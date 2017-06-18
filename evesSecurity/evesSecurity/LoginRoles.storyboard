@@ -51,7 +51,7 @@ This option will then guide you through creating an Organisation and then allow 
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
-                                    <action selector="txtEntry:" destination="R7f-FH-ZDV" eventType="editingDidEnd" id="E9m-Dn-1Z1"/>
+                                    <action selector="txtEntry:" destination="R7f-FH-ZDV" eventType="editingChanged" id="SgC-nz-Tlo"/>
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eod-na-cWf">
@@ -469,12 +469,18 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
+                                <connections>
+                                    <action selector="txtFieldChanged:" destination="TMw-rd-O2R" eventType="editingChanged" id="Gna-gC-cwC"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3Wo-K1-AoT" userLabel="txtName">
                                 <rect key="frame" x="276" y="74" width="452" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                <connections>
+                                    <action selector="txtFieldChanged:" destination="TMw-rd-O2R" eventType="editingChanged" id="f45-CH-Cii"/>
+                                </connections>
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="i2H-1n-qe3" userLabel="tblUsers">
                                 <rect key="frame" x="20" y="74" width="200" height="930"/>
@@ -483,7 +489,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                     <constraint firstAttribute="width" constant="200" id="px8-gx-1I1"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellUser" id="swe-1V-xkf" customClass="userDisplayItem" customModule="Shift_Dashboard" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellUser" id="swe-1V-xkf" customClass="oneLabelTable" customModule="Shift_Dashboard" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="swe-1V-xkf" id="zE7-af-ogx">
@@ -505,7 +511,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="lblName" destination="B5P-L2-xuo" id="0J6-7I-InR"/>
+                                            <outlet property="lbl1" destination="B5P-L2-xuo" id="FTy-2r-nuJ"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -544,17 +550,88 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading Users.  Please wait." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCM-dh-MLS" userLabel="lblLoadingUsers">
+                                <rect key="frame" x="277" y="502" width="214" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Xxi-2K-aFo" userLabel="tblRoles">
+                                <rect key="frame" x="240" y="297" width="210" height="707"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="210" id="AzD-Na-EtN"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellRoles" id="Wb0-Bf-9Cw" customClass="userPermissions" customModule="Shift_Dashboard" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="210" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Wb0-Bf-9Cw" id="sTU-Lm-SSK">
+                                            <rect key="frame" x="0.0" y="0.0" width="210" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtM-qd-Dpl" userLabel="lblRole">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="43.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="100" id="V5K-xh-SX3"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MG4-dL-bIL" userLabel="btnPermission">
+                                                    <rect key="frame" x="105" y="0.0" width="100" height="43.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="100" id="fj6-T5-1tQ"/>
+                                                    </constraints>
+                                                    <state key="normal" title="Button"/>
+                                                    <connections>
+                                                        <action selector="btnPermission:" destination="Wb0-Bf-9Cw" eventType="touchUpInside" id="Mug-wv-60l"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="MG4-dL-bIL" secondAttribute="trailing" id="5IX-s6-23g"/>
+                                                <constraint firstItem="vtM-qd-Dpl" firstAttribute="top" secondItem="sTU-Lm-SSK" secondAttribute="top" id="Cph-qj-dk1"/>
+                                                <constraint firstItem="MG4-dL-bIL" firstAttribute="top" secondItem="sTU-Lm-SSK" secondAttribute="top" id="Pzq-Bd-K9I"/>
+                                                <constraint firstAttribute="bottom" secondItem="MG4-dL-bIL" secondAttribute="bottom" id="h1n-AK-8fN"/>
+                                                <constraint firstItem="MG4-dL-bIL" firstAttribute="leading" secondItem="vtM-qd-Dpl" secondAttribute="trailing" constant="5" id="qeD-Kc-dks"/>
+                                                <constraint firstItem="vtM-qd-Dpl" firstAttribute="leading" secondItem="sTU-Lm-SSK" secondAttribute="leading" id="rXB-UN-c8h"/>
+                                                <constraint firstAttribute="bottom" secondItem="vtM-qd-Dpl" secondAttribute="bottom" id="s1L-KI-dGE"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="btnPermission" destination="MG4-dL-bIL" id="hsI-BS-1Bu"/>
+                                            <outlet property="lblRole" destination="vtM-qd-Dpl" id="tMT-uF-ku1"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="TMw-rd-O2R" id="gTU-MB-pQo"/>
+                                    <outlet property="delegate" destination="TMw-rd-O2R" id="Tdd-F1-aRj"/>
+                                </connections>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Roles" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lNd-kd-l8W" userLabel="lblRoles">
+                                <rect key="frame" x="320" y="256" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="lNd-kd-l8W" firstAttribute="top" secondItem="fra-o9-X2f" secondAttribute="bottom" constant="20" id="001-xx-WR2"/>
                             <constraint firstItem="gKh-pB-kHV" firstAttribute="top" secondItem="bzA-hu-bs2" secondAttribute="bottom" constant="20" id="0jd-DG-ba8"/>
                             <constraint firstItem="bzA-hu-bs2" firstAttribute="leading" secondItem="i6w-BB-htF" secondAttribute="trailing" constant="5" id="3xJ-He-O59"/>
                             <constraint firstItem="HD9-bJ-TXM" firstAttribute="top" secondItem="bzA-hu-bs2" secondAttribute="bottom" constant="20" id="68E-Mv-2oO"/>
                             <constraint firstItem="fra-o9-X2f" firstAttribute="leading" secondItem="VLm-hT-mIl" secondAttribute="trailing" constant="5" id="AyU-OJ-4Nt"/>
+                            <constraint firstItem="Xxi-2K-aFo" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="20" id="Ccl-Q2-CHI"/>
+                            <constraint firstItem="cCM-dh-MLS" firstAttribute="centerX" secondItem="ymr-Qb-oi7" secondAttribute="centerX" id="Dni-jr-StK"/>
                             <constraint firstItem="i6w-BB-htF" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="EWO-zk-4wW"/>
                             <constraint firstItem="VLm-hT-mIl" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="GxO-0A-5it"/>
                             <constraint firstAttribute="trailingMargin" secondItem="gKh-pB-kHV" secondAttribute="trailing" constant="20" id="HIH-Ei-a6k"/>
                             <constraint firstItem="VLm-hT-mIl" firstAttribute="top" secondItem="HD9-bJ-TXM" secondAttribute="bottom" constant="20" id="IbA-TM-UXN"/>
+                            <constraint firstItem="lNd-kd-l8W" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="100" id="N4y-an-H1k"/>
                             <constraint firstItem="uHr-l0-H1y" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" id="Nje-mb-iEJ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bzA-hu-bs2" secondAttribute="trailing" constant="20" id="OjA-IS-GNi"/>
                             <constraint firstItem="bzA-hu-bs2" firstAttribute="top" secondItem="3Wo-K1-AoT" secondAttribute="bottom" constant="20" id="OwJ-28-a5H"/>
@@ -562,7 +639,9 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                             <constraint firstAttribute="trailingMargin" secondItem="uHr-l0-H1y" secondAttribute="trailing" id="WdC-07-SF5"/>
                             <constraint firstItem="uHr-l0-H1y" firstAttribute="top" secondItem="JxS-um-JiW" secondAttribute="bottom" id="YzL-jV-lgE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3Wo-K1-AoT" secondAttribute="trailing" constant="20" id="bLn-Uu-2Ai"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Xxi-2K-aFo" secondAttribute="trailing" constant="20" id="c6U-FN-vAj"/>
                             <constraint firstItem="HD9-bJ-TXM" firstAttribute="leading" secondItem="VLm-hT-mIl" secondAttribute="trailing" constant="5" id="dBk-Ph-Jud"/>
+                            <constraint firstItem="cCM-dh-MLS" firstAttribute="centerY" secondItem="ymr-Qb-oi7" secondAttribute="centerY" id="dda-tl-fpk"/>
                             <constraint firstItem="xC2-qg-j34" firstAttribute="top" secondItem="bzA-hu-bs2" secondAttribute="bottom" constant="20" id="elf-4f-l8V"/>
                             <constraint firstItem="loF-On-eyS" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="gj9-a2-bo5"/>
                             <constraint firstItem="3Wo-K1-AoT" firstAttribute="leading" secondItem="i6w-BB-htF" secondAttribute="trailing" constant="5" id="gli-hi-B9l"/>
@@ -570,8 +649,10 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                             <constraint firstItem="2hM-l5-gz4" firstAttribute="top" secondItem="i2H-1n-qe3" secondAttribute="bottom" constant="20" id="l4I-G9-QaQ"/>
                             <constraint firstItem="3Wo-K1-AoT" firstAttribute="top" secondItem="uHr-l0-H1y" secondAttribute="bottom" constant="10" id="nBq-yB-1Ob"/>
                             <constraint firstItem="fra-o9-X2f" firstAttribute="top" secondItem="HD9-bJ-TXM" secondAttribute="bottom" constant="20" id="pd6-pO-h7V"/>
+                            <constraint firstItem="Xxi-2K-aFo" firstAttribute="top" secondItem="lNd-kd-l8W" secondAttribute="bottom" constant="20" id="sQj-J1-IT7"/>
                             <constraint firstItem="i2H-1n-qe3" firstAttribute="top" secondItem="uHr-l0-H1y" secondAttribute="bottom" constant="10" id="tMn-ne-3UH"/>
                             <constraint firstItem="loF-On-eyS" firstAttribute="top" secondItem="uHr-l0-H1y" secondAttribute="bottom" constant="15" id="tcM-13-lGg"/>
+                            <constraint firstItem="2hM-l5-gz4" firstAttribute="top" secondItem="Xxi-2K-aFo" secondAttribute="bottom" constant="20" id="tuS-Jy-EQ9"/>
                             <constraint firstItem="i2H-1n-qe3" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" id="u6S-By-dwS"/>
                             <constraint firstItem="i6w-BB-htF" firstAttribute="top" secondItem="3Wo-K1-AoT" secondAttribute="bottom" constant="25" id="uM6-Jy-S14"/>
                             <constraint firstItem="gKh-pB-kHV" firstAttribute="leading" secondItem="HD9-bJ-TXM" secondAttribute="trailing" constant="10" id="ycN-fd-mD1"/>
@@ -584,8 +665,14 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                         <outlet property="btnSave" destination="C4q-Bg-vcR" id="KVG-Su-DJ6"/>
                         <outlet property="lblDate" destination="fra-o9-X2f" id="0Zj-AJ-c0b"/>
                         <outlet property="lblEmail" destination="HD9-bJ-TXM" id="Ynh-A6-BR3"/>
+                        <outlet property="lblLoadingUsers" destination="cCM-dh-MLS" id="gYl-SJ-6xb"/>
                         <outlet property="lblName" destination="loF-On-eyS" id="3WF-Sg-JNw"/>
+                        <outlet property="lblNameTitle" destination="i6w-BB-htF" id="i9y-gs-IKb"/>
+                        <outlet property="lblPassPhraseExpiryTitle" destination="VLm-hT-mIl" id="uc9-bo-DWE"/>
+                        <outlet property="lblPassPhraseTitle" destination="xC2-qg-j34" id="YEI-Tw-SDp"/>
                         <outlet property="lblPhrase" destination="HD9-bJ-TXM" id="dio-aW-qzL"/>
+                        <outlet property="lblRoles" destination="lNd-kd-l8W" id="N0O-Wv-IPc"/>
+                        <outlet property="tblRoles" destination="Xxi-2K-aFo" id="z8Q-aT-lVa"/>
                         <outlet property="tblUsers" destination="i2H-1n-qe3" id="pzd-dc-zGN"/>
                         <outlet property="txtEmail" destination="bzA-hu-bs2" id="TQO-s8-Hhi"/>
                         <outlet property="txtName" destination="3Wo-K1-AoT" id="5BJ-5c-EyA"/>
@@ -710,7 +797,166 @@ This passowrd is only valid on this device.  If you forget the password ther
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Uf-cX-piN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2158.59375" y="82.6171875"/>
+            <point key="canvasLocation" x="1706" y="117"/>
+        </scene>
+        <!--Dropdown Maintenance-->
+        <scene sceneID="XOY-aq-SGc">
+            <objects>
+                <viewController storyboardIdentifier="dropdownMaintenance" id="hLq-EY-3xw" userLabel="Dropdown Maintenance" customClass="dropdownMaintenanceViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="kd0-VU-1xN"/>
+                        <viewControllerLayoutGuide type="bottom" id="S3G-Ue-eT4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Mze-ya-MrD">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wkc-ZY-6nm">
+                                <rect key="frame" x="0.0" y="20" width="768" height="44"/>
+                                <items>
+                                    <navigationItem title="Dropdown Maintenance" id="R2T-Ib-LvS">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5zU-SI-WTc" userLabel="btnBack">
+                                            <connections>
+                                                <action selector="btnBack:" destination="hLq-EY-3xw" id="nVb-Rn-25l"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FV1-0N-F2y" userLabel="tblDropdowns">
+                                <rect key="frame" x="20" y="84" width="200" height="920"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="6bf-I6-E25"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellDropdown" id="zGR-57-yRS" userLabel="cellDropdown" customClass="oneLabelTable" customModule="Shift_Dashboard" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="200" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zGR-57-yRS" id="EhZ-zq-x9b">
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jkh-SM-T95" userLabel="lblName">
+                                                    <rect key="frame" x="0.0" y="0.0" width="200" height="43.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="jkh-SM-T95" secondAttribute="trailing" id="ili-yh-cMw"/>
+                                                <constraint firstItem="jkh-SM-T95" firstAttribute="leading" secondItem="EhZ-zq-x9b" secondAttribute="leading" id="k84-DN-Uif"/>
+                                                <constraint firstItem="jkh-SM-T95" firstAttribute="top" secondItem="EhZ-zq-x9b" secondAttribute="top" id="xnW-RA-sQP"/>
+                                                <constraint firstAttribute="bottom" secondItem="jkh-SM-T95" secondAttribute="bottom" id="zMU-VE-mr8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="lbl1" destination="jkh-SM-T95" id="xaV-dq-dNI"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="hLq-EY-3xw" id="m0H-TO-FdA"/>
+                                    <outlet property="delegate" destination="hLq-EY-3xw" id="sE2-pD-5RN"/>
+                                </connections>
+                            </tableView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Jwl-ap-Jj8" userLabel="tblValues">
+                                <rect key="frame" x="240" y="134" width="508" height="870"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellValue" id="38F-Wl-hqJ" userLabel="cellValue" customClass="oneLabelTable" customModule="Shift_Dashboard" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="508" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="38F-Wl-hqJ" id="rnc-ic-beQ">
+                                            <rect key="frame" x="0.0" y="0.0" width="508" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tsf-M8-xEc" userLabel="lblName">
+                                                    <rect key="frame" x="0.0" y="0.0" width="508" height="43.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="tsf-M8-xEc" secondAttribute="trailing" id="LGL-DC-tXn"/>
+                                                <constraint firstAttribute="bottom" secondItem="tsf-M8-xEc" secondAttribute="bottom" id="O5Z-83-Bjj"/>
+                                                <constraint firstItem="tsf-M8-xEc" firstAttribute="top" secondItem="rnc-ic-beQ" secondAttribute="top" id="kHJ-ab-fG9"/>
+                                                <constraint firstItem="tsf-M8-xEc" firstAttribute="leading" secondItem="rnc-ic-beQ" secondAttribute="leading" id="nvT-Ou-LIc"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="lbl1" destination="tsf-M8-xEc" id="7Cx-bO-e9h"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="hLq-EY-3xw" id="dWU-WQ-8kE"/>
+                                    <outlet property="delegate" destination="hLq-EY-3xw" id="agc-MT-fQU"/>
+                                </connections>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="igW-ek-ZcS" userLabel="lblNewValue">
+                                <rect key="frame" x="240" y="89" width="81" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="81" id="jO8-M3-RTN"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4no-lK-nVi" userLabel="txtValue">
+                                <rect key="frame" x="331" y="84" width="338" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                <connections>
+                                    <action selector="txtValue:" destination="hLq-EY-3xw" eventType="editingChanged" id="hsF-uh-aMs"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4qN-l6-Boe" userLabel="btnAdd">
+                                <rect key="frame" x="679" y="84" width="69" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="69" id="qwV-xp-FKc"/>
+                                </constraints>
+                                <state key="normal" title="Add Value"/>
+                                <connections>
+                                    <action selector="btnAdd:" destination="hLq-EY-3xw" eventType="touchUpInside" id="smF-nK-V0C"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="4qN-l6-Boe" firstAttribute="top" secondItem="wkc-ZY-6nm" secondAttribute="bottom" constant="20" id="0po-jg-xtf"/>
+                            <constraint firstItem="4qN-l6-Boe" firstAttribute="leading" secondItem="4no-lK-nVi" secondAttribute="trailing" constant="10" id="76n-Q0-VxW"/>
+                            <constraint firstItem="4no-lK-nVi" firstAttribute="top" secondItem="wkc-ZY-6nm" secondAttribute="bottom" constant="20" id="GbO-j6-ZSt"/>
+                            <constraint firstItem="4no-lK-nVi" firstAttribute="leading" secondItem="igW-ek-ZcS" secondAttribute="trailing" constant="10" id="NGI-gx-h4z"/>
+                            <constraint firstItem="igW-ek-ZcS" firstAttribute="leading" secondItem="FV1-0N-F2y" secondAttribute="trailing" constant="20" id="Nk5-cA-cvK"/>
+                            <constraint firstAttribute="trailing" secondItem="Jwl-ap-Jj8" secondAttribute="trailing" constant="20" id="O9b-WR-pzm"/>
+                            <constraint firstItem="igW-ek-ZcS" firstAttribute="top" secondItem="wkc-ZY-6nm" secondAttribute="bottom" constant="25" id="Q2W-fT-rff"/>
+                            <constraint firstItem="FV1-0N-F2y" firstAttribute="leading" secondItem="Mze-ya-MrD" secondAttribute="leading" constant="20" id="Qif-IL-jUO"/>
+                            <constraint firstItem="wkc-ZY-6nm" firstAttribute="leading" secondItem="Mze-ya-MrD" secondAttribute="leading" id="gHm-mP-Sz1"/>
+                            <constraint firstItem="Jwl-ap-Jj8" firstAttribute="leading" secondItem="FV1-0N-F2y" secondAttribute="trailing" constant="20" id="hlm-Oi-qLo"/>
+                            <constraint firstItem="FV1-0N-F2y" firstAttribute="top" secondItem="wkc-ZY-6nm" secondAttribute="bottom" constant="20" id="hzm-O8-rLg"/>
+                            <constraint firstAttribute="trailing" secondItem="4qN-l6-Boe" secondAttribute="trailing" constant="20" id="klh-uI-fV7"/>
+                            <constraint firstItem="Jwl-ap-Jj8" firstAttribute="top" secondItem="4qN-l6-Boe" secondAttribute="bottom" constant="20" id="le7-Qx-ZzB"/>
+                            <constraint firstItem="S3G-Ue-eT4" firstAttribute="top" secondItem="FV1-0N-F2y" secondAttribute="bottom" constant="20" id="lvj-GU-ddr"/>
+                            <constraint firstItem="S3G-Ue-eT4" firstAttribute="top" secondItem="Jwl-ap-Jj8" secondAttribute="bottom" constant="20" id="nbe-Le-1Am"/>
+                            <constraint firstAttribute="trailing" secondItem="wkc-ZY-6nm" secondAttribute="trailing" id="oUn-GN-SYC"/>
+                            <constraint firstItem="wkc-ZY-6nm" firstAttribute="top" secondItem="kd0-VU-1xN" secondAttribute="bottom" id="yNl-bN-JII"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="btnAdd" destination="4qN-l6-Boe" id="oI6-dL-xI9"/>
+                        <outlet property="lblNewValue" destination="igW-ek-ZcS" id="MDm-Am-4YH"/>
+                        <outlet property="tblDropdowns" destination="FV1-0N-F2y" id="sw5-aC-TBk"/>
+                        <outlet property="tblValues" destination="Jwl-ap-Jj8" id="X9d-Q5-oGR"/>
+                        <outlet property="txtValue" destination="4no-lK-nVi" id="Aqf-VD-L4U"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OkA-vK-DVA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2370.3125" y="116.60156249999999"/>
         </scene>
     </scenes>
 </document>

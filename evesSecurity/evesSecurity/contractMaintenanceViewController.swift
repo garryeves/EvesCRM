@@ -8,7 +8,7 @@
 
 import UIKit
 
-class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITextViewDelegate
+class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate
 {
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtNote: UITextView!
@@ -22,11 +22,13 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var btnInvoicingFrequency: UIButton!
     @IBOutlet weak var btnType: UIButton!
     @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var tblShifts: UITableView!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
     
     fileprivate var displayList: [String] = Array()
+    fileprivate var shiftList: shifts!
     
     override func viewDidLoad()
     {
@@ -43,6 +45,23 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         // Dispose of any resources that can be recreated.
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return shiftList.shifts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        let cell = tableView.dequeueReusableCell(withIdentifier:"cellShift", for: indexPath) as! twoLabelTable
+        
+        let dateString = "\(shiftList.shifts[indexPath.row].workDateString) \(shiftList.shifts[indexPath.row].startTimeString) - \(shiftList.shifts[indexPath.row].endTimeString)"
+        cell.lbl1.text = dateString
+        
+        let tempPerson = person(personID: shiftList.shifts[indexPath.row].personID)
+        cell.lbl2.text = tempPerson.name
+        
+        return cell
+    }
     
     @IBAction func txtName(_ sender: UITextField)
     {
@@ -433,6 +452,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     {
         if workingContract != nil
         {
+            shiftList = shifts(projectID: workingContract.projectID)
             txtName.text = workingContract.projectName
             txtNote.text = workingContract.note
             txtDept.text = workingContract.clientDept

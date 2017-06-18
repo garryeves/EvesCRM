@@ -136,9 +136,9 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 return cell
             
             case tblPerson:
-                let cell = tableView.dequeueReusableCell(withIdentifier:"personCell", for: indexPath) as! rosterPersonItem
+                let cell = tableView.dequeueReusableCell(withIdentifier:"personCell", for: indexPath) as! oneLabelTable
                 
-                cell.lblName.text = peopleList.people[indexPath.row].name
+                cell.lbl1.text = peopleList.people[indexPath.row].name
                 
                 return cell
             
@@ -373,17 +373,6 @@ class rosterDisplayItem: UITableViewCell
     @IBOutlet weak var lblContract: UILabel!
     @IBOutlet weak var lblFrom: UILabel!
     
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }
-}
-
-class rosterPersonItem: UITableViewCell
-{
-    @IBOutlet weak var lblName: UILabel!
-
     override func layoutSubviews()
     {
         contentView.frame = bounds

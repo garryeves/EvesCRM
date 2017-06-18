@@ -161,7 +161,10 @@ class ViewController: UIViewController, myCommunicationDelegate
 //            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
 //        }
 //        
-//    
+//
+        
+myDatabaseConnection.fixDropDowns()
+//currentUser.currentTeam!.populateRoleTypesDropDown
 
         myDatabaseConnection.recordsProcessed = 0
         

@@ -1343,3 +1343,26 @@ func calculateAmount(numHours: Int, numMins: Double, rate: Double) -> Double
         return calcAmount * rate
     }
 }
+
+class oneLabelTable: UITableViewCell
+{
+    @IBOutlet weak var lbl1: UILabel!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+}
+
+class twoLabelTable: UITableViewCell
+{
+    @IBOutlet weak var lbl1: UILabel!
+    @IBOutlet weak var lbl2: UILabel!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+}

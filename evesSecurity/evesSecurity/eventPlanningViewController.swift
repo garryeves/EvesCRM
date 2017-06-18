@@ -269,7 +269,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         
         displayList.append("")
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "ShowRole"))!
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Event Roles"))!
         {
             displayList.append(myItem)
         }
@@ -586,7 +586,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     
     func refreshScreen()
     {
-        eventList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventShiftType)
+        eventList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventProjectType)
         tblEvents.reloadData()
         
         if currentEvent != nil

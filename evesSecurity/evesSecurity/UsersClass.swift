@@ -153,9 +153,27 @@ class userItem: NSObject
         {
             return myCurrentTeam
         }
+        set
+        {
+            var foundBool = false
+            
+            for myItem in myTeams
+            {
+                if myItem.teamID == newValue!.teamID
+                {
+                    foundBool = true
+                    break
+                }
+            }
+            
+            if foundBool
+            {
+                myCurrentTeam = newValue
+            }
+        }
     }
     
-    init(currentTeam: team)
+    init(currentTeam: team, userName: String, userEmail: String)
     {
         super.init()
         
@@ -163,6 +181,8 @@ class userItem: NSObject
         
         myCurrentTeam = currentTeam
         notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
+        myName = userName
+        myEmail = userEmail
         
         myCloudDB.getUserCount()
     }
@@ -177,6 +197,10 @@ class userItem: NSObject
         super.init()
 
         myUserID = userID
+        
+        loadTeams()
+        
+        loadRoles()
     }
     
     func getUserDetails()
@@ -240,7 +264,7 @@ class userItem: NSObject
         
         notificationCenter.addObserver(self, selector: #selector(self.userCreated), name: NotificationUserSaved, object: nil)
         
-        myCloudDB.createNewUser(myUserID)
+        myCloudDB.createNewUser(myUserID, name: myName, email: myEmail)
     }
     
     func userCreated()
@@ -248,6 +272,7 @@ class userItem: NSObject
         myAuthorised = true
         
         addTeamToUser(myCurrentTeam)
+        
         notificationCenter.post(name: NotificationUserCreated, object: nil)
     }
 
@@ -274,24 +299,24 @@ class userItem: NSObject
         myRoles = userRoles(userID: myUserID, teamID: currentTeam!.teamID)
     }
     
-    func setCurrentTeam(_ teamObject: team)
-    {
-        var foundBool = false
-        
-        for myItem in myTeams
-        {
-            if myItem.teamID == teamObject.teamID
-            {
-                foundBool = true
-                break
-            }
-        }
-        
-        if foundBool
-        {
-            myCurrentTeam = teamObject
-        }
-    }
+//    func setCurrentTeam(_ teamObject: team)
+//    {
+//        var foundBool = false
+//
+//        for myItem in myTeams
+//        {
+//            if myItem.teamID == teamObject.teamID
+//            {
+//                foundBool = true
+//                break
+//            }
+//        }
+//
+//        if foundBool
+//        {
+//            myCurrentTeam = teamObject
+//        }
+//    }
     
     func removeTeamForUser(_ teamObject: team)
     {
@@ -370,12 +395,12 @@ class userItem: NSObject
         {
             if recordCount == processRecords.count - 1
             {
-                addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: true)
+                addRoleToUser(roleType: myItem, accessLevel: noPermission, saveToCloud: true)
                 usleep(500)
             }
             else
             {
-                addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: false)
+                addRoleToUser(roleType: myItem, accessLevel: noPermission, saveToCloud: false)
                 recordCount += 1
                 usleep(500)
             }
@@ -411,10 +436,12 @@ extension CloudKitInteraction
         return recordsInTable
     }
     
-    func createNewUser(_ userID: Int)
+    func createNewUser(_ userID: Int, name: String, email: String)
     {
         let record = CKRecord(recordType: "DBUsers")
         record.setValue(userID, forKey: "userID")
+        record.setValue(name, forKey: "name")
+        record.setValue(email, forKey: "email")
         
         self.publicDB.save(record, completionHandler:
             { (savedRecord, saveError) in
@@ -601,6 +628,7 @@ extension CloudKitInteraction
         
         let predicate = NSPredicate(format: "userID IN { \(userList) } AND (updateType != \"Delete\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "DBUsers", predicate: predicate)
+        query.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         let operation = CKQueryOperation(query: query)
         
         operation.recordFetchedBlock = { (record) in

@@ -177,7 +177,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
 
         if currentUser == nil
         {
-            currentUser = userItem(currentTeam: workingOrganisation!)
+            currentUser = userItem(currentTeam: workingOrganisation!, userName: "", userEmail: "")
             
             notificationCenter.addObserver(self, selector: #selector(self.addTeamToUser), name: NotificationUserCreated, object: nil)
         }

@@ -100,16 +100,16 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         switch tableView
         {
             case tblClients:
-                let cell = tableView.dequeueReusableCell(withIdentifier:"cellClients", for: indexPath) as! clientsListItem
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellClients", for: indexPath) as! oneLabelTable
         
-                cell.lblName.text = clientList.clients[indexPath.row].name
+                cell.lbl1.text = clientList.clients[indexPath.row].name
                 
                 return cell
                 
             case tblContracts:
-                let cell = tableView.dequeueReusableCell(withIdentifier:"cellContract", for: indexPath) as! contractsSummaryItem
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellContract", for: indexPath) as! oneLabelTable
                 
-                cell.lblContractName.text = contractsList.projects[indexPath.row].projectName
+                cell.lbl1.text = contractsList.projects[indexPath.row].projectName
             
                 return cell
             
@@ -368,28 +368,6 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 tblRates.reloadData()
             }
         }
-    }
-}
-
-class contractsSummaryItem: UITableViewCell
-{
-    @IBOutlet weak var lblContractName: UILabel!
-    
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }
-}
-
-class clientsListItem: UITableViewCell
-{
-    @IBOutlet weak var lblName: UILabel!
-    
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
     }
 }
 

@@ -103,9 +103,9 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         switch tableView
         {
             case tblTemplates:
-                let cell = tableView.dequeueReusableCell(withIdentifier:"templateCell", for: indexPath) as! templateListItem
+                let cell = tableView.dequeueReusableCell(withIdentifier:"templateCell", for: indexPath) as! oneLabelTable
                 
-                cell.lblName.text = templates.templates[indexPath.row].templateName
+                cell.lbl1.text = templates.templates[indexPath.row].templateName
                 
                 return cell
                 
@@ -220,7 +220,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         
         displayList.append("")
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "ShowRole"))!
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Event Roles"))!
         {
             displayList.append(myItem)
         }
@@ -522,17 +522,6 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
             btnStartTime.setTitle("Select", for: .normal)
             txtNumRequired.text = "0"
         }
-    }
-}
-
-class templateListItem: UITableViewCell
-{
-    @IBOutlet weak var lblName: UILabel!
-    
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
     }
 }
 

@@ -27,6 +27,7 @@
 		3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */; };
 		3463FA9C1ED141ED00486195 /* Shifts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3463FA9B1ED141ED00486195 /* Shifts.storyboard */; };
 		3463FA9E1ED15B3F00486195 /* shiftMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */; };
+		34729B171EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34729B161EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift */; };
 		347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */; };
 		347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEBF1EC55D88006B95BA /* newUserViewController.swift */; };
 		347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEC11EC563F0006B95BA /* orgEditViewController.swift */; };
@@ -119,6 +120,7 @@
 		3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = rateMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3463FA9B1ED141ED00486195 /* Shifts.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Shifts.storyboard; sourceTree = "<group>"; };
 		3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftMaintenanceViewController.swift; sourceTree = "<group>"; };
+		34729B161EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dropdownMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 30.xcdatamodel"; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */,
 				34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */,
 				34B35A841ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift */,
+				34729B161EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift */,
 				34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */,
 				347BCEC11EC563F0006B95BA /* orgEditViewController.swift */,
 				343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */,
@@ -601,6 +604,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */,
+				34729B171EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift in Sources */,
 				34CEEA391EC2EB5E00F85A11 /* addressClass.swift in Sources */,
 				343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */,
 				34B01DCB1EE3B89200B836C8 /* extensions.swift in Sources */,

@@ -1142,7 +1142,7 @@
                                     <constraint firstAttribute="width" constant="200" id="7qn-IQ-imy"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="templateCell" id="y8s-mM-Wwh" customClass="templateListItem" customModule="Shift_Dashboard" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="templateCell" id="y8s-mM-Wwh" customClass="oneLabelTable" customModule="Shift_Dashboard" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y8s-mM-Wwh" id="pN9-g8-auk">
@@ -1164,7 +1164,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="lblName" destination="wno-az-Fh4" id="jdn-kM-bmV"/>
+                                            <outlet property="lbl1" destination="wno-az-Fh4" id="EEP-1K-JC0"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1356,7 +1356,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XoD-4N-Ts7" userLabel="btnStartTime">
-                                <rect key="frame" x="456" y="154" width="100" height="71"/>
+                                <rect key="frame" x="456" y="154" width="100" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="1te-2h-ZNL"/>
                                 </constraints>
@@ -1465,7 +1465,6 @@
                             <constraint firstItem="xW9-lo-ZtM" firstAttribute="top" secondItem="9nV-4T-PQ3" secondAttribute="bottom" constant="20" id="MKf-Ia-0qJ"/>
                             <constraint firstItem="WSV-oE-mgZ" firstAttribute="top" secondItem="UTE-H3-a5Z" secondAttribute="bottom" constant="15" id="TJZ-IV-yYQ"/>
                             <constraint firstItem="EBh-yE-MAx" firstAttribute="top" secondItem="Q43-BM-HbB" secondAttribute="bottom" id="U7a-Yy-3l2"/>
-                            <constraint firstItem="9nV-4T-PQ3" firstAttribute="top" secondItem="XoD-4N-Ts7" secondAttribute="bottom" constant="10" id="VO0-Gk-Hjf"/>
                             <constraint firstItem="9nV-4T-PQ3" firstAttribute="top" secondItem="elV-Y7-ete" secondAttribute="bottom" constant="15" id="YQ4-ut-MXH"/>
                             <constraint firstItem="g52-XK-puq" firstAttribute="top" secondItem="Rzj-0P-37V" secondAttribute="bottom" constant="15" id="aDG-aO-5rd"/>
                             <constraint firstItem="CcP-3H-SSH" firstAttribute="top" secondItem="UTE-H3-a5Z" secondAttribute="bottom" constant="10" id="aKb-Hv-rON"/>
@@ -1683,7 +1682,7 @@
                                     <constraint firstAttribute="width" constant="200" id="nSk-7p-nBd"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="personCell" id="MMn-Df-GMu" customClass="rosterPersonItem" customModule="Shift_Dashboard" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="personCell" id="MMn-Df-GMu" customClass="oneLabelTable" customModule="Shift_Dashboard" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MMn-Df-GMu" id="fK9-FT-PKi">
@@ -1705,7 +1704,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="lblName" destination="3xF-aS-cIa" id="e15-n4-fVk"/>
+                                            <outlet property="lbl1" destination="3xF-aS-cIa" id="qMs-1L-pFf"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

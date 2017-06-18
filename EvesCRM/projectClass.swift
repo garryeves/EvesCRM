@@ -10,9 +10,9 @@ import Foundation
 import CoreData
 import CloudKit
 
-let eventProjectType = "Event"
-let regularProjectType = "Regular"
-let projectProjectType = "Project"
+let eventProjectType = "Event Project"
+let regularProjectType = "Regular Project"
+let salesProjectType = "Sales Project"
 
 let alertProjectNoType = "project type"
 let alertProjectNoStartOrEnd = "project no start or end"
@@ -1818,7 +1818,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myProject in fetchResults
             {
-                myProject.type = "Regular"
+                myProject.type = "Regular Project"
                 myProject.updateTime = NSDate()
                 saveContext()
             }

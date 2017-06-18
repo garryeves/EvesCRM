@@ -13,10 +13,16 @@ import CloudKit
 class dropdowns: NSObject
 {
     fileprivate var myDropdowns:[dropdownItem] = Array()
+    fileprivate var myDropdownTypes: [String] = Array()
     
-    init(dropdownType: String)
+    init(teamID: Int)
     {
-        for myItem in myDatabaseConnection.getDropdowns(dropdownType: dropdownType)
+        myDropdownTypes = myDatabaseConnection.getDropdownsTypes(teamID: teamID)
+    }
+    
+    init(dropdownType: String, teamID: Int)
+    {
+        for myItem in myDatabaseConnection.getDropdowns(dropdownType: dropdownType, teamID: teamID)
         {
             let myObject = dropdownItem(dropdownType: myItem.dropDownType!,
                                    dropdownValue: myItem.dropDownValue!,
@@ -32,6 +38,11 @@ class dropdowns: NSObject
         {
             return myDropdowns
         }
+    }
+    
+    var dropDownTypes: [String]
+    {
+        return myDropdownTypes
     }
 }
 
@@ -58,6 +69,7 @@ class dropdownItem: NSObject
         set
         {
             myDropdownValue = newValue
+            save()
         }
     }
     
@@ -141,13 +153,57 @@ extension coreDatabase
         saveContext()
     }
     
-    func getDropdowns(dropdownType: String)->[Dropdowns]
+    func getDropdownsTypes(teamID: Int)->[String]
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (dropDownType != 'Privacy') AND (dropDownType != 'ProjectType') AND (dropDownType != 'Reports') AND (dropDownType != 'RoleAccess') AND (dropDownType != 'RoleType') AND (dropDownType !=  'ShiftType') AND (dropDownType != 'TeamState') AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        fetchRequest.resultType = .dictionaryResultType
+        
+        fetchRequest.propertiesToFetch = ["dropDownType"]
+        fetchRequest.returnsDistinctResults = true
+        
+        let sortDescriptor = NSSortDescriptor(key: "dropDownType", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            var returnArray: [String] = Array()
+            
+            let resultsDict = fetchResults as! [[String: String]]
+            
+            for myItem in resultsDict
+            {
+                returnArray.append(myItem["dropDownType"]!)
+            }
+            
+ //           returnArray.sorted({$0 < $1})
+            
+            return returnArray
+        }
+        catch
+        {
+            print("Error occurred during execution: D \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func getDropdowns(dropdownType: String, teamID: Int)->[Dropdowns]
     {
         let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(dropDownType == \"\(dropdownType)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (dropDownType == \"\(dropdownType)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -189,9 +245,16 @@ extension coreDatabase
         }
     }
     
-    func resetAllDropdowns()
+    func resetAllDropdowns(teamID: Int)
     {
         let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -281,9 +344,16 @@ extension coreDatabase
         }
     }
     
-    func deleteAllDropdowns()
+    func deleteAllDropdowns(teamID: Int)
     {
         let fetchRequest2 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest2.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -302,13 +372,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteDropdowns(_ forType: String)
+    func deleteDropdowns(_ forType: String, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(dropDownType == \"\(forType)\")")
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (dropDownType == \"\(forType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -329,6 +399,192 @@ extension coreDatabase
         
         saveContext()
     }
+    
+    
+    func fixDropDowns()
+    {
+        // first delete the unneeded ones
+        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "((dropDownType == \"Project\") || (dropDownType == \"Stages\")) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                myItem.updateTime = NSDate()
+                myItem.updateType = "Delete"
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: J \(error.localizedDescription)")
+        }
+        
+        saveContext()
+        
+        // Now we rename
+        
+        let fetchRequest1 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate1 = NSPredicate(format: "updateType != \"Delete\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest1.predicate = predicate1
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults1 = try objectContext.fetch(fetchRequest1)
+            for myItem in fetchResults1
+            {
+                if myItem.dropDownType == "Event"
+                {
+                    myItem.dropDownType = "Event Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownType == "Regular"
+                {
+                    myItem.dropDownType = "Regular Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownType == "Sales"
+                {
+                    myItem.dropDownType = "Sales Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownType == "Roles"
+                {
+                    myItem.dropDownType = "Project Roles"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownType == "ShowRole"
+                {
+                    myItem.dropDownType = "Event Roles"
+                    myItem.updateTime = NSDate()
+                }
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: D \(error.localizedDescription)")
+        }
+        saveContext()
+        
+        let fetchRequest2 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate2 = NSPredicate(format: "(dropDownType == \"ProjectType\") AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest2.predicate = predicate2
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
+            for myItem in fetchResults2
+            {
+                if myItem.dropDownValue == "Event"
+                {
+                    myItem.dropDownValue = "Event Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownValue == "Regular"
+                {
+                    myItem.dropDownValue = "Regular Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownValue == "Sales"
+                {
+                    myItem.dropDownValue = "Sales Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.dropDownValue == "Project"
+                {
+                    myItem.updateType = "Delete"
+                    myItem.updateTime = NSDate()
+                }
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: D \(error.localizedDescription)")
+        }
+        saveContext()
+        
+        let fetchRequest3 = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate3 = NSPredicate(format: "updateType != \"Delete\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest3.predicate = predicate3
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
+            for myItem in fetchResults3
+            {
+                if myItem.type == "Event"
+                {
+                    myItem.type = "Event Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.type == "Regular"
+                {
+                    myItem.type = "Regular Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.type == "Sales"
+                {
+                    myItem.type = "Sales Project"
+                    myItem.updateTime = NSDate()
+                }
+                
+                if myItem.type == "Project"
+                {
+                    myItem.type = "Regular Project"
+                    myItem.updateTime = NSDate()
+                }
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: D \(error.localizedDescription)")
+        }
+        saveContext()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    }
 }
 
 extension CloudKitInteraction
@@ -337,7 +593,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getDropdownsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))
         {
-            saveDropdownsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveDropdownsRecordToCloudKit(myItem)
         }
     }
     
@@ -375,7 +631,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func saveDropdownsRecordToCloudKit(_ sourceRecord: Dropdowns, teamID: Int)
+    func saveDropdownsRecordToCloudKit(_ sourceRecord: Dropdowns)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -427,7 +683,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.dropDownType, forKey: "dropDownType")
                     record.setValue(sourceRecord.dropDownValue, forKey: "dropDownValue")
                     
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {

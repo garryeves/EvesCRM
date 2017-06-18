@@ -138,7 +138,7 @@ class rate: NSObject
             else
             {
                 let myDateFormatter = DateFormatter()
-                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                myDateFormatter.dateStyle = DateFormatter.Style.short
                 return myDateFormatter.string(from: myStartDate)
             }
         }

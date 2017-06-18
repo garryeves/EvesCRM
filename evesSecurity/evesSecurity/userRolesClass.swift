@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 import CloudKit
 
+let readPermission = "Read"
+let writePermission = "Write"
+let noPermission = "None"
+
 class userRoles: NSObject
 {
     fileprivate var myUserRoles:[userRoleItem] = Array()

@@ -11,10 +11,10 @@ import UIKit
 class settingsViewController: UIViewController, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var btnTeam: UIButton!
-    @IBOutlet weak var btnUser: UIButton!
     @IBOutlet weak var btnPassword: UIButton!
     @IBOutlet weak var btnPerAddInfo: UIButton!
     @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnDropbown: UIButton!
     
     override func viewDidLoad()
     {
@@ -33,13 +33,6 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         let orgEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "orgEdit") as! orgEditViewController
         orgEditViewControl.workingOrganisation = currentUser!.currentTeam
         self.present(orgEditViewControl, animated: true, completion: nil)
-    }
-
-    @IBAction func btnUser(_ sender: UIButton)
-    {
-        let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
-        userEditViewControl.workingUser = currentUser
-        self.present(userEditViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnPassword(_ sender: UIButton)
@@ -61,6 +54,12 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     {
         let addPerInfoViewControl = personStoryboard.instantiateViewController(withIdentifier: "AddPersonInfo") as! addPerInfoMaintenanceViewController
         self.present(addPerInfoViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnDropdowns(_ sender: UIButton)
+    {
+        let dropdownEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "dropdownMaintenance") as! dropdownMaintenanceViewController
+        self.present(dropdownEditViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnBack(_ sender: Any)

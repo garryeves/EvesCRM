@@ -21,6 +21,12 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnAdd: UIBarButtonItem!
+    @IBOutlet weak var tblRoles: UITableView!
+    @IBOutlet weak var lblLoadingUsers: UILabel!
+    @IBOutlet weak var lblRoles: UILabel!
+    @IBOutlet weak var lblNameTitle: UILabel!
+    @IBOutlet weak var lblPassPhraseTitle: UILabel!
+    @IBOutlet weak var lblPassPhraseExpiryTitle: UILabel!
     
     var workingUser: userItem!
     var communicationDelegate: myCommunicationDelegate?
@@ -33,6 +39,8 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         hideFields()
         if !initialUser
         {
+            tblUsers.isHidden = true
+            lblLoadingUsers.isHidden = false
             if workingUser == nil
             {
                 getUserList()
@@ -90,43 +98,114 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if userList == nil
+        switch tableView
         {
-            return 0
-        }
-        else
-        {
-            return userList.users.count
+            case tblUsers:
+                if userList == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return userList.users.count
+                }
+            
+            case tblRoles:
+                if workingUser == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return workingUser.roles.userRole.count
+            }
+            
+            default:
+                return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier:"cellUser", for: indexPath) as! userDisplayItem
+        switch tableView
+        {
+            case tblUsers:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellUser", for: indexPath) as! oneLabelTable
+                
+                cell.lbl1.text = userList.users[indexPath.row].name
+                
+                return cell
+            
+            case tblRoles:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellRoles", for: indexPath) as! userPermissions
+                
+                cell.lblRole.text = workingUser.roles.userRole[indexPath.row].roleType
+                cell.btnPermission.setTitle(workingUser.roles.userRole[indexPath.row].accessLevel, for: .normal)
+                cell.record = workingUser.roles.userRole[indexPath.row]
+                cell.mainView = self
+                cell.sourceView = cell
+                
+                return cell
+            
+            default:
+                return UITableViewCell()
+        }
         
-        cell.lblName.text = userList.users[indexPath.row].name
-        
-        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        workingUser = userItem(userID: userList.users[indexPath.row].userID)
-        workingUser.name = userList.users[indexPath.row].name
-        workingUser.email = userList.users[indexPath.row].email
-        workingUser.passPhrase = userList.users[indexPath.row].passPhrase
-        workingUser.phraseDate = userList.users[indexPath.row].phraseDate
-        populateForm()
+        if tableView == tblUsers
+        {
+            workingUser = userItem(userID: userList.users[indexPath.row].userID)
+            workingUser.name = userList.users[indexPath.row].name
+            workingUser.email = userList.users[indexPath.row].email
+            workingUser.passPhrase = userList.users[indexPath.row].passPhrase
+            workingUser.phraseDate = userList.users[indexPath.row].phraseDate
+            workingUser.currentTeam = currentUser.currentTeam
+            populateForm()
+        }
     }
-
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if tableView == tblUsers
+        {
+            if editingStyle == .delete
+            {
+                let teamList = userTeams(userID: userList.users[indexPath.row].userID)
+                for myItem in teamList.UserTeams
+                {
+                    if myItem.teamID == currentUser.currentTeam!.teamID
+                    {
+                        myItem.delete()
+                    }
+                }
+                
+                getUserList()
+            }
+        }
+    }
+    
     @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
-        workingUser.name = txtName.text!
-        workingUser.email = txtEmail.text!
-        
-        workingUser.save()
-        
-        getUserList()
+        btnSave.isEnabled = false
+        if workingUser == nil
+        {
+            lblLoadingUsers.text = "Creating and Saving User.  Please wait"
+            lblLoadingUsers.isHidden = false
+            notificationCenter.addObserver(self, selector: #selector(self.userCreated), name: NotificationUserCreated, object: nil)
+            workingUser = userItem(currentTeam: currentUser.currentTeam!, userName: txtName.text!, userEmail: txtEmail.text!)
+        }
+        else
+        {
+            workingUser.name = txtName.text!
+            workingUser.email = txtEmail.text!
+            
+            workingUser.save()
+            
+            getUserList()
+        }
     }
     
     @IBAction func btnBack(_ sender: UIBarButtonItem)
@@ -147,23 +226,53 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnAdd(_ sender: UIBarButtonItem)
     {
-        btnSave.isEnabled = false
-        notificationCenter.addObserver(self, selector: #selector(self.userCreated), name: NotificationUserCreated, object: nil)
-        workingUser = userItem(currentTeam: currentUser.currentTeam!)
+        lblPassPhraseTitle.isHidden = true
+        lblPhrase.isHidden = true
+        lblPassPhraseExpiryTitle.isHidden = true
+        lblDate.isHidden = true
+        btnPassPhrase.isHidden = true
+        lblRoles.isHidden = true
+        tblRoles.isHidden = true
         
-        populateForm()
+        lblName.isHidden = false
+        lblNameTitle.isHidden = false
+        txtEmail.isHidden = false
+        txtName.isHidden = false
+        btnAdd.isEnabled = false
+        workingUser = nil
+        txtEmail.text = ""
+        txtName.text = ""
+        
+        txtName.becomeFirstResponder()
+    }
+    
+    @IBAction func txtFieldChanged(_ sender: UITextField)
+    {
+        if txtName.text! != "" && txtEmail.text != ""
+        {
+            btnSave.isEnabled = true
+            btnAdd.isEnabled = false
+        }
+        else
+        {
+            btnSave.isEnabled = false
+            btnAdd.isEnabled = true
+        }
     }
     
     func userCreated()
     {
-        workingUser.addInitialUserRoles()
-        
-        myDBSync.sync()
+//        DispatchQueue.global().async
+//        {
+//            myDBSync.sync()
+//        }
         
         DispatchQueue.main.async
         {
-            self.btnSave.isEnabled = true
+            self.workingUser.addInitialUserRoles()
         }
+        
+        getUserList()
     }
     
     func hideFields()
@@ -177,7 +286,12 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblName.isHidden = true
         lblEmail.isHidden = true
         btnSave.isEnabled = false
+        lblNameTitle.isHidden = true
+        lblPassPhraseTitle.isHidden = true
+        lblPassPhraseExpiryTitle.isHidden = true
         btnPassPhrase.isHidden = true
+        tblRoles.isHidden = true
+        lblRoles.isHidden = true
         if initialUser
         {
             btnAdd.isEnabled = false
@@ -199,7 +313,12 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblName.isHidden = false
         lblEmail.isHidden = false
         btnSave.isEnabled = true
+        lblNameTitle.isHidden = false
+        lblPassPhraseTitle.isHidden = false
+        lblPassPhraseExpiryTitle.isHidden = false
         btnPassPhrase.isHidden = false
+        tblRoles.isHidden = false
+        lblRoles.isHidden = false
         if initialUser
         {
             btnAdd.isEnabled = false
@@ -218,6 +337,8 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblDate.text = workingUser.phraseDateText
         
         showFields()
+        btnSave.isEnabled = false
+        tblRoles.reloadData()
     }
     
     func getUserList()
@@ -238,7 +359,6 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
             
             firstRecordDone = true
         }
-        print("string : \(userString)")
         
         notificationCenter.addObserver(self, selector: #selector(self.userListRetrieved), name: NotificationUserListLoaded, object: nil)
         
@@ -248,21 +368,78 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     func userListRetrieved()
     {
         notificationCenter.removeObserver(NotificationUserListLoaded)
+
         DispatchQueue.main.async
         {
+            self.tblUsers.isHidden = false
+            self.lblLoadingUsers.isHidden = true
             self.tblUsers.reloadData()
+            
+            if self.workingUser != nil
+            {
+                self.lblLoadingUsers.isHidden = true
+                self.btnSave.isEnabled = false
+                self.btnAdd.isEnabled = true
+                self.lblPassPhraseTitle.isHidden = false
+                self.lblPhrase.isHidden = false
+                self.lblPassPhraseExpiryTitle.isHidden = false
+                self.lblDate.isHidden = false
+                self.btnPassPhrase.isHidden = false
+                self.lblRoles.isHidden = false
+                self.tblRoles.isHidden = false
+                self.populateForm()
+            }
         }
     }
 }
 
-class userDisplayItem: UITableViewCell
+class userPermissions: UITableViewCell, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
-    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblRole: UILabel!
+    @IBOutlet weak var btnPermission: UIButton!
     
+    var record: userRoleItem!
+    var sourceView: userPermissions!
+    var mainView: userFormViewController!
+    
+    fileprivate var displayList: [String] = Array()
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
     }
+    
+    @IBAction func btnPermission(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append(noPermission)
+        displayList.append(readPermission)
+        displayList.append(writePermission)
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = sourceView
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        pickerView.source = "btnRateMon"
+        
+        pickerView.delegate = sourceView
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+        
+        mainView.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if selectedItem >= 0
+        {
+            record.accessLevel = displayList[selectedItem]
+            btnPermission.setTitle(displayList[selectedItem], for: .normal)
+        }
+    }
 }
-
