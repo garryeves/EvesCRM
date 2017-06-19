@@ -17,6 +17,7 @@ let NotificationUserCreated = Notification.Name("NotificationUserCreated")
 let NotificationUserLoaded = Notification.Name("NotificationUserLoaded")
 let NotificationUserListLoaded = Notification.Name("NotificationUserListLoaded")
 let NotificationValidateUser = Notification.Name("NotificationValidateUser")
+let NotificationExistingUserQueryDone = Notification.Name("NotificationExistingUserQueryDone")
 
 class userItems: NSObject
 {
@@ -180,11 +181,12 @@ class userItem: NSObject
         // Create a new user
         
         myCurrentTeam = currentTeam
-        notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
         myName = userName
         myEmail = userEmail
         
-        myCloudDB.getUserCount()
+        notificationCenter.addObserver(self, selector: #selector(self.queryExistingFinished), name: NotificationExistingUserQueryDone, object: nil)
+        
+        myCloudDB.checkExistingUser(email: myEmail)
     }
     
     override init()
@@ -200,7 +202,23 @@ class userItem: NSObject
         
         loadTeams()
         
-        loadRoles()
+        if currentTeam != nil
+        {
+            loadRoles()
+        }
+    }
+    
+    func checkPermission(_ roleType: String) -> String
+    {
+        for myRoles in userRoles(userID: myUserID, teamID: myCurrentTeam!.teamID).userRole
+        {
+            if myRoles.roleType == roleType
+            {
+                return myRoles.accessLevel
+            }
+        }
+        
+        return noPermission
     }
     
     func getUserDetails()
@@ -251,7 +269,19 @@ class userItem: NSObject
     
     func queryExistingFinished()
     {
+        notificationCenter.removeObserver(NotificationExistingUserQueryDone)
         
+        if myCloudDB.validatedUserID() > 0
+        {
+            myUserID = myCloudDB.validatedUserID()
+            
+            userCreated()
+        }
+        else
+        {
+            notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
+            myCloudDB.getUserCount()
+        }
     }
     
     func queryFinished()
@@ -271,7 +301,23 @@ class userItem: NSObject
     {
         myAuthorised = true
         
-        addTeamToUser(myCurrentTeam)
+        // Check to see if already a member of the team
+        
+        var teamFound: Bool = false
+        
+        for myItem in userTeams(userID: myUserID).UserTeams
+        {
+            if myItem.teamID == myCurrentTeam.teamID
+            {
+                teamFound = true
+                break
+            }
+        }
+        
+        if !teamFound
+        {
+            addTeamToUser(myCurrentTeam)
+        }
         
         notificationCenter.post(name: NotificationUserCreated, object: nil)
     }
@@ -290,8 +336,11 @@ class userItem: NSObject
     
     func addRoleToUser(roleType: String, accessLevel: String, saveToCloud: Bool)
     {
-        let myItem = userRoleItem(userID: myUserID, roleType: roleType, teamID: currentTeam!.teamID, saveToCloud: saveToCloud)
-        myItem.accessLevel = accessLevel
+        if myDatabaseConnection.getUserRoles(userID: myUserID, teamID: currentUser.currentTeam!.teamID, roleType: roleType).count == 0
+        {
+            let myItem = userRoleItem(userID: myUserID, roleType: roleType, teamID: currentTeam!.teamID, saveToCloud: saveToCloud)
+            myItem.accessLevel = accessLevel
+        }
     }
     
     func loadRoles()
@@ -335,7 +384,7 @@ class userItem: NSObject
             myTeams.append(teamObject)
         }
         
-        if myTeams.count == 1
+        if myTeams.count > 0
         {
             myCurrentTeam = myTeams[0]
         }
@@ -389,18 +438,26 @@ class userItem: NSObject
     {
         var recordCount: Int = 0
         
+        // Check to see if this is a new team - this is done by seeing if there any roles entries yet
+        
+        var basePermission = writePermission
+        if myDatabaseConnection.getUserRolesCount(teamID: currentTeam!.teamID) > 0
+        {
+            basePermission = noPermission
+        }
+        
         let processRecords = currentUser.currentTeam!.getRoleTypes()
         
         for myItem in processRecords
         {
             if recordCount == processRecords.count - 1
             {
-                addRoleToUser(roleType: myItem, accessLevel: noPermission, saveToCloud: true)
+                addRoleToUser(roleType: myItem, accessLevel: basePermission, saveToCloud: true)
                 usleep(500)
             }
             else
             {
-                addRoleToUser(roleType: myItem, accessLevel: noPermission, saveToCloud: false)
+                addRoleToUser(roleType: myItem, accessLevel: basePermission, saveToCloud: false)
                 recordCount += 1
                 usleep(500)
             }
@@ -432,6 +489,33 @@ extension CloudKitInteraction
     }
     
     func userCount() -> Int
+    {
+        return recordsInTable
+    }
+    
+    func checkExistingUser(email: String)
+    {
+        recordsInTable = 0
+        
+        let predicate: NSPredicate = NSPredicate(format: "email == \"\(email)\"")
+        let query: CKQuery = CKQuery(recordType: "DBUsers", predicate: predicate)
+        
+        let operation = CKQueryOperation(query: query)
+        
+        operation.desiredKeys = ["userID"]
+        
+        operation.recordFetchedBlock = { (record) in
+            if record.object(forKey: "userID") != nil
+            {
+                self.recordsInTable = record.object(forKey: "userID") as! Int
+            }
+        }
+        let operationQueue = OperationQueue()
+        
+        executePublicQueryOperation(targetTable: "DBUsers", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationExistingUserQueryDone)
+    }
+    
+    func validatedUserID() -> Int
     {
         return recordsInTable
     }

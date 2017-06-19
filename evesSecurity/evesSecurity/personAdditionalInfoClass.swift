@@ -115,16 +115,22 @@ class personAdditionalInfo: NSObject
     
     func save()
     {
-        myDatabaseConnection.savePersonAdditionalInfo(myAddInfoID,
-                                         addInfoName: myAddInfoName,
-                                         addInfoType: myAddInfoType,
-                                         teamID: myTeamID
-                                         )
+        if currentUser.checkPermission("Admin") == writePermission
+        {
+            myDatabaseConnection.savePersonAdditionalInfo(myAddInfoID,
+                                             addInfoName: myAddInfoName,
+                                             addInfoType: myAddInfoType,
+                                             teamID: myTeamID
+                                             )
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deletePersonAdditionalInfo(myAddInfoID)
+        if currentUser.checkPermission("Admin") == writePermission
+        {
+            myDatabaseConnection.deletePersonAdditionalInfo(myAddInfoID)
+        }
     }
 }
 

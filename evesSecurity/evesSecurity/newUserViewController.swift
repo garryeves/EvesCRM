@@ -112,9 +112,13 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     {
         notificationCenter.removeObserver(NotificationValidateUser)
         
-        if myCloudDB.retrieveUserList().count > 0
+        sleep(2)
+        
+        let userList = myCloudDB.retrieveUserList()
+        if userList.count > 0
         {
-            currentUser = userItem(userID: myCloudDB.retrieveUserList()[0].userID)
+
+            currentUser = userItem(userID: userList[0].userID)
             writeDefaultInt(userDefaultName, value: currentUser.userID)
             
             myCloudDB.replaceUserTeamsInCoreData()
@@ -124,13 +128,13 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
             
             sleep(2)
             
-            myCloudDB.updatePublicDecodesInCoreData()
+//            myCloudDB.updatePublicDecodesInCoreData()
             
-            sleep(2)
+//            sleep(2)
             
-            currentUser.loadTeams()
+//            currentUser.loadTeams()
             
-            currentUser.addInitialUserRoles()
+//            currentUser.addInitialUserRoles()
             
             communicationDelegate!.callLoadMainScreen!()
             self.dismiss(animated: true, completion: nil)
@@ -148,7 +152,6 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
             popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
             
             self.present(alert, animated: false, completion: nil)
-            
             
             DispatchQueue.main.async
             {

@@ -209,19 +209,25 @@ class rate: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveRates(myRateID,
-                                       clientID: myClientID,
-                                        rateName: myRateName,
-                                        rateAmount: myRateAmount,
-                                        chargeAmount: myChargeAmount,
-                                        startDate: myStartDate,
-                                        teamID: myTeamID
-                                         )
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        {
+            myDatabaseConnection.saveRates(myRateID,
+                                           clientID: myClientID,
+                                            rateName: myRateName,
+                                            rateAmount: myRateAmount,
+                                            chargeAmount: myChargeAmount,
+                                            startDate: myStartDate,
+                                            teamID: myTeamID
+                                             )
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteRates(myRateID)
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        {
+            myDatabaseConnection.deleteRates(myRateID)
+        }
     }
 }
 

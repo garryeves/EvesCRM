@@ -94,7 +94,7 @@
                                         <rect key="frame" x="0.0" y="28" width="728" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cwe-kN-AWb" id="8gv-Xy-VwJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="728" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="728" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hH3-G6-f0e" userLabel="lbl2">
@@ -331,7 +331,7 @@
                                         <rect key="frame" x="0.0" y="28" width="728" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hYU-9i-fzc" id="9Qc-sy-Ny0">
-                                            <rect key="frame" x="0.0" y="0.0" width="728" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="728" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PPm-6w-89J" userLabel="lblAlert">
@@ -800,8 +800,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TTT-Ql-BcK" userLabel="btnPerAddInfo">
-                                <rect key="frame" x="262" y="264" width="245" height="30"/>
-                                <state key="normal" title="Personal Addional Info Maintenance"/>
+                                <rect key="frame" x="257.5" y="264" width="254" height="30"/>
+                                <state key="normal" title="Personal Additional Info Maintenance"/>
                                 <connections>
                                     <action selector="btnPerAddInfo:" destination="Jrc-Qv-cxH" eventType="touchUpInside" id="hwZ-BB-N55"/>
                                 </connections>
@@ -825,10 +825,18 @@
                                     <action selector="btnDropdowns:" destination="Jrc-Qv-cxH" eventType="touchUpInside" id="CAE-2q-XmJ"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l5E-D4-inq" userLabel="btnSwitchUsers">
+                                <rect key="frame" x="339" y="314" width="90" height="30"/>
+                                <state key="normal" title="Switch Users"/>
+                                <connections>
+                                    <action selector="btnSwitchUsers:" destination="Jrc-Qv-cxH" eventType="touchUpInside" id="ojf-Pj-seZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="oJv-nI-Nhx" firstAttribute="top" secondItem="aei-BC-elD" secondAttribute="bottom" constant="30" id="4h5-aK-ZI2"/>
+                            <constraint firstItem="l5E-D4-inq" firstAttribute="centerX" secondItem="AhC-ro-dr2" secondAttribute="centerX" id="EtH-eJ-ZnU"/>
                             <constraint firstItem="m4z-Xh-enP" firstAttribute="top" secondItem="gbC-ug-n8s" secondAttribute="bottom" constant="20" id="F7C-8s-zXi"/>
                             <constraint firstAttribute="trailingMargin" secondItem="gbC-ug-n8s" secondAttribute="trailing" id="FvK-5V-wdn"/>
                             <constraint firstItem="m4z-Xh-enP" firstAttribute="centerX" secondItem="AhC-ro-dr2" secondAttribute="centerX" id="Gq6-WG-yS4"/>
@@ -839,6 +847,7 @@
                             <constraint firstItem="aei-BC-elD" firstAttribute="top" secondItem="m4z-Xh-enP" secondAttribute="bottom" constant="30" id="doW-r3-UUi"/>
                             <constraint firstItem="gbC-ug-n8s" firstAttribute="top" secondItem="zu4-Mn-clG" secondAttribute="bottom" id="lWI-tn-ugl"/>
                             <constraint firstItem="gbC-ug-n8s" firstAttribute="leading" secondItem="AhC-ro-dr2" secondAttribute="leadingMargin" id="nHp-ky-Zxv"/>
+                            <constraint firstItem="l5E-D4-inq" firstAttribute="top" secondItem="TTT-Ql-BcK" secondAttribute="bottom" constant="20" id="reD-kX-veD"/>
                         </constraints>
                     </view>
                     <connections>
@@ -846,6 +855,7 @@
                         <outlet property="btnDropbown" destination="oJv-nI-Nhx" id="PFp-mG-qdd"/>
                         <outlet property="btnPassword" destination="m4z-Xh-enP" id="xEG-fX-8IZ"/>
                         <outlet property="btnPerAddInfo" destination="TTT-Ql-BcK" id="hYj-eA-AhI"/>
+                        <outlet property="btnSwitchUsers" destination="l5E-D4-inq" id="O7l-3S-035"/>
                         <outlet property="btnTeam" destination="aei-BC-elD" id="MPU-1a-8Eg"/>
                     </connections>
                 </viewController>

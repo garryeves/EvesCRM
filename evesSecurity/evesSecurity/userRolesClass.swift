@@ -249,6 +249,54 @@ extension coreDatabase
         }
     }
     
+    func getUserRoles(userID: Int, teamID: Int, roleType: String)->[UserRoles]
+    {
+        let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(userID == \(userID)) AND (roleType == \"\(roleType)\") AND (teamID == \(teamID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getUserRolesCount(teamID: Int )-> Int
+    {
+        let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.count(for: fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
+    }
+    
     func getUserRolesDetails(_ roleID: Int)->[UserRoles]
     {
         let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")

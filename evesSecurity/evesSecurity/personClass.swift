@@ -68,8 +68,6 @@ class people: NSObject
         sortArray()
     }
     
-    
-    
     init(clientID: Int)
     {
         super.init()
@@ -385,21 +383,27 @@ class person: NSObject
     
     func save()
     {
-        myDatabaseConnection.savePerson(myPersonID,
-                                         name: name,
-                                         dob: dob,
-                                         teamID: myTeamID,
-                                         gender: myGender,
-                                         note: myNote,
-                                         clientID: myClientID,
-                                         projectID: myProjectID,
-                                         canRoster: myCanRoster
-                                         )
+        if currentUser.checkPermission("HR") == writePermission
+        {
+            myDatabaseConnection.savePerson(myPersonID,
+                                             name: name,
+                                             dob: dob,
+                                             teamID: myTeamID,
+                                             gender: myGender,
+                                             note: myNote,
+                                             clientID: myClientID,
+                                             projectID: myProjectID,
+                                             canRoster: myCanRoster
+                                             )
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deletePerson(myPersonID)
+        if currentUser.checkPermission("HR") == writePermission
+        {
+            myDatabaseConnection.deletePerson(myPersonID)
+        }
     }
     
     func deleteAddress(addressType: String)

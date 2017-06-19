@@ -24,7 +24,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h3g-M8-yj3">
-                                <rect key="frame" x="498" y="248" width="200" height="30"/>
+                                <rect key="frame" x="498" y="233.5" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="4dC-Ag-eb8"/>
                                 </constraints>
@@ -34,7 +34,7 @@
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="rIO-71-x0e">
-                                <rect key="frame" x="70" y="188" width="378" height="150"/>
+                                <rect key="frame" x="70" y="173.5" width="378" height="150"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="wgU-iZ-gpl"/>
@@ -46,7 +46,7 @@ This option will then guide you through creating an Organisation and then allow 
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pJQ-Xn-VGG" userLabel="txtCode">
-                                <rect key="frame" x="86" y="658" width="150" height="30"/>
+                                <rect key="frame" x="86" y="643.5" width="150" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -55,7 +55,7 @@ This option will then guide you through creating an Organisation and then allow 
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eod-na-cWf">
-                                <rect key="frame" x="40" y="663" width="41" height="21"/>
+                                <rect key="frame" x="40" y="648.5" width="41" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="41" id="IYV-nl-sMm"/>
                                 </constraints>
@@ -64,7 +64,7 @@ This option will then guide you through creating an Organisation and then allow 
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="vfb-kD-2h2">
-                                <rect key="frame" x="70" y="438" width="378" height="150"/>
+                                <rect key="frame" x="70" y="423.5" width="378" height="150"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="BZB-CC-bhE"/>
@@ -76,13 +76,16 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome.  Please select one of the options below" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="20" translatesAutoresizingMaskIntoConstraints="NO" id="YYr-ic-nTI">
-                                <rect key="frame" x="20" y="40" width="728" height="48"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                <rect key="frame" x="134" y="40" width="500" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="500" id="gmD-ZZ-C8m"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="28"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yim-sJ-eOx">
-                                <rect key="frame" x="40" y="613" width="41" height="21"/>
+                                <rect key="frame" x="40" y="598.5" width="41" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="41" id="i0A-eu-eow"/>
                                 </constraints>
@@ -91,7 +94,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rs5-EW-paL" userLabel="txtEmail">
-                                <rect key="frame" x="86" y="608" width="642" height="30"/>
+                                <rect key="frame" x="86" y="593.5" width="642" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -100,7 +103,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bVM-jY-sFk">
-                                <rect key="frame" x="284" y="708" width="200" height="30"/>
+                                <rect key="frame" x="284" y="693.5" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="jgL-bt-BZq"/>
                                 </constraints>
@@ -114,7 +117,6 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                         <constraints>
                             <constraint firstItem="Eod-na-cWf" firstAttribute="leading" secondItem="2bt-wV-3Q5" secondAttribute="leadingMargin" constant="20" id="4Hi-SI-v9t"/>
                             <constraint firstAttribute="trailingMargin" secondItem="pJQ-Xn-VGG" secondAttribute="trailing" constant="512" id="8oi-mK-2U6"/>
-                            <constraint firstItem="YYr-ic-nTI" firstAttribute="leading" secondItem="2bt-wV-3Q5" secondAttribute="leadingMargin" id="DdJ-XN-158"/>
                             <constraint firstItem="h3g-M8-yj3" firstAttribute="top" secondItem="YYr-ic-nTI" secondAttribute="bottom" constant="160" id="Ere-4w-WWK"/>
                             <constraint firstItem="bVM-jY-sFk" firstAttribute="top" secondItem="pJQ-Xn-VGG" secondAttribute="bottom" constant="20" id="ImN-6R-tdm"/>
                             <constraint firstItem="yim-sJ-eOx" firstAttribute="top" secondItem="vfb-kD-2h2" secondAttribute="bottom" constant="25" id="Itc-gi-K4B"/>
@@ -135,7 +137,6 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                             <constraint firstItem="bVM-jY-sFk" firstAttribute="centerX" secondItem="2bt-wV-3Q5" secondAttribute="centerX" id="jaG-jp-vk6"/>
                             <constraint firstItem="rIO-71-x0e" firstAttribute="leading" secondItem="2bt-wV-3Q5" secondAttribute="leadingMargin" constant="50" id="jxV-XG-twX"/>
                             <constraint firstItem="yim-sJ-eOx" firstAttribute="leading" secondItem="2bt-wV-3Q5" secondAttribute="leadingMargin" constant="20" id="prK-ep-3hE"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="YYr-ic-nTI" secondAttribute="trailing" id="tAM-JT-JVv"/>
                             <constraint firstItem="Rs5-EW-paL" firstAttribute="top" secondItem="vfb-kD-2h2" secondAttribute="bottom" constant="20" id="zzR-tR-Ndr"/>
                         </constraints>
                     </view>
@@ -143,7 +144,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                         <outlet property="ExistingHeightConstraint" destination="BZB-CC-bhE" id="W1D-k8-aJ0"/>
                         <outlet property="btnExisting" destination="bVM-jY-sFk" id="nOZ-0b-xtr"/>
                         <outlet property="btnNew" destination="h3g-M8-yj3" id="ram-6D-iJh"/>
-                        <outlet property="newButtonVerticalConstraint" destination="DdJ-XN-158" id="2f9-aX-eje"/>
+                        <outlet property="newButtonVerticalConstraint" destination="Ere-4w-WWK" id="GvI-Mf-mFL"/>
                         <outlet property="newTextHeightConstraint" destination="wgU-iZ-gpl" id="nT4-Y6-qVT"/>
                         <outlet property="newTextVerticalConstraint" destination="LH5-an-AWq" id="sO6-o8-b2k"/>
                         <outlet property="txtCode" destination="pJQ-Xn-VGG" id="UIG-RB-FHO"/>

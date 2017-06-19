@@ -8,13 +8,19 @@
 
 import UIKit
 
-class settingsViewController: UIViewController, UIPopoverPresentationControllerDelegate
+class settingsViewController: UIViewController, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
     @IBOutlet weak var btnTeam: UIButton!
     @IBOutlet weak var btnPassword: UIButton!
     @IBOutlet weak var btnPerAddInfo: UIButton!
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnDropbown: UIButton!
+    @IBOutlet weak var btnSwitchUsers: UIButton!
+    
+    var communicationDelegate: myCommunicationDelegate?
+    
+    private var displayList: [String] = Array()
+    private var teamList: userTeams!
     
     override func viewDidLoad()
     {
@@ -62,14 +68,76 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         self.present(dropdownEditViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func btnSwitchUsers(_ sender: UIButton)
+    {
+        teamList = userTeams(userID: currentUser.userID)
+        displayList.removeAll()
+        
+        displayList.append("")
+        
+        for myItem in teamList.UserTeams
+        {
+            let tempTeam = team(teamID: myItem.teamID)
+            displayList.append(tempTeam.name)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "TeamList"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "TeamList"
+        {
+            if selectedItem > 0
+            {
+                currentUser.currentTeam = team(teamID: teamList.UserTeams[selectedItem - 1].teamID)
+            }
+        }
+    }
+    
     @IBAction func btnBack(_ sender: Any)
     {
+        communicationDelegate!.refreshScreen!()
         dismiss(animated: true, completion: nil)
     }
     
     func refreshScreen()
     {
+        if currentUser.email == "garry@eves.id.au"
+        {
+            btnSwitchUsers.isHidden = false
+        }
+        else
+        {
+            btnSwitchUsers.isHidden = true
+        }
         
+        if currentUser.checkPermission("Admin") != noPermission
+        {
+            btnTeam.isEnabled = true
+            btnPerAddInfo.isEnabled = true
+            btnDropbown.isEnabled = true
+        }
+        else
+        {
+            btnTeam.isEnabled = false
+            btnPerAddInfo.isEnabled = false
+            btnDropbown.isEnabled = false
+        }
     }
 }
 

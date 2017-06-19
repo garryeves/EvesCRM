@@ -289,23 +289,29 @@ class address: NSObject
 
     func save()
     {
-        myDatabaseConnection.saveAddress(myAddressID,
-            addressLine1: myAddressLine1,
-            addressLine2: myAddressLine2,
-            city: myCity,
-            clientID: myClientID,
-            country: myCountry,
-            personID: myPersonID,
-            postcode: myPostcode,
-            projectID: myProjectID,
-            state: myState,
-            addressType: myAddressType,
-            teamID: myTeamID)
+        if currentUser.checkPermission("HR") == writePermission
+        {
+            myDatabaseConnection.saveAddress(myAddressID,
+                addressLine1: myAddressLine1,
+                addressLine2: myAddressLine2,
+                city: myCity,
+                clientID: myClientID,
+                country: myCountry,
+                personID: myPersonID,
+                postcode: myPostcode,
+                projectID: myProjectID,
+                state: myState,
+                addressType: myAddressType,
+                teamID: myTeamID)
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteAddress(myAddressID)
+        if currentUser.checkPermission("HR") == writePermission
+        {
+            myDatabaseConnection.deleteAddress(myAddressID)
+        }
     }
 }
 

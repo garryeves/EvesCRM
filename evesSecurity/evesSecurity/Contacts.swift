@@ -212,31 +212,36 @@ class contactItem: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveContact(myPersonID,
-                                         contactType: myContactType,
-                                         contactValue: myContactValue,
-                                         teamID: myTeamID,
-                                         clientID: myClientID,
-                                         projectID: myProjectID)
+        if currentUser.checkPermission("HR") == writePermission
+        {
+            myDatabaseConnection.saveContact(myPersonID,
+                                             contactType: myContactType,
+                                             contactValue: myContactValue,
+                                             teamID: myTeamID,
+                                             clientID: myClientID,
+                                             projectID: myProjectID)
+        }
     }
     
     func delete()
     {
-        if myPersonID != 0
+        if currentUser.checkPermission("HR") == writePermission
         {
-            myDatabaseConnection.deleteContactForPerson(myPersonID, contactType: myContactType)
+            if myPersonID != 0
+            {
+                myDatabaseConnection.deleteContactForPerson(myPersonID, contactType: myContactType)
+            }
+            
+            if myClientID != 0
+            {
+                myDatabaseConnection.deleteContactForClient(myClientID, contactType: myContactType)
+            }
+            
+            if myProjectID != 0
+            {
+                myDatabaseConnection.deleteContactForProject(myProjectID, contactType: myContactType)
+            }
         }
-        
-        if myClientID != 0
-        {
-            myDatabaseConnection.deleteContactForClient(myClientID, contactType: myContactType)
-        }
-        
-        if myProjectID != 0
-        {
-            myDatabaseConnection.deleteContactForProject(myProjectID, contactType: myContactType)
-        }
-
     }
 }
 

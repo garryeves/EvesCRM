@@ -189,25 +189,31 @@ class client: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveClient(myClientID,
-                                        clientName: myClientName,
-                                        clientContact: myClientContact, teamID: myTeamID, note: myClientNote)
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        {
+            myDatabaseConnection.saveClient(myClientID,
+                                            clientName: myClientName,
+                                            clientContact: myClientContact, teamID: myTeamID, note: myClientNote)
+        }
     }
     
     func delete()
     {
-        // There are a number of actions to take when deleting a client, mainly to make sure we maintain data integrity
-        
-        // Close any existing projects
-        
-        for myProject in projects(clientID: myClientID).projects
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
         {
-            myProject.projectStatus = "Archived"
+            // There are a number of actions to take when deleting a client, mainly to make sure we maintain data integrity
+            
+            // Close any existing projects
+            
+            for myProject in projects(clientID: myClientID).projects
+            {
+                myProject.projectStatus = "Archived"
+            }
+            
+            // Now delete the client
+            
+            myDatabaseConnection.deleteClient(myClientID)
         }
-        
-        // Now delete the client
-        
-        myDatabaseConnection.deleteClient(myClientID)
     }
 }
 

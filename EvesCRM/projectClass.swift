@@ -859,40 +859,43 @@ class project: NSObject // 10k level
  
     func save()
     {
-        myDatabaseConnection.saveProject(myProjectID,
-                                         projectEndDate: myProjectEndDate,
-                                         projectName: myProjectName,
-                                         projectStartDate: myProjectStartDate,
-                                         projectStatus: myProjectStatus,
-                                         reviewFrequency: myReviewFrequency,
-                                         lastReviewDate: myLastReviewDate,
-                                         GTDItemID: myGTDItemID,
-                                         repeatInterval: myRepeatInterval,
-                                         repeatType: myRepeatType,
-                                         repeatBase: myRepeatBase,
-                                         teamID: myTeamID,
-                                         clientID: myClientID,
-                                         note: myNote,
-                                         reviewPeriod: myReviewPeriod,
-                                         predecessor: myPredecessor,
-                                         clientDept: myClientDept,
-                                         invoicingFrequency: myInvoicingFrequency,
-                                         invoicingDay: myInvoicingDay,
-                                         daysToPay: myDaysToPay,
-                                         type: myType)
-        
-        // Save Team Members
-        
-//        for myMember in myTeamMembers
-//        {
-//            myMember.save()
-//        }
-//        
-        // Save Tasks
-        
-        for myProjectTask in myTasks
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
         {
-            myProjectTask.save()
+            myDatabaseConnection.saveProject(myProjectID,
+                                             projectEndDate: myProjectEndDate,
+                                             projectName: myProjectName,
+                                             projectStartDate: myProjectStartDate,
+                                             projectStatus: myProjectStatus,
+                                             reviewFrequency: myReviewFrequency,
+                                             lastReviewDate: myLastReviewDate,
+                                             GTDItemID: myGTDItemID,
+                                             repeatInterval: myRepeatInterval,
+                                             repeatType: myRepeatType,
+                                             repeatBase: myRepeatBase,
+                                             teamID: myTeamID,
+                                             clientID: myClientID,
+                                             note: myNote,
+                                             reviewPeriod: myReviewPeriod,
+                                             predecessor: myPredecessor,
+                                             clientDept: myClientDept,
+                                             invoicingFrequency: myInvoicingFrequency,
+                                             invoicingDay: myInvoicingDay,
+                                             daysToPay: myDaysToPay,
+                                             type: myType)
+            
+            // Save Team Members
+            
+    //        for myMember in myTeamMembers
+    //        {
+    //            myMember.save()
+    //        }
+    //
+            // Save Tasks
+            
+            for myProjectTask in myTasks
+            {
+                myProjectTask.save()
+            }
         }
     }
     
@@ -1018,28 +1021,32 @@ class project: NSObject // 10k level
     
     func delete() -> Bool
     {
-        if myTasks.count > 0
+        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
         {
-            return false
-        }
-        else
-        {
-            myProjectStatus = "Deleted"
-            save()
-            
-            // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
-            
-            // Go and see if another item has set as its predecessor
-            
-            let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
-            
-            if fromCurrentPredecessor > 0
-            {  // This item is a predecessor
-                let tempSuccessor = project(projectID: fromCurrentPredecessor)
-                tempSuccessor.predecessor = myPredecessor
+            if myTasks.count > 0
+            {
+                return false
             }
-            return true
+            else
+            {
+                myProjectStatus = "Deleted"
+                save()
+                
+                // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
+                
+                // Go and see if another item has set as its predecessor
+                
+                let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
+                
+                if fromCurrentPredecessor > 0
+                {  // This item is a predecessor
+                    let tempSuccessor = project(projectID: fromCurrentPredecessor)
+                    tempSuccessor.predecessor = myPredecessor
+                }
+                return true
+            }
         }
+        return true
     }
 }
 

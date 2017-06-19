@@ -94,12 +94,18 @@ class dropdownItem: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        if currentUser.checkPermission("Admin") == writePermission
+        {
+            myDatabaseConnection.saveDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        if currentUser.checkPermission("Admin") == writePermission
+        {
+            myDatabaseConnection.deleteDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        }
     }
 }
 

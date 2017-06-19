@@ -169,20 +169,23 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
-        if tableView == tblUsers
+        if currentUser.checkPermission("Admin") != writePermission
         {
-            if editingStyle == .delete
+            if tableView == tblUsers
             {
-                let teamList = userTeams(userID: userList.users[indexPath.row].userID)
-                for myItem in teamList.UserTeams
+                if editingStyle == .delete
                 {
-                    if myItem.teamID == currentUser.currentTeam!.teamID
+                    let teamList = userTeams(userID: userList.users[indexPath.row].userID)
+                    for myItem in teamList.UserTeams
                     {
-                        myItem.delete()
+                        if myItem.teamID == currentUser.currentTeam!.teamID
+                        {
+                            myItem.delete()
+                        }
                     }
+                    
+                    getUserList()
                 }
-                
-                getUserList()
             }
         }
     }
@@ -339,6 +342,12 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         showFields()
         btnSave.isEnabled = false
         tblRoles.reloadData()
+        
+        if currentUser.checkPermission("Admin") != writePermission
+        {
+            btnAdd.isEnabled = false
+            btnSave.isEnabled = false
+        }
     }
     
     func getUserList()
@@ -436,7 +445,14 @@ class userPermissions: UITableViewCell, UIPopoverPresentationControllerDelegate,
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
+        var workingItem: Int = 0
+        
         if selectedItem >= 0
+        {
+            workingItem = selectedItem
+        }
+        
+        if workingItem < 0
         {
             record.accessLevel = displayList[selectedItem]
             btnPermission.setTitle(displayList[selectedItem], for: .normal)

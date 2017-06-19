@@ -76,6 +76,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     override func viewDidLoad()
     {
+        if currentUser.currentTeam == nil
+        {
+            currentUser.loadTeams()
+        }
+        
         btnSettings.title = NSString(string: "\u{2699}") as String
         
         btnSelect1.setTitle("Select", for: .normal)
@@ -311,6 +316,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBAction func btnSettings(_ sender: UIBarButtonItem)
     {
         let userEditViewControl = self.storyboard?.instantiateViewController(withIdentifier: "settings") as! settingsViewController
+        userEditViewControl.communicationDelegate = self
         self.present(userEditViewControl, animated: true, completion: nil)
     }
     
@@ -407,7 +413,23 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
         {
-            displayList.append(myItem)
+            switch myItem
+            {
+                case "People":
+                    if currentUser.checkPermission("HR") != noPermission
+                    {
+                        displayList.append(myItem)
+                    }
+                
+                case "Financial":
+                    if currentUser.checkPermission("Financial") != noPermission
+                    {
+                        displayList.append(myItem)
+                    }
+                
+                default:
+                    displayList.append(myItem)
+            }
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -596,6 +618,55 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             runReport()
         }
+        
+        if currentUser.checkPermission("Rostering") != noPermission
+        {
+            btnRoster.isEnabled = true
+        }
+        else
+        {
+            btnRoster.isEnabled = false
+        }
+        
+        if currentUser.checkPermission("Financials") != noPermission
+        {
+            btnRoster.isEnabled = true
+            btnShare.isEnabled = true
+        }
+        else
+        {
+            btnRoster.isEnabled = false
+            btnShare.isEnabled = false
+        }
+        
+        if currentUser.checkPermission("HR") != noPermission
+        {
+            btnPeople.isEnabled = true
+        }
+        else
+        {
+            btnPeople.isEnabled = false
+        }
+        
+        if currentUser.checkPermission("Sales") != noPermission
+        {
+//            btnRoster.isEnabled = true
+        }
+        else
+        {
+//            btnRoster.isEnabled = false
+        }
+        
+        if currentUser.checkPermission("Invoicing") != noPermission
+        {
+          //  btnRoster.isEnabled = true
+        }
+        else
+        {
+         //   btnRoster.isEnabled = false
+        }
+        
+        
     }
     
     func buildAlerts()
