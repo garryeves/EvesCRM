@@ -383,7 +383,7 @@ class person: NSObject
     
     func save()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             myDatabaseConnection.savePerson(myPersonID,
                                              name: name,
@@ -400,7 +400,7 @@ class person: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             myDatabaseConnection.deletePerson(myPersonID)
         }

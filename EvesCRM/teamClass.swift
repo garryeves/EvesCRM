@@ -542,17 +542,19 @@ class team: NSObject
     
     func populateRoleTypesDropDown()
     {
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: adminRoleType, teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: rosteringRoleType, teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: invoicingRoleType, teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: financialsRoleType, teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: hrRoleType, teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: salesRoleType, teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: pmRoleType, teamID: myTeamID)
         usleep(500)
     }
 

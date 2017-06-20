@@ -34,10 +34,18 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
         
-        if workingOrganisation == nil
+        var connected: Bool = false
+        
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
+        {
+            connected = true
+        }
+            
+        if workingOrganisation == nil && connected
         {
             notificationCenter.addObserver(self, selector: #selector(self.teamCreated(_:)), name: NotificationTeamCreated, object: nil)
-
+            
             workingOrganisation = team()
             // Step 1 is to create a new team
             
@@ -45,6 +53,27 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             btnSave.isEnabled = false
             btnUsers.isEnabled = false
             txtOrgName.isEnabled = false
+        }
+        else if workingOrganisation == nil
+        {
+            txtOrgName.isEnabled = false
+            txtExternalID.isEnabled = false
+            txtNotes.isEditable = false
+            txtCompanyNo.isEnabled = false
+            txtTaxNo.isEnabled = false
+            
+            btnBack.isEnabled = true
+            btnSave.isEnabled = false
+            btnUsers.isEnabled = false
+            btnStatus.isEnabled = false
+            
+            let alert = UIAlertController(title: "Create Team", message:
+                "You need to be connected to the Internet to create a team", preferredStyle: UIAlertControllerStyle.alert)
+            
+            let yesOption = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: nil)
+            
+            alert.addAction(yesOption)
+            self.present(alert, animated: false, completion: nil)
         }
         else
         {
@@ -59,16 +88,6 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             btnUsers.isEnabled = true
             btnStatus.isEnabled = true
             btnStatus.setTitle(workingOrganisation!.status, for: .normal)
-        }
-    
-        let myReachability = Reachability()
-        if myReachability.isConnectedToNetwork()
-        {
-            btnUsers.isEnabled = true
-        }
-        else
-        {
-            btnUsers.isEnabled = false
         }
         
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -186,10 +205,11 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             addTeamToUser()
         }
         
+        writeDefaultInt("teamID", value: workingOrganisation!.teamID)
+        
         DispatchQueue.main.async
         {
             self.btnSave.isEnabled = true
-            self.btnUsers.isEnabled = true
             self.txtOrgName.isEnabled = true
         }
     }

@@ -170,6 +170,7 @@ class userItem: NSObject
             if foundBool
             {
                 myCurrentTeam = newValue
+                loadRoles()
             }
         }
     }
@@ -177,7 +178,7 @@ class userItem: NSObject
     init(currentTeam: team, userName: String, userEmail: String)
     {
         super.init()
-        
+
         // Create a new user
         
         myCurrentTeam = currentTeam

@@ -105,6 +105,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
             if selectedItem > 0
             {
                 currentUser.currentTeam = team(teamID: teamList.UserTeams[selectedItem - 1].teamID)
+                writeDefaultInt("teamID", value: currentUser.currentTeam!.teamID)
             }
         }
     }
@@ -117,7 +118,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     
     func refreshScreen()
     {
-        if currentUser.email == "garry@eves.id.au"
+        if userTeams(userID: currentUser.userID).UserTeams.count > 1
         {
             btnSwitchUsers.isHidden = false
         }
@@ -126,7 +127,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
             btnSwitchUsers.isHidden = true
         }
         
-        if currentUser.checkPermission("Admin") != noPermission
+        if currentUser.checkPermission(adminRoleType) != noPermission
         {
             btnTeam.isEnabled = true
             btnPerAddInfo.isEnabled = true

@@ -151,23 +151,29 @@ class eventTemplate: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveEventTemplate(myEventID,
-                                           role: myRole,
-                                           numRequired: myNumRequired,
-                                           dateModifier: myDateModifier,
-                                           startTime: myStartTime,
-                                           endTime: myEndTime,
-                                           teamID: myTeamID)
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
+        {
+            myDatabaseConnection.saveEventTemplate(myEventID,
+                                               role: myRole,
+                                               numRequired: myNumRequired,
+                                               dateModifier: myDateModifier,
+                                               startTime: myStartTime,
+                                               endTime: myEndTime,
+                                               teamID: myTeamID)
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteEventTemplate(myEventID,
-                                             role: myRole,
-                                             dateModifier: myDateModifier,
-                                             startTime: myStartTime,
-                                             endTime: myEndTime,
-                                             teamID: myTeamID)
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
+        {
+            myDatabaseConnection.deleteEventTemplate(myEventID,
+                                                 role: myRole,
+                                                 dateModifier: myDateModifier,
+                                                 startTime: myStartTime,
+                                                 endTime: myEndTime,
+                                                 teamID: myTeamID)
+        }
     }
 }
 

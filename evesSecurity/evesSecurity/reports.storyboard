@@ -76,7 +76,7 @@
                                 <rect key="frame" x="0.0" y="20" width="768" height="44"/>
                                 <items>
                                     <navigationItem title="Report Maintenance" id="pEI-Tz-KJI">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="AdI-1m-eW0" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="AdI-1m-eW0" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="IWC-Jn-EAE" id="o9K-T3-cM2"/>
                                             </connections>

@@ -209,7 +209,7 @@ class rate: NSObject
     
     func save()
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(financialsRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             myDatabaseConnection.saveRates(myRateID,
                                            clientID: myClientID,
@@ -224,7 +224,7 @@ class rate: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(financialsRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             myDatabaseConnection.deleteRates(myRateID)
         }

@@ -115,7 +115,7 @@ class personAdditionalInfo: NSObject
     
     func save()
     {
-        if currentUser.checkPermission("Admin") == writePermission
+        if currentUser.checkPermission(adminRoleType) == writePermission
         {
             myDatabaseConnection.savePersonAdditionalInfo(myAddInfoID,
                                              addInfoName: myAddInfoName,
@@ -127,7 +127,7 @@ class personAdditionalInfo: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("Admin") == writePermission
+        if currentUser.checkPermission(adminRoleType) == writePermission
         {
             myDatabaseConnection.deletePersonAdditionalInfo(myAddInfoID)
         }

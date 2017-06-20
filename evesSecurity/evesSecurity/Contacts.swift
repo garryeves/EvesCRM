@@ -212,7 +212,7 @@ class contactItem: NSObject
     
     func save()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             myDatabaseConnection.saveContact(myPersonID,
                                              contactType: myContactType,
@@ -225,7 +225,7 @@ class contactItem: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             if myPersonID != 0
             {

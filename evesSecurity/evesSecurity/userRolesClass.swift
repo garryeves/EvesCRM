@@ -14,6 +14,14 @@ let readPermission = "Read"
 let writePermission = "Write"
 let noPermission = "None"
 
+let adminRoleType = "Admin"
+let rosteringRoleType = "Rostering"
+let invoicingRoleType = "Invoicing"
+let financialsRoleType = "Financials"
+let hrRoleType = "HR"
+let salesRoleType = "Sales"
+let pmRoleType = "Project Manager"
+
 class userRoles: NSObject
 {
     fileprivate var myUserRoles:[userRoleItem] = Array()
@@ -22,8 +30,7 @@ class userRoles: NSObject
     {
         for myItem in myDatabaseConnection.getUserRoles(userID: userID, teamID: teamID)
         {
-            let myObject = userRoleItem(roleID: Int(myItem.roleID),
-                                    userID: Int(myItem.userID),
+            let myObject = userRoleItem(userID: Int(myItem.userID),
                                     teamID: Int(myItem.teamID),
                                     roleType: myItem.roleType!,
                                     accessLevel: myItem.accessLevel!
@@ -43,19 +50,10 @@ class userRoles: NSObject
 
 class userRoleItem: NSObject
 {
-    fileprivate var myRoleID: Int = 0
     fileprivate var myUserID: Int = 0
     fileprivate var myTeamID: Int = 0
     fileprivate var myRoleType: String = ""
     fileprivate var myAccessLevel: String = "None"
-    
-    var roleID: Int
-    {
-        get
-        {
-            return myRoleID
-        }
-    }
     
     var teamID: Int
     {
@@ -97,8 +95,7 @@ class userRoleItem: NSObject
     init(userID: Int, roleType: String, teamID: Int, saveToCloud: Bool)
     {
         super.init()
-
-        myRoleID = myDatabaseConnection.getNextID("UserRoles", saveToCloud: saveToCloud)
+        
         myUserID = userID
         myRoleType = roleType
         myTeamID = teamID
@@ -106,22 +103,7 @@ class userRoleItem: NSObject
         save()
     }
     
-    init(roleID: Int)
-    {
-        let myReturn = myDatabaseConnection.getUserRolesDetails(roleID)
-        
-        for myItem in myReturn
-        {
-            myRoleID = Int(myItem.roleID)
-            myUserID = Int(myItem.userID)
-            myRoleType = myItem.roleType!
-            myAccessLevel = myItem.accessLevel!
-            myTeamID = Int(myItem.teamID)
-        }
-    }
-    
-    init(roleID: Int,
-         userID: Int,
+    init(userID: Int,
          teamID: Int,
          roleType: String,
          accessLevel: String
@@ -129,7 +111,6 @@ class userRoleItem: NSObject
     {
         super.init()
         
-        myRoleID = roleID
         myUserID = userID
         myRoleType = roleType
         myAccessLevel = accessLevel
@@ -138,8 +119,7 @@ class userRoleItem: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveUserRoles(myRoleID,
-                                           userID: myUserID,
+        myDatabaseConnection.saveUserRoles(userID: myUserID,
                                            teamID: myTeamID,
                                            roleType: myRoleType,
                                            accessLevel: myAccessLevel
@@ -148,14 +128,15 @@ class userRoleItem: NSObject
     
     func delete()
     {
-        myDatabaseConnection.deleteUserRoles(myRoleID)
+        myDatabaseConnection.deleteUserRoles(userID: myUserID,
+                                             teamID: myTeamID,
+                                             roleType: myRoleType)
     }
 }
 
 extension coreDatabase
 {
-    func saveUserRoles(_ roleID: Int,
-                       userID: Int,
+    func saveUserRoles(userID: Int,
                        teamID: Int,
                        roleType: String,
                        accessLevel: String,
@@ -163,12 +144,11 @@ extension coreDatabase
     {
         var myItem: UserRoles!
         
-        let myReturn = getUserRolesDetails(roleID)
+        let myReturn = getUserRoles(userID: userID, teamID: teamID, roleType: roleType)
         
         if myReturn.count == 0
         { // Add
             myItem = UserRoles(context: objectContext)
-            myItem.roleID = Int64(roleID)
             myItem.userID = Int64(userID)
             myItem.roleType = roleType
             myItem.accessLevel = accessLevel
@@ -211,9 +191,11 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteUserRoles(_ roleID: Int)
+    func deleteUserRoles(userID: Int,
+                         teamID: Int,
+                         roleType: String)
     {
-        let myReturn = getUserRolesDetails(roleID)
+        let myReturn = getUserRoles(userID: userID, teamID: teamID, roleType: roleType)
         
         if myReturn.count > 0
         {
@@ -294,30 +276,6 @@ extension coreDatabase
         {
             print("Error occurred during execution: \(error)")
             return 0
-        }
-    }
-    
-    func getUserRolesDetails(_ roleID: Int)->[UserRoles]
-    {
-        let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(roleID == \(roleID)) && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
         }
     }
     
@@ -433,6 +391,33 @@ extension coreDatabase
         
         saveContext()
     }
+    
+    func addPMRoleToAll()
+    {
+        let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(roleType == \"\(adminRoleType)\") AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            
+            for myItem in fetchResults
+            {
+                saveUserRoles(userID: Int(myItem.userID), teamID: Int(myItem.teamID), roleType: pmRoleType, accessLevel: noPermission)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    }
 }
 
 extension CloudKitInteraction
@@ -441,7 +426,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getUserRolesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "UserRoles"))
         {
-            saveUserRolesRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveUserRolesRecordToCloudKit(myItem)
         }
     }
     
@@ -460,30 +445,30 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "UserRoles", queryOperation: operation, onOperationQueue: operationQueue)
     }
     
-    func deleteUserRoles(roleID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (roleID == \(roleID))")
-        let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteUserRoles(roleID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (roleID == \(roleID))")
+//        let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//
+//        sem.wait()
+//    }
     
-    func saveUserRolesRecordToCloudKit(_ sourceRecord: UserRoles, teamID: Int)
+    func saveUserRolesRecordToCloudKit(_ sourceRecord: UserRoles)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(userID == \(sourceRecord.userID)) AND (roleType == \"\(sourceRecord.roleType!)\") AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "UserRoles", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -500,7 +485,7 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     
-                    record!.setValue(sourceRecord.roleType, forKey: "roleType")
+                    record!.setValue(sourceRecord.accessLevel, forKey: "accessLevel")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -527,12 +512,11 @@ extension CloudKitInteraction
                 else
                 {  // Insert
                     let record = CKRecord(recordType: "UserRoles")
-                    record.setValue(sourceRecord.roleID, forKey: "roleID")
                     record.setValue(sourceRecord.userID, forKey: "userID")
                     record.setValue(sourceRecord.roleType, forKey: "roleType")
                     record.setValue(sourceRecord.accessLevel, forKey: "accessLevel")
                     
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -563,12 +547,6 @@ extension CloudKitInteraction
 
     func updateUserRolesRecord(_ sourceRecord: CKRecord)
     {
-        var roleID: Int = 0
-        if sourceRecord.object(forKey: "roleID") != nil
-        {
-            roleID = sourceRecord.object(forKey: "roleID") as! Int
-        }
-        
         var userID: Int = 0
         if sourceRecord.object(forKey: "userID") != nil
         {
@@ -606,8 +584,7 @@ extension CloudKitInteraction
         
         self.recordCount += 1
         
-        myDatabaseConnection.saveUserRoles(roleID,
-                                           userID: userID,
+        myDatabaseConnection.saveUserRoles(userID: userID,
                                            teamID: teamID,
                                            roleType: roleType,
                                            accessLevel: accessLevel

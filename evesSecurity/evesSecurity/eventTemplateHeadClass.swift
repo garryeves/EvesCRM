@@ -106,14 +106,20 @@ class eventTemplateHead: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveEventTemplateHead(myTemplateID,
-                                               templateName: myTemplateName,
-                                               teamID: myTeamID)
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
+        {
+            myDatabaseConnection.saveEventTemplateHead(myTemplateID,
+                                                   templateName: myTemplateName,
+                                                   teamID: myTeamID)
+        }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteEventTemplateHead(myTemplateID)
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
+        {
+            myDatabaseConnection.deleteEventTemplateHead(myTemplateID)
+        }
     }
     
     func loadRoles()

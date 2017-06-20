@@ -269,7 +269,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Organisation Maintenance" id="Zpm-6l-wDp">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="EJE-vT-JNf" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="EJE-vT-JNf" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="BL0-sa-lTT" id="NCU-93-Y2h"/>
                                             </connections>
@@ -531,7 +531,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="User Maintenance" id="mgD-M1-aeQ">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="8Va-n6-REp" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="8Va-n6-REp" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="TMw-rd-O2R" id="ZUn-mu-fyT"/>
                                             </connections>
@@ -558,29 +558,29 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Xxi-2K-aFo" userLabel="tblRoles">
-                                <rect key="frame" x="240" y="297" width="210" height="707"/>
+                                <rect key="frame" x="240" y="297" width="260" height="707"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="210" id="AzD-Na-EtN"/>
+                                    <constraint firstAttribute="width" constant="260" id="AzD-Na-EtN"/>
                                 </constraints>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellRoles" id="Wb0-Bf-9Cw" customClass="userPermissions" customModule="Shift_Dashboard" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="210" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Wb0-Bf-9Cw" id="sTU-Lm-SSK">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="Wb0-Bf-9Cw" id="sTU-Lm-SSK">
                                             <rect key="frame" x="0.0" y="0.0" width="210" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtM-qd-Dpl" userLabel="lblRole">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtM-qd-Dpl" userLabel="lblRole">
                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="43.5"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="100" id="V5K-xh-SX3"/>
+                                                        <constraint firstAttribute="width" constant="150" id="V5K-xh-SX3"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MG4-dL-bIL" userLabel="btnPermission">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MG4-dL-bIL" userLabel="btnPermission">
                                                     <rect key="frame" x="105" y="0.0" width="100" height="43.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="100" id="fj6-T5-1tQ"/>
@@ -737,7 +737,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Password" id="9Fs-LE-ofB">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xIo-gX-ecp" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="xIo-gX-ecp" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="sTX-5Y-pI0" id="uJ0-n9-1sr"/>
                                             </connections>
@@ -816,7 +816,7 @@ This passowrd is only valid on this device.  If you forget the password ther
                                 <rect key="frame" x="0.0" y="20" width="768" height="44"/>
                                 <items>
                                     <navigationItem title="Dropdown Maintenance" id="R2T-Ib-LvS">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5zU-SI-WTc" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="5zU-SI-WTc" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="hLq-EY-3xw" id="nVb-Rn-25l"/>
                                             </connections>

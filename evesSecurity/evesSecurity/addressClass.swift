@@ -289,7 +289,7 @@ class address: NSObject
 
     func save()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             myDatabaseConnection.saveAddress(myAddressID,
                 addressLine1: myAddressLine1,
@@ -308,7 +308,7 @@ class address: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("HR") == writePermission
+        if currentUser.checkPermission(hrRoleType) == writePermission
         {
             myDatabaseConnection.deleteAddress(myAddressID)
         }

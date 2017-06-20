@@ -224,7 +224,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Contract Maintenance" id="ofu-mc-g6W">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="DWf-sd-Y5w" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="DWf-sd-Y5w" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="bZ1-UV-m47" id="apw-WR-oQC"/>
                                             </connections>

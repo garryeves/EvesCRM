@@ -43,7 +43,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
             lblLoadingUsers.isHidden = false
             if workingUser == nil
             {
-                getUserList()
+                getUserListForTeam()
             }
         }
         
@@ -169,7 +169,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
-        if currentUser.checkPermission("Admin") != writePermission
+        if currentUser.checkPermission(adminRoleType) == writePermission
         {
             if tableView == tblUsers
             {
@@ -184,7 +184,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
                         }
                     }
                     
-                    getUserList()
+                    getUserListForTeam()
                 }
             }
         }
@@ -207,7 +207,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
             
             workingUser.save()
             
-            getUserList()
+            getUserListForTeam()
         }
     }
     
@@ -275,7 +275,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
             self.workingUser.addInitialUserRoles()
         }
         
-        getUserList()
+        getUserListForTeam()
     }
     
     func hideFields()
@@ -343,14 +343,14 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         btnSave.isEnabled = false
         tblRoles.reloadData()
         
-        if currentUser.checkPermission("Admin") != writePermission
+        if currentUser.checkPermission(adminRoleType) != writePermission
         {
             btnAdd.isEnabled = false
             btnSave.isEnabled = false
         }
     }
     
-    func getUserList()
+    func getUserListForTeam()
     {
         let teamList = userTeams(teamID: currentUser.currentTeam!.teamID)
         
@@ -452,10 +452,10 @@ class userPermissions: UITableViewCell, UIPopoverPresentationControllerDelegate,
             workingItem = selectedItem
         }
         
-        if workingItem < 0
+        if workingItem >= 0
         {
-            record.accessLevel = displayList[selectedItem]
-            btnPermission.setTitle(displayList[selectedItem], for: .normal)
+            record.accessLevel = displayList[workingItem]
+            btnPermission.setTitle(displayList[workingItem], for: .normal)
         }
     }
 }

@@ -662,7 +662,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Shift Maintenance" id="ZSW-Cb-Fu6">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="1GD-JH-vAz" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="1GD-JH-vAz" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="AMn-e9-Bjg" id="1FY-cT-VAD"/>
                                             </connections>
@@ -1020,7 +1020,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Event Planning" id="3Nk-bj-C7g">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="yhe-Rn-u6i" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="yhe-Rn-u6i" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="Qzn-bI-amV" id="kJ4-n1-BTG"/>
                                             </connections>
@@ -1379,7 +1379,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Maintain Event Template" id="brW-Lj-y7F">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xrJ-Lk-dim" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="xrJ-Lk-dim" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="TtK-FO-Rkw" id="0fy-2R-wT1"/>
                                             </connections>
@@ -1754,7 +1754,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Monthly Roster" id="Ihk-mJ-0BY">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="wkc-B5-JKm" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="wkc-B5-JKm" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="UPo-pV-36S" id="Nr5-9V-zVb"/>
                                             </connections>

@@ -1081,30 +1081,36 @@ class shift: NSObject
     
     func save()
     {
-        if myStartTime != nil && myEndTime != nil
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
         {
-            myDatabaseConnection.saveShifts(myShiftID,
-                                            projectID: myProjectID,
-                                            personID: myPersonID,
-                                            workDate: myWorkDate,
-                                            shiftDescription: myShiftDescription,
-                                            startTime: myStartTime,
-                                            endTime: myEndTime,
-                                            teamID: myTeamID,
-                                            weekEndDate: myWeekEndDate,
-                                            status: myStatus,
-                                            shiftLineID: myShiftLineID,
-                                            rateID: myRateID,
-                                            type: myType,
-                                            clientInvoiceNumber: myClientInvoiceNumber,
-                                            personInvoiceNumber: myPersonInvoiceNumber
-                                             )
+            if myStartTime != nil && myEndTime != nil
+            {
+                myDatabaseConnection.saveShifts(myShiftID,
+                                                projectID: myProjectID,
+                                                personID: myPersonID,
+                                                workDate: myWorkDate,
+                                                shiftDescription: myShiftDescription,
+                                                startTime: myStartTime,
+                                                endTime: myEndTime,
+                                                teamID: myTeamID,
+                                                weekEndDate: myWeekEndDate,
+                                                status: myStatus,
+                                                shiftLineID: myShiftLineID,
+                                                rateID: myRateID,
+                                                type: myType,
+                                                clientInvoiceNumber: myClientInvoiceNumber,
+                                                personInvoiceNumber: myPersonInvoiceNumber
+                                                 )
+            }
         }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteShifts(myShiftID)
+        if currentUser.checkPermission(rosteringRoleType) == writePermission
+        {
+            myDatabaseConnection.deleteShifts(myShiftID)
+        }
     }
 }
 

@@ -33,7 +33,7 @@
                                         <rect key="frame" x="0.0" y="28" width="200" height="63"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cVf-3C-E8r" id="xH7-o9-UDB">
-                                            <rect key="frame" x="0.0" y="0.0" width="200" height="63"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="62.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpH-yw-aUl" userLabel="lblName">
@@ -157,10 +157,10 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellAddInfo" rowHeight="76" id="lFQ-CO-IP0" customClass="personAddInfoListItem" customModule="Shift_Dashboard" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="247" height="76"/>
+                                        <rect key="frame" x="0.0" y="28" width="246.5" height="76"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lFQ-CO-IP0" id="XfR-OP-f2M">
-                                            <rect key="frame" x="0.0" y="0.0" width="247" height="76"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="246.5" height="75.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Czp-T1-veN" userLabel="lblDescription">
@@ -233,7 +233,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Person Maintenance" id="B1O-rH-e3g">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="b3d-nF-iBQ" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="b3d-nF-iBQ" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="PpL-2q-poJ" id="3m8-3h-Rt1"/>
                                             </connections>
@@ -257,7 +257,7 @@
                                         <rect key="frame" x="0.0" y="28" width="246" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="axK-4F-JXr" id="IW4-Nm-Msh">
-                                            <rect key="frame" x="0.0" y="0.0" width="246" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="246" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GnC-dG-f61" userLabel="lblType">
@@ -308,7 +308,7 @@
                                         <rect key="frame" x="0.0" y="28" width="246" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="x7U-gX-GWF" id="8sF-lV-Gk3">
-                                            <rect key="frame" x="0.0" y="0.0" width="246" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="246" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="foD-NA-k0x" userLabel="lblType">
@@ -359,7 +359,7 @@
                                         <rect key="frame" x="0.0" y="28" width="498" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RMN-2c-Sb3" id="edo-dd-6ql">
-                                            <rect key="frame" x="0.0" y="0.0" width="498" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="498" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sbf-6d-MEK" userLabel="lblDate">
@@ -788,7 +788,7 @@
                                         <rect key="frame" x="0.0" y="28" width="708" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GSo-9L-fx1" id="mKy-Qn-6sV">
-                                            <rect key="frame" x="0.0" y="0.0" width="708" height="46"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="708" height="45.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wdq-ux-V8v">

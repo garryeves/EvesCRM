@@ -164,6 +164,16 @@ class ViewController: UIViewController, myCommunicationDelegate
 //
         
 myDatabaseConnection.fixDropDowns()
+        
+myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: pmRoleType, teamID: 1)
+usleep(500)
+        
+// Populate Pm roles in users details
+        
+myDatabaseConnection.addPMRoleToAll()
+        
+        
+        
 //currentUser.currentTeam!.populateRoleTypesDropDown
 
         myDatabaseConnection.recordsProcessed = 0

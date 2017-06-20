@@ -121,20 +121,20 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellRates" id="VNQ-Ks-KBq" customClass="ratesListItem" customModule="Shift_Dashboard" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="403" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="378" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VNQ-Ks-KBq" id="4Lr-O7-wpd">
-                                            <rect key="frame" x="0.0" y="0.0" width="403" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="378" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQt-9B-imd" userLabel="lblName">
-                                                    <rect key="frame" x="8" y="8" width="142" height="28"/>
+                                                    <rect key="frame" x="8" y="8" width="117" height="28"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gP0-KQ-MP3" userLabel="lblStart">
-                                                    <rect key="frame" x="150" y="8" width="65" height="27.5"/>
+                                                    <rect key="frame" x="125" y="8" width="65" height="27.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="65" id="dhg-3b-PQ5"/>
                                                     </constraints>
@@ -143,7 +143,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Staff" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K8K-21-4j1" userLabel="lblStaff">
-                                                    <rect key="frame" x="215" y="8" width="70" height="27.5"/>
+                                                    <rect key="frame" x="190" y="8" width="70" height="27.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="70" id="SrC-LV-cY1"/>
                                                     </constraints>
@@ -152,7 +152,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="28.8" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tZU-gx-7rz" userLabel="lblGP">
-                                                    <rect key="frame" x="355" y="8" width="40" height="27"/>
+                                                    <rect key="frame" x="330" y="8" width="40" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="7F2-nE-Tet"/>
                                                     </constraints>
@@ -161,7 +161,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="client" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eAn-ud-e8U" userLabel="lblClient">
-                                                    <rect key="frame" x="285" y="8" width="70" height="27.5"/>
+                                                    <rect key="frame" x="260" y="8" width="70" height="27.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="70" id="qlS-2i-x6b"/>
                                                     </constraints>
@@ -256,7 +256,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Client Maintenance" id="ZFm-UA-Qed">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="2B8-yz-ceW" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="2B8-yz-ceW" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="lPG-hE-jiD" id="Nid-vM-QTa"/>
                                             </connections>

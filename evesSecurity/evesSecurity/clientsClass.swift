@@ -189,7 +189,7 @@ class client: NSObject
     
     func save()
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             myDatabaseConnection.saveClient(myClientID,
                                             clientName: myClientName,
@@ -199,7 +199,7 @@ class client: NSObject
     
     func delete()
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             // There are a number of actions to take when deleting a client, mainly to make sure we maintain data integrity
             

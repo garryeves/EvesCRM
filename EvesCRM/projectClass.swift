@@ -859,7 +859,7 @@ class project: NSObject // 10k level
  
     func save()
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             myDatabaseConnection.saveProject(myProjectID,
                                              projectEndDate: myProjectEndDate,
@@ -1021,7 +1021,7 @@ class project: NSObject // 10k level
     
     func delete() -> Bool
     {
-        if currentUser.checkPermission("Financial") == writePermission || currentUser.checkPermission("Sales") == writePermission
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
             if myTasks.count > 0
             {

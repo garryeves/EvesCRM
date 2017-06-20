@@ -81,6 +81,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             currentUser.loadTeams()
         }
         
+        if readDefaultInt("teamID") >= 0
+        {
+            currentUser.currentTeam = team(teamID: readDefaultInt("teamID"))
+        }
+        
         btnSettings.title = NSString(string: "\u{2699}") as String
         
         btnSelect1.setTitle("Select", for: .normal)
@@ -416,13 +421,13 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             switch myItem
             {
                 case "People":
-                    if currentUser.checkPermission("HR") != noPermission
+                    if currentUser.checkPermission(hrRoleType) != noPermission
                     {
                         displayList.append(myItem)
                     }
                 
                 case "Financial":
-                    if currentUser.checkPermission("Financial") != noPermission
+                    if currentUser.checkPermission(financialsRoleType) != noPermission
                     {
                         displayList.append(myItem)
                     }
@@ -619,54 +624,86 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             runReport()
         }
         
-        if currentUser.checkPermission("Rostering") != noPermission
+        var showRoster: Bool = false
+        var showEvents: Bool = false
+        var showMonthlyRoster: Bool = false
+        var showShare: Bool = false
+        var showPeople: Bool = false
+        var showClients: Bool = false
+        
+        if currentUser.checkPermission(rosteringRoleType) != noPermission
         {
-            btnRoster.isEnabled = true
-        }
-        else
-        {
-            btnRoster.isEnabled = false
+            showRoster = true
+            showEvents = true
+            showMonthlyRoster = true
         }
         
-        if currentUser.checkPermission("Financials") != noPermission
+        if currentUser.checkPermission(pmRoleType) != noPermission
+        {
+            showClients = true
+            showPeople = true
+            showEvents = true
+            showMonthlyRoster = true
+            showRoster = true
+        }
+        
+        
+        if currentUser.checkPermission(financialsRoleType) != noPermission
+        {
+            showShare = true
+        }
+        
+        if currentUser.checkPermission(hrRoleType) != noPermission
+        {
+            showPeople = true
+        }
+        
+        if currentUser.checkPermission(salesRoleType) != noPermission
+        {
+            showClients = true
+        }
+        
+        if currentUser.checkPermission(invoicingRoleType) != noPermission
+        {
+            showClients = true
+        }
+        
+        btnRoster.isEnabled = false
+        btnEvents.isEnabled = false
+        btnMonthlyRoster.isEnabled = false
+        btnShare.isEnabled = false
+        btnPeople.isEnabled = false
+        btnClients.isEnabled = false
+        
+        if showRoster
         {
             btnRoster.isEnabled = true
+        }
+        
+        if showEvents
+        {
+            btnEvents.isEnabled = true
+        }
+        
+        if showMonthlyRoster
+        {
+            btnMonthlyRoster.isEnabled = true
+        }
+        
+        if showShare
+        {
             btnShare.isEnabled = true
         }
-        else
-        {
-            btnRoster.isEnabled = false
-            btnShare.isEnabled = false
-        }
         
-        if currentUser.checkPermission("HR") != noPermission
+        if showPeople
         {
             btnPeople.isEnabled = true
         }
-        else
-        {
-            btnPeople.isEnabled = false
-        }
         
-        if currentUser.checkPermission("Sales") != noPermission
+        if showClients
         {
-//            btnRoster.isEnabled = true
+            btnClients.isEnabled = true
         }
-        else
-        {
-//            btnRoster.isEnabled = false
-        }
-        
-        if currentUser.checkPermission("Invoicing") != noPermission
-        {
-          //  btnRoster.isEnabled = true
-        }
-        else
-        {
-         //   btnRoster.isEnabled = false
-        }
-        
-        
     }
     
     func buildAlerts()

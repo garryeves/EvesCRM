@@ -810,7 +810,7 @@
                                 <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <navigationItem title="Settings" id="BmF-nD-yoB">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="dTx-Fj-Lbb" userLabel="btnBack">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="dTx-Fj-Lbb" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="Jrc-Qv-cxH" id="SWB-6m-n98"/>
                                             </connections>
@@ -826,8 +826,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l5E-D4-inq" userLabel="btnSwitchUsers">
-                                <rect key="frame" x="339" y="314" width="90" height="30"/>
-                                <state key="normal" title="Switch Users"/>
+                                <rect key="frame" x="336.5" y="314" width="95" height="30"/>
+                                <state key="normal" title="Switch Teams"/>
                                 <connections>
                                     <action selector="btnSwitchUsers:" destination="Jrc-Qv-cxH" eventType="touchUpInside" id="ojf-Pj-seZ"/>
                                 </connections>
