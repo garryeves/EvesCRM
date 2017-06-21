@@ -174,28 +174,29 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in contractList.projects
         {
             displayList.append(myItem.projectName)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "project"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "project"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnCreateShift(_ sender: UIButton)
@@ -398,25 +399,10 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     {
         if source == "project"
         {
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 // We have a new object, with a selected item, so we can go ahead and create a new summary row
                 
-//                let tempShift = mergedShiftList(contract: contractList.projects[selectedItem - 1].projectName,
-//                                                projectID: contractList.projects[selectedItem - 1].projectID,
-//                                                description: nil,
-//                                                WEDate: currentWeekEndingDate,
-//                                                shiftLineID: nil,
-//                                                monShift: nil,
-//                                                tueShift: nil,
-//                                                wedShift: nil,
-//                                                thuShift: nil,
-//                                                friShift: nil,
-//                                                satShift: nil,
-//                                                sunShift: nil,
-//                                                type: nil
-//                )
-//
                 // create a dummy shift entry so we can get the sort order correct
                 
                 // Get the ntex shiftlineID
@@ -425,7 +411,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
                 
                 let workDate = currentWeekEndingDate.add(.day, amount: -1)
                 
-                let newShift = shift(projectID: contractList.projects[selectedItem - 1].projectID, workDate: workDate, weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: lineID, type: shiftShiftType)
+                let newShift = shift(projectID: contractList.projects[selectedItem].projectID, workDate: workDate, weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: lineID, type: shiftShiftType)
                 
                 newShift.startTime = getDefaultDate()
                 newShift.endTime = getDefaultDate()
@@ -552,8 +538,6 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in rateList.rates
         {
             displayList.append(myItem.rateName)
@@ -562,101 +546,105 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         displayList.append("")
         displayList.append("Delete Shift")
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        switch sender
+        if displayList.count > 0
         {
-            case btnRateMon:
-                pickerView.source = "btnRateMon"
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            switch sender
+            {
+                case btnRateMon:
+                    pickerView.source = "btnRateMon"
                 
-            case btnRateTue:
-                pickerView.source = "btnRateTue"
+                case btnRateTue:
+                    pickerView.source = "btnRateTue"
                 
-            case btnRateWed:
-                pickerView.source = "btnRateWed"
+                case btnRateWed:
+                    pickerView.source = "btnRateWed"
                 
-            case btnRateThu:
-                pickerView.source = "btnRateThu"
+                case btnRateThu:
+                    pickerView.source = "btnRateThu"
                 
-            case btnRateFri:
-                pickerView.source = "btnRateFri"
+                case btnRateFri:
+                    pickerView.source = "btnRateFri"
                 
-            case btnRateSat:
-                pickerView.source = "btnRateSat"
+                case btnRateSat:
+                    pickerView.source = "btnRateSat"
                 
-            case btnRateSun:
-                pickerView.source = "btnRateSun"
+                case btnRateSun:
+                    pickerView.source = "btnRateSun"
                 
-            default:
-                print("shiftListItem btnRate got unexpected entry")
+                default:
+                    print("shiftListItem btnRate got unexpected entry")
+            }
+            
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = sender.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
         }
-        
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnPerson(_ sender: UIButton)
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in peopleList.people
         {
             displayList.append(myItem.name)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        switch sender
+        if displayList.count > 0
         {
-            case btnPersonMon:
-                pickerView.source = "btnPersonMon"
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            switch sender
+            {
+                case btnPersonMon:
+                    pickerView.source = "btnPersonMon"
                 
-            case btnPersonTue:
-                pickerView.source = "btnPersonTue"
+                case btnPersonTue:
+                    pickerView.source = "btnPersonTue"
                 
-            case btnPersonWed:
-                pickerView.source = "btnPersonWed"
+                case btnPersonWed:
+                    pickerView.source = "btnPersonWed"
                 
-            case btnPersonThu:
-                pickerView.source = "btnPersonThu"
+                case btnPersonThu:
+                    pickerView.source = "btnPersonThu"
                 
-            case btnPersonFri:
-                pickerView.source = "btnPersonFri"
+                case btnPersonFri:
+                    pickerView.source = "btnPersonFri"
                 
-            case btnPersonSat:
-                pickerView.source = "btnPersonSat"
+                case btnPersonSat:
+                    pickerView.source = "btnPersonSat"
                 
-            case btnPersonSun:
-                pickerView.source = "btnPersonSun"
+                case btnPersonSun:
+                    pickerView.source = "btnPersonSun"
                 
-            default:
-                print("shiftListItem btnPerson got unexpected entry")
-        }
+                default:
+                    print("shiftListItem btnPerson got unexpected entry")
+            }
 
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = sender.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSelectTime(_ sender: UIButton)
@@ -846,8 +834,6 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Shift"))!
         {
             if myItem != eventShiftType
@@ -856,21 +842,24 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             }
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        pickerView.source = "shiftType"
-        
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            pickerView.source = "shiftType"
+            
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = sender.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func txtDescription(_ sender: UITextField)
@@ -929,7 +918,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        if selectedItem > 0
+        if selectedItem >= 0
         {
             // We have a new object, with a selected item, so we can go ahead and create a new summary row
             switch source
@@ -1030,14 +1019,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
 
-                    btnRateMon.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateMon.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                 
                     if weeklyRecord.monShift == nil
                     {
                         weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     }
 
-                    weeklyRecord.monShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.monShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.monShift.save()
                 
                 case "btnRateTue":
@@ -1065,14 +1054,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateTue.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateTue.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.tueShift == nil
                     {
                         weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     }
                 
-                    weeklyRecord.tueShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.tueShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.tueShift.save()
                 
                 case "btnRateWed":
@@ -1099,14 +1088,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateWed.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateWed.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.wedShift == nil
                     {
                         weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     }
                     
-                    weeklyRecord.wedShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.wedShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.wedShift.save()
                 
                 case "btnRateThu":
@@ -1133,14 +1122,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateThu.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateThu.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.thuShift == nil
                     {
                         weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     }
                     
-                    weeklyRecord.thuShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.thuShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.thuShift.save()
                 
                 case "btnRateFri":
@@ -1167,14 +1156,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateFri.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateFri.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.friShift == nil
                     {
                         weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     }
 
-                    weeklyRecord.friShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.friShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.friShift.save()
                 
                 case "btnRateSat":
@@ -1201,14 +1190,14 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateSat.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateSat.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.satShift == nil
                     {
                         weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     }
                     
-                    weeklyRecord.satShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.satShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.satShift.save()
                 
                 case "btnRateSun":
@@ -1235,91 +1224,91 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                         break
                     }
                     
-                    btnRateSun.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
+                    btnRateSun.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
                     
                     if weeklyRecord.sunShift == nil
                     {
                         weeklyRecord.sunShift = createShiftEntry(workDate: weeklyRecord.WEDate)
                     }
                     
-                    weeklyRecord.sunShift.rateID = rateList.rates[selectedItem - 1].rateID
+                    weeklyRecord.sunShift.rateID = rateList.rates[selectedItem].rateID
                     weeklyRecord.sunShift.save()
                 
                 case "btnPersonMon":
-                    btnPersonMon.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonMon.setTitle(peopleList.people[selectedItem].name, for: .normal)
                   
                     if weeklyRecord.monShift == nil
                     {
                         weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     }
                     
-                    weeklyRecord.monShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.monShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.monShift.save()
                 
                 case "btnPersonTue":
-                    btnPersonTue.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonTue.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.tueShift == nil
                     {
                         weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     }
                     
-                    weeklyRecord.tueShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.tueShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.tueShift.save()
                 
                 case "btnPersonWed":
-                    btnPersonWed.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonWed.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.wedShift == nil
                     {
                         weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     }
                     
-                    weeklyRecord.wedShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.wedShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.wedShift.save()
                 
                 case "btnPersonThu":
-                    btnPersonThu.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonThu.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.thuShift == nil
                     {
                         weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     }
                     
-                    weeklyRecord.thuShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.thuShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.thuShift.save()
                 
                 case "btnPersonFri":
-                    btnPersonFri.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonFri.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.friShift == nil
                     {
                         weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     }
                     
-                    weeklyRecord.friShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.friShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.friShift.save()
                 
                 case "btnPersonSat":
-                    btnPersonSat.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonSat.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.satShift == nil
                     {
                         weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     }
                     
-                    weeklyRecord.satShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.satShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.satShift.save()
                 
                 case "btnPersonSun":
-                    btnPersonSun.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                    btnPersonSun.setTitle(peopleList.people[selectedItem].name, for: .normal)
                     
                     if weeklyRecord.sunShift == nil
                     {
                         weeklyRecord.sunShift = createShiftEntry(workDate: weeklyRecord.WEDate)
                     }
                     
-                    weeklyRecord.sunShift.personID = peopleList.people[selectedItem - 1].personID
+                    weeklyRecord.sunShift.personID = peopleList.people[selectedItem].personID
                     weeklyRecord.sunShift.save()
                 
                 default:

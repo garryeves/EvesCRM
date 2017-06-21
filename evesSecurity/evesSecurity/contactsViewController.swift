@@ -49,29 +49,30 @@ class contactsViewController: UIViewController, MyPickerDelegate, UIPopoverPrese
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Contacts"))!
         {
             displayList.append(myItem)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        //      pickerView.isModalInPopover = true
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "Contacts"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "Contacts"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSave(_ sender: UIButton)

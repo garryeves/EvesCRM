@@ -67,8 +67,6 @@ class addressesViewController: UIViewController, MyPickerDelegate, UIPopoverPres
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Address"))!
         {
             displayList.append(myItem)
@@ -78,18 +76,21 @@ class addressesViewController: UIViewController, MyPickerDelegate, UIPopoverPres
         pickerView.modalPresentationStyle = .popover
   //      pickerView.isModalInPopover = true
         
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "address"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "address"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnAddressType.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSave(_ sender: UIButton)

@@ -73,38 +73,39 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         teamList = userTeams(userID: currentUser.userID)
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in teamList.UserTeams
         {
             let tempTeam = team(teamID: myItem.teamID)
             displayList.append(tempTeam.name)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "TeamList"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "TeamList"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "TeamList"
         {
-            if selectedItem > 0
+            if selectedItem >= 0
             {
-                currentUser.currentTeam = team(teamID: teamList.UserTeams[selectedItem - 1].teamID)
+                currentUser.currentTeam = team(teamID: teamList.UserTeams[selectedItem].teamID)
                 writeDefaultInt("teamID", value: currentUser.currentTeam!.teamID)
             }
         }

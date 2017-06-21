@@ -495,7 +495,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
         {
-            saveClientRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveClientRecordToCloudKit(myItem)
         }
     }
     
@@ -514,30 +514,30 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "Clients", queryOperation: operation, onOperationQueue: operationQueue)
     }
     
-    func deleteClient(clientID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (client != \(clientID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteClient(clientID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (client != \(clientID))")
+//        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        
+//        sem.wait()
+//    }
     
-    func saveClientRecordToCloudKit(_ sourceRecord: Clients, teamID: Int)
+    func saveClientRecordToCloudKit(_ sourceRecord: Clients)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Clients", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -590,7 +590,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.clientContact, forKey: "clientContact")
                     record.setValue(sourceRecord.note, forKey: "note")
 
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {

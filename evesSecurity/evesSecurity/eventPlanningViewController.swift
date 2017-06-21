@@ -217,28 +217,29 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             displayList.append(myItem.formatDateToString)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "workday"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "workday"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 400)
+            pickerView.currentValue = btnDate.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnTemplate(_ sender: UIButton)
     {
         displayList.removeAll()
-        
-        displayList.append("")
         
         templateList = eventTemplateHeads(teamID: currentUser.currentTeam!.teamID)
         for myItem in templateList.templates
@@ -246,49 +247,53 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             displayList.append(myItem.templateName)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "template"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "template"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnTemplate.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSelect(_ sender: UIButton)
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Event Roles"))!
         {
             displayList.append(myItem)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "role"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "role"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnSelect.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnAddRole(_ sender: UIButton)
@@ -390,28 +395,30 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: eventProjectType))!
         {
             displayList.append(myItem)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "status"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "status"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = btnStatus.currentTitle!
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -419,7 +426,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         switch source
         {
         case "template":
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 if displayList[selectedItem] == ""
                 {
@@ -431,7 +438,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 {
                     btnTemplate.setTitle(displayList[selectedItem], for: .normal)
                 }
-                currentTemplate = templateList.templates[selectedItem - 1]
+                currentTemplate = templateList.templates[selectedItem]
                 btnCreatePlan.isHidden = false
             }
             else
@@ -452,7 +459,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                         {
                             btnTemplate.setTitle(displayList[selectedItem], for: .normal)
                         }
-                        currentTemplate = templateList.templates[selectedItem - 1]
+                        currentTemplate = templateList.templates[selectedItem]
                         btnCreatePlan.isHidden = false
                     }
                     else
@@ -466,7 +473,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             }
         
         case "role" :
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 if displayList[selectedItem] == ""
                 {
@@ -487,7 +494,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             
         case "workday" :
             var workingItem: Int = 0
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 workingItem = selectedItem
             }
@@ -496,7 +503,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             newRoleDate = eventDays[workingItem].startOfDay
             
         case "status" :
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 currentEvent.projectStatus = displayList[selectedItem]
                 btnStatus.setTitle(displayList[selectedItem], for: .normal)
@@ -668,28 +675,29 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in peopleList.people
         {
             displayList.append(myItem.name)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "person"
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "person"
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = btnPerson.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnStart(_ sender: UIButton)
@@ -746,29 +754,29 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in rateList.rates
         {
             displayList.append(myItem.rateName)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        pickerView.source = "rate"
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            pickerView.source = "rate"
 
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
-
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = btnRate.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -779,14 +787,14 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             switch source
             {
             case "person":
-                btnPerson.setTitle(peopleList.people[selectedItem - 1].name, for: .normal)
+                btnPerson.setTitle(peopleList.people[selectedItem].name, for: .normal)
                 
-                shiftRecord.personID = peopleList.people[selectedItem - 1].personID
+                shiftRecord.personID = peopleList.people[selectedItem].personID
                 shiftRecord.save()
                 
             case "rate":
-                btnRate.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
-                shiftRecord.rateID = rateList.rates[selectedItem - 1].rateID
+                btnRate.setTitle(rateList.rates[selectedItem].rateName, for: .normal)
+                shiftRecord.rateID = rateList.rates[selectedItem].rateID
                 shiftRecord.save()
                 
              default:

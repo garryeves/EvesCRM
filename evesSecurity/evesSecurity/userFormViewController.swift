@@ -426,21 +426,24 @@ class userPermissions: UITableViewCell, UIPopoverPresentationControllerDelegate,
         displayList.append(readPermission)
         displayList.append(writePermission)
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = sourceView
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        pickerView.source = "btnRateMon"
-        
-        pickerView.delegate = sourceView
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
-        
-        mainView.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = sourceView
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            pickerView.source = "btnRateMon"
+            
+            pickerView.delegate = sourceView
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+            pickerView.currentValue = sender.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)

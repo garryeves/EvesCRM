@@ -89,6 +89,28 @@ extension coreDatabase
             return []
         }
     }
+    
+    func getDecodes() -> [Decodes]
+    {
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
+        
+        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
  
     func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
     {

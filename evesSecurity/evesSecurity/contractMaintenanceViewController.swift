@@ -172,28 +172,30 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: btnType.currentTitle!))!
         {
             displayList.append(myItem)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "status"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "status"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = btnStatus.currentTitle!
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
 
     @IBAction func btnStartDate(_ sender: UIButton)
@@ -265,56 +267,59 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     {
         displayList.removeAll()
         
-        displayList.append("")
         displayList.append("Annualy")
         displayList.append("At Completion")
         displayList.append("Milestones")
         displayList.append("Monthly")
         displayList.append("Quarterly")
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "InvoicingFrequency"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "InvoicingFrequency"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnInvoicingFrequency.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
 
     @IBAction func btnType(_ sender: UIButton)
     {
         displayList.removeAll()
         
-        displayList.append("")
-        
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "ProjectType"))!
         {
             displayList.append(myItem)
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "type"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "type"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = btnType.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)

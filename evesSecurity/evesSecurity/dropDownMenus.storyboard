@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,7 +13,7 @@
         <!--timeSelectViewController-->
         <scene sceneID="291-Q7-7WC">
             <objects>
-                <viewController storyboardIdentifier="timeView" id="Kmf-Y4-P0a" userLabel="timeSelectViewController" customClass="timeSelectViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="timeView" id="Kmf-Y4-P0a" userLabel="timeSelectViewController" customClass="timeSelectViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9hs-zj-AvP"/>
                         <viewControllerLayoutGuide type="bottom" id="NR6-IO-U2b"/>
@@ -98,7 +98,7 @@
         <!--pickerViewController-->
         <scene sceneID="uEr-gb-7FN">
             <objects>
-                <viewController storyboardIdentifier="pickerView" id="gIR-tU-07p" userLabel="pickerViewController" customClass="PickerViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="pickerView" id="gIR-tU-07p" userLabel="pickerViewController" customClass="PickerViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wz7-oz-5dx"/>
                         <viewControllerLayoutGuide type="bottom" id="lnq-yp-r5k"/>
@@ -108,35 +108,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eIp-1G-khM">
-                                <rect key="frame" x="20" y="25" width="728" height="959"/>
+                                <rect key="frame" x="20" y="20" width="728" height="1004"/>
                                 <connections>
                                     <outlet property="dataSource" destination="gIR-tU-07p" id="cXc-GV-OZm"/>
                                     <outlet property="delegate" destination="gIR-tU-07p" id="Xh0-PY-KJi"/>
                                 </connections>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yeN-fR-qIy" userLabel="btnSelect">
-                                <rect key="frame" x="362" y="989" width="44" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="1NP-dC-VfN"/>
-                                </constraints>
-                                <state key="normal" title="Select"/>
-                                <connections>
-                                    <action selector="btnSelect:" destination="gIR-tU-07p" eventType="touchUpInside" id="6QT-NN-T1h"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="eIp-1G-khM" firstAttribute="leading" secondItem="Hbb-Vw-3H6" secondAttribute="leadingMargin" id="4uZ-Um-TiH"/>
                             <constraint firstAttribute="trailingMargin" secondItem="eIp-1G-khM" secondAttribute="trailing" id="9de-pv-rG5"/>
-                            <constraint firstItem="yeN-fR-qIy" firstAttribute="centerX" secondItem="Hbb-Vw-3H6" secondAttribute="centerX" id="FGR-QB-Mci"/>
-                            <constraint firstItem="lnq-yp-r5k" firstAttribute="top" secondItem="yeN-fR-qIy" secondAttribute="bottom" constant="5" id="Uf3-Ny-ofz"/>
-                            <constraint firstItem="yeN-fR-qIy" firstAttribute="top" secondItem="eIp-1G-khM" secondAttribute="bottom" constant="5" id="i01-eP-Nxg"/>
-                            <constraint firstItem="eIp-1G-khM" firstAttribute="top" secondItem="wz7-oz-5dx" secondAttribute="bottom" constant="5" id="kxh-pQ-zCO"/>
+                            <constraint firstItem="eIp-1G-khM" firstAttribute="top" secondItem="wz7-oz-5dx" secondAttribute="bottom" id="kxh-pQ-zCO"/>
+                            <constraint firstItem="lnq-yp-r5k" firstAttribute="top" secondItem="eIp-1G-khM" secondAttribute="bottom" id="mfY-Mj-byo"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnSelect" destination="yeN-fR-qIy" id="dnj-ZD-siK"/>
                         <outlet property="myPicker" destination="eIp-1G-khM" id="sfz-WR-ld4"/>
                     </connections>
                 </viewController>
@@ -147,7 +134,7 @@
         <!--DateTimePicker-->
         <scene sceneID="SnQ-LP-AHi">
             <objects>
-                <viewController storyboardIdentifier="datePicker" title="DateTimePicker" id="nrS-XI-BT4" customClass="dateTimePickerView" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="datePicker" title="DateTimePicker" id="nrS-XI-BT4" customClass="dateTimePickerView" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zgT-SL-T9H"/>
                         <viewControllerLayoutGuide type="bottom" id="h0R-1B-feR"/>
@@ -157,7 +144,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="5K1-T3-QsO" userLabel="datePicker">
-                                <rect key="frame" x="20" y="25" width="728" height="959"/>
+                                <rect key="frame" x="20" y="20" width="728" height="1004"/>
                                 <date key="date" timeIntervalSinceReferenceDate="480307233.385396">
                                     <!--2016-03-22 02:40:33 +0000-->
                                 </date>
@@ -165,29 +152,16 @@
                                     <action selector="datePicker:" destination="nrS-XI-BT4" eventType="valueChanged" id="nB4-XJ-ymj"/>
                                 </connections>
                             </datePicker>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DfC-TE-nM3" userLabel="btnSelect">
-                                <rect key="frame" x="362" y="989" width="44" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="W0K-x6-Fpq"/>
-                                </constraints>
-                                <state key="normal" title="Select"/>
-                                <connections>
-                                    <action selector="btnSelect:" destination="nrS-XI-BT4" eventType="touchUpInside" id="ncf-Ur-BLy"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="5K1-T3-QsO" secondAttribute="trailing" id="3c7-qt-ihe"/>
-                            <constraint firstItem="DfC-TE-nM3" firstAttribute="top" secondItem="5K1-T3-QsO" secondAttribute="bottom" constant="5" id="CZQ-LI-hpB"/>
-                            <constraint firstItem="DfC-TE-nM3" firstAttribute="centerX" secondItem="m5Q-CA-0ho" secondAttribute="centerX" id="M1e-j9-icj"/>
-                            <constraint firstItem="5K1-T3-QsO" firstAttribute="top" secondItem="zgT-SL-T9H" secondAttribute="bottom" constant="5" id="PoO-LG-NLR"/>
-                            <constraint firstItem="h0R-1B-feR" firstAttribute="top" secondItem="DfC-TE-nM3" secondAttribute="bottom" constant="5" id="Sa5-qO-cYz"/>
+                            <constraint firstItem="5K1-T3-QsO" firstAttribute="top" secondItem="zgT-SL-T9H" secondAttribute="bottom" id="PoO-LG-NLR"/>
                             <constraint firstItem="5K1-T3-QsO" firstAttribute="leading" secondItem="m5Q-CA-0ho" secondAttribute="leadingMargin" id="qcR-a4-uS2"/>
+                            <constraint firstItem="h0R-1B-feR" firstAttribute="top" secondItem="5K1-T3-QsO" secondAttribute="bottom" id="wQz-aZ-Bpz"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnSelect" destination="DfC-TE-nM3" id="WiR-fG-A6V"/>
                         <outlet property="datePicker" destination="5K1-T3-QsO" id="UzO-Vb-xfu"/>
                     </connections>
                 </viewController>

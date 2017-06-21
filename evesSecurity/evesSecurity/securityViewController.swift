@@ -127,7 +127,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             self.populateMonthList()
         }
-                
+        
         Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.buildReportList), userInfo: nil, repeats: false)
     }
     
@@ -402,19 +402,17 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 pickerView.source = "report"
                 pickerView.delegate = self
                 pickerView.pickerValues = displayList
+                pickerView.currentValue = btnReport.currentTitle!
                 pickerView.preferredContentSize = CGSize(width: 400,height: 400)
                 
                 self.present(pickerView, animated: true, completion: nil)
             }
         }
-            
     }
     
     @IBAction func btnReportType(_ sender: UIButton)
     {
         displayList.removeAll()
-        
-        displayList.append("")
         
         for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
         {
@@ -437,21 +435,25 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             }
         }
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "Reports"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "Reports"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.currentValue = btnReportType.currentTitle!
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnMaintainReports(_ sender: UIButton)
@@ -473,15 +475,15 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     displayList.append(myItem)
                 }
             
-        case reportWagesForMonth:
-                displayList.removeAll()
-                
-                for myItem in monthList
-                {
-                    displayList.append(myItem)
-                }
+            case reportWagesForMonth:
+                    displayList.removeAll()
+                    
+                    for myItem in monthList
+                    {
+                        displayList.append(myItem)
+                    }
             
-        case reportContractForYear:
+            case reportContractForYear:
                 displayList.removeAll()
                 
                 displayList.append("2017")
@@ -493,47 +495,54 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             default:
                 print("unknown entry btnDropdown - currentReportID - \(currentReport.reportName)")
         }
-
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
         
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "dropdown"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
-        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "dropdown"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = btnDropdown.currentTitle!
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnYear(_ sender: UIButton)
     {
         displayList.removeAll()
         
-        displayList.append("2017")
-        displayList.append("2018")
-        
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "year"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            displayList.append("2017")
+            displayList.append("2018")
+            
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "year"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = btnYear.currentTitle!
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSelect(_ sender: UIButton)
@@ -745,45 +754,37 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        var workingItem: Int = 0
-        if selectedItem < 0
+        if selectedItem >= 0
         {
-            workingItem = 0
-        }
-        else
-        {
-            workingItem = selectedItem
-        }
-        
-        switch source
-        {
-            case "report":
-                btnReport.setTitle(reportList.reports[workingItem].reportName, for: .normal)
-                
-                currentReport = reportList.reports[workingItem]
-                
-                displayReportFields()
-                    //           writeDefaultInt("reportID", value: currentReportID)
+            switch source
+            {
+                case "report":
+                    btnReport.setTitle(reportList.reports[selectedItem].reportName, for: .normal)
+                    
+                    currentReport = reportList.reports[selectedItem]
+                    
+                    displayReportFields()
+                        //           writeDefaultInt("reportID", value: currentReportID)
 
-            case "dropdown":
-                btnDropdown.setTitle(displayList[workingItem], for: .normal)
+                case "dropdown":
+                    btnDropdown.setTitle(displayList[selectedItem], for: .normal)
+                    
+                    writeDefaultString("reportMonth", value: displayList[selectedItem])
                 
-                writeDefaultString("reportMonth", value: displayList[workingItem])
-            
-            case "year":
-                btnYear.setTitle(displayList[workingItem], for: .normal)
-                writeDefaultInt("reportYear", value: Int(displayList[workingItem])!)
+                case "year":
+                    btnYear.setTitle(displayList[selectedItem], for: .normal)
+                    writeDefaultInt("reportYear", value: Int(displayList[selectedItem])!)
 
-            case "Reports":
-                btnReportType.setTitle(displayList[workingItem], for: .normal)
-                currentReport = nil
-                btnReport.setTitle("Select", for: .normal)
-            
-            default:
-                print("unknown entry myPickerDidFinish - source - \(source)")
+                case "Reports":
+                    btnReportType.setTitle(displayList[selectedItem], for: .normal)
+                    currentReport = nil
+                    btnReport.setTitle("Select", for: .normal)
+                
+                default:
+                    print("unknown entry myPickerDidFinish - source - \(source)")
+            }
+            runReport()
         }
-        
-        runReport()
     }
     
     func buildReportCell(label: UILabel, text: String, width: CGFloat, constraint: NSLayoutConstraint, drawLine: Bool)

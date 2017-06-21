@@ -43,11 +43,14 @@ class DBSync: NSObject
             let myReachability = Reachability()
             if myReachability.isConnectedToNetwork()
             {
+                refreshRunning = true
                 performSync()
 
                 notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                 myDatabaseConnection.clearDeletedItems()
                 myDatabaseConnection.clearSyncedItems()
+                
+                refreshRunning = false
             }
         }
     }

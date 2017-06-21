@@ -111,7 +111,7 @@ extension DBSync
         }
         
         myCloudDB.saveDecodesToCloudKit()
-        myCloudDB.updateDecodesInCoreData()
+        myCloudDB.updatePublicDecodesInCoreData()
         if myCloudDB.saveOK
         {
             myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)

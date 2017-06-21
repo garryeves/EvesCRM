@@ -21,31 +21,34 @@ import UIKit
 
 class PickerViewController: UIViewController
 {
-    @IBOutlet weak var btnSelect: UIButton!
-    @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var myPicker: UIPickerView!
     
     var pickerValues: [String]?
     var source: String?
+    var currentValue: String?
     var delegate: MyPickerDelegate?
     
-    private var selectedRow: Int = -1
+    private var selectedRow: Int = 0
     private var maxLines: CGFloat = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        if pickerValues!.count == 0
-        {
-            btnSelect.isEnabled = false
-        }
-        
+                
         // work out the size of the rows
+        
+        var recordCount: Int = 0
         
         for myItem in pickerValues!
         {
             let textArr = myItem.components(separatedBy: "\n")
+            
+            if currentValue == myItem
+            {
+                selectedRow = recordCount
+            }
+            
+            recordCount += 1
             
             var numLinesInt = textArr.count
             
@@ -61,6 +64,14 @@ class PickerViewController: UIViewController
                 maxLines = numLines
             }
         }
+        
+        myPicker.selectRow(selectedRow, inComponent: 0, animated: true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        delegate!.myPickerDidFinish!(source!, selectedItem: selectedRow)
     }
     
     override func didReceiveMemoryWarning() {
@@ -129,11 +140,5 @@ class PickerViewController: UIViewController
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat
     {
         return UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * maxLines * UIScreen.main.scale
-    }
-    
-    @IBAction func btnSelect(_ sender: UIButton)
-    {
-        delegate!.myPickerDidFinish!(source!, selectedItem: selectedRow)
-        dismiss(animated: true, completion: nil)
     }
 }

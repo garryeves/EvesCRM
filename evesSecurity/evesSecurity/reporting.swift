@@ -2490,6 +2490,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
 
+//        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (updateType != \"Delete\")")
         let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (reportType == \"\(reportType)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
@@ -2652,7 +2653,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getReportsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Reports"))
         {
-            saveReportsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveReportsRecordToCloudKit(myItem)
         }
     }
     
@@ -2671,29 +2672,29 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "reports", queryOperation: operation, onOperationQueue: operationQueue)
     }
     
-    func deleteReports(reportID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (reportID == \(reportID))")
-        let query: CKQuery = CKQuery(recordType: "reports", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteReports(reportID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (reportID == \(reportID))")
+//        let query: CKQuery = CKQuery(recordType: "reports", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        
+//        sem.wait()
+//    }
     
-    func saveReportsRecordToCloudKit(_ sourceRecord: Reports, teamID: Int)
+    func saveReportsRecordToCloudKit(_ sourceRecord: Reports)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(reportID == \(sourceRecord.reportID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(reportID == \(sourceRecord.reportID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "reports", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -2863,7 +2864,6 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.sortOrder3, forKey: "sortOrder3")
                     record.setValue(sourceRecord.sortOrder4, forKey: "sortOrder4")
                     record.setValue(sourceRecord.orientation, forKey: "orientation")
-
 
                     if sourceRecord.updateTime != nil
                     {

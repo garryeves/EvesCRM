@@ -378,7 +378,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getEventTemplateHeadForSync(myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplateHead"))
         {
-            saveEventTemplateHeadRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveEventTemplateHeadRecordToCloudKit(myItem)
         }
     }
     
@@ -397,30 +397,30 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "EventTemplateHead", queryOperation: operation, onOperationQueue: operationQueue)
     }
     
-    func deleteEventTemplateHead(eventID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (eventID == \(eventID))")
-        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteEventTemplateHead(eventID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (eventID == \(eventID))")
+//        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        
+//        sem.wait()
+//    }
     
-    func saveEventTemplateHeadRecordToCloudKit(_ sourceRecord: EventTemplateHead, teamID: Int)
+    func saveEventTemplateHeadRecordToCloudKit(_ sourceRecord: EventTemplateHead)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (eventID == \(sourceRecord.eventID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID)) AND (eventID == \(sourceRecord.eventID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -468,7 +468,7 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "EventTemplateHead")
                     record.setValue(sourceRecord.eventID, forKey: "eventID")
                     record.setValue(sourceRecord.eventName, forKey: "eventName")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {

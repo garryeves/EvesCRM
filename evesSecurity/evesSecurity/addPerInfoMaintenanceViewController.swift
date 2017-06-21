@@ -59,7 +59,7 @@ class addPerInfoMaintenanceViewController: UIViewController, UIPopoverPresentati
     {
         if source == "choices"
         {
-            if selectedItem > 0
+            if selectedItem >= 0
             {
                 btnType.setTitle(displayList[selectedItem], for: .normal)
             
@@ -72,27 +72,30 @@ class addPerInfoMaintenanceViewController: UIViewController, UIPopoverPresentati
     {
         displayList.removeAll()
         
-        displayList.append("")
         displayList.append(perInfoText)
         displayList.append(perInfoDate)
         displayList.append(perInfoYesNo)
         
-        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
-        pickerView.modalPresentationStyle = .popover
-        //      pickerView.isModalInPopover = true
-        
-        let popover = pickerView.popoverPresentationController!
-        popover.delegate = self
-        popover.sourceView = sender
-        popover.sourceRect = sender.bounds
-        popover.permittedArrowDirections = .any
-        
-        pickerView.source = "choices"
-        pickerView.delegate = self
-        pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
-        
-        self.present(pickerView, animated: true, completion: nil)
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "choices"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnType.currentTitle!
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnSave(_ sender: UIButton)

@@ -595,7 +595,7 @@ class task: NSObject
     {
         let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID)[0]
         
-        myCloudDB.saveTaskRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
+        myCloudDB.saveTaskRecordToCloudKit(myTask)
         
         // Save context link
         
@@ -1515,7 +1515,7 @@ extension CloudKitInteraction
     {     
         for myItem in myDatabaseConnection.getTaskForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Task"))
         {
-            saveTaskRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveTaskRecordToCloudKit(myItem)
         }
     }
 
@@ -1533,28 +1533,28 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "Task", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteTask(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
+//    func deleteTask(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
-    func saveTaskRecordToCloudKit(_ sourceRecord: Task, teamID: Int)
+    func saveTaskRecordToCloudKit(_ sourceRecord: Task)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(sourceRecord.teamID)") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1634,7 +1634,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.urgency, forKey: "urgency")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

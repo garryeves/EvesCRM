@@ -1912,9 +1912,10 @@ extension person
 
         var wage: Double = 0.0
         var hours: Double = 0.0
-
+    
         for myShift in shifts(personID: personID, searchFrom: startDate, searchTo: endDate, teamID: currentUser.currentTeam!.teamID, type: "").shifts
         {
+
             wage += myShift.expense
             hours += Double(myShift.numHours)
             hours += myShift.numMins
@@ -1936,6 +1937,8 @@ extension person
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
@@ -2259,6 +2262,8 @@ extension coreDatabase
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
+        
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
         
@@ -2295,6 +2300,8 @@ extension coreDatabase
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
@@ -2774,7 +2781,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getShiftsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Shifts"))
         {
-            saveShiftsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveShiftsRecordToCloudKit(myItem)
         }
     }
     
@@ -2917,31 +2924,30 @@ extension CloudKitInteraction
         self.recordCount -= 1
     }
     
-    func deleteShifts(shiftID: Int)
-    {
-print("Called deleteShifts")
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (shiftID == \(shiftID))")
-        let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteShifts(shiftID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (shiftID == \(shiftID))")
+//        let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        
+//        sem.wait()
+//    }
     
-    func saveShiftsRecordToCloudKit(_ sourceRecord: Shifts, teamID: Int)
+    func saveShiftsRecordToCloudKit(_ sourceRecord: Shifts)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(shiftID == \(sourceRecord.shiftID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(shiftID == \(sourceRecord.shiftID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Shifts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -3008,7 +3014,7 @@ print("Called deleteShifts")
                     record.setValue(sourceRecord.clientInvoiceNumber, forKey: "clientInvoiceNumber")
                     record.setValue(sourceRecord.personInvoiceNumber, forKey: "personInvoiceNumber")
 
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {

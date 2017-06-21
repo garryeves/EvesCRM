@@ -12,7 +12,6 @@ import UIKit
 class dateTimePickerView: UIViewController
 {
     @IBOutlet weak var datePicker: UIDatePicker!
-    @IBOutlet weak var btnSelect: UIButton!
     
     var currentDate: Date!
     var source: String?
@@ -75,6 +74,12 @@ class dateTimePickerView: UIViewController
    //     btnSelect.isEnabled = false
     }
     
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        delegate!.myPickerDidFinish!(source!, selectedDate: datePicker.date)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -82,12 +87,6 @@ class dateTimePickerView: UIViewController
     
     @IBAction func datePicker(_ sender: UIDatePicker)
     {
-        btnSelect.isEnabled = true
-    }
-    
-    @IBAction func btnSelect(_ sender: UIButton)
-    {
-        delegate!.myPickerDidFinish!(source!, selectedDate: datePicker.date)
-        dismiss(animated: true, completion: nil)
+        let _ = 1
     }
 }

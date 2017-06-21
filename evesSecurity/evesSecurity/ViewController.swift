@@ -23,12 +23,6 @@ class ViewController: UIViewController, myCommunicationDelegate
         progressbar.layer.borderWidth = 2
         progressbar.layer.borderColor = UIColor.black.cgColor
         
-        
-//myDatabaseConnection.quickFixProjects()
-//myDatabaseConnection.quickFixPerson()
-//myDatabaseConnection.quickFixTeams()
-//myDatabaseConnection.quickFixShifts()
-        
         if readDefaultInt(userDefaultName) <= 0
         {
             Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.loadNewUserScreen), userInfo: nil, repeats: false)
@@ -104,78 +98,6 @@ class ViewController: UIViewController, myCommunicationDelegate
     
     func loadMainScreen()
     {
-//        let myDateFormatter = DateFormatter()
-//        myDateFormatter.dateFormat = "dd MMM yy"
-//        
-//        let startArray = ["27 Mar 17",
-//                          "03 Apr 17",
-//                          "10 Apr 17",
-//                          "17 Apr 17",
-//                          "24 Apr 17",
-//                          "01 May 17",
-//                          "08 May 17",
-//                          "15 May 17",
-//                          "22 May 17",
-//                          "29 May 17",
-//                          "05 Jun 17",
-//                          "12 Jun 17",
-//                          "19 Jun 17",
-//                          "16 Jun 17"]
-//                          
-//        
-//        
-//        for myDate in startArray
-//        {
-//            // Monday
-//            let originalDate = myDateFormatter.date(from: myDate)!
-//            var startDate = originalDate.add(.day, amount: 1).startOfDay
-//print("Start = \(startDate)")
-//            var endDate = originalDate.add(.day, amount: 2).startOfDay
-//            
-//            let WEndDate = endDate.getWeekEndingDate
-//print("Orig = \(endDate) WE = \(WEndDate)")
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Tuesday
-//            startDate = originalDate.add(.day, amount: 2).startOfDay
-//            endDate = originalDate.add(.day, amount: 3).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Wednesday
-//            startDate = originalDate.add(.day, amount: 3).startOfDay
-//            endDate = originalDate.add(.day, amount: 4).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Thursday
-//            startDate = originalDate.add(.day, amount: 4).startOfDay
-//            endDate = originalDate.add(.day, amount: 5).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Friday
-//            startDate = originalDate.add(.day, amount: 5).startOfDay
-//            endDate = originalDate.add(.day, amount: 6).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Saturday
-//            startDate = originalDate.add(.day, amount: 6).startOfDay
-//            endDate = originalDate.add(.day, amount: 7).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//            // Sunday
-//            startDate = originalDate.add(.day, amount: 7).startOfDay
-//            endDate = originalDate.add(.day, amount: 8).startOfDay
-//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
-//        }
-//        
-//
-        
-myDatabaseConnection.fixDropDowns()
-        
-myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: pmRoleType, teamID: 1)
-usleep(500)
-        
-// Populate Pm roles in users details
-        
-myDatabaseConnection.addPMRoleToAll()
-        
-        
-        
-//currentUser.currentTeam!.populateRoleTypesDropDown
-
         myDatabaseConnection.recordsProcessed = 0
         
         let myReachability = Reachability()

@@ -464,7 +464,7 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getEventTemplateForSync(myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplate"))
         {
-            saveEventTemplateRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveEventTemplateRecordToCloudKit(myItem)
         }
     }
     
@@ -483,34 +483,34 @@ extension CloudKitInteraction
         executePublicQueryOperation(targetTable: "EventTemplate", queryOperation: operation, onOperationQueue: operationQueue)
     }
     
-    func deleteEventTemplate(eventID: Int,
-                             role: String,
-                             dateModifier: Int,
-                             startTime: Date,
-                             endTime: Date)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (role == \"\(role)\") AND (eventID == \(eventID)) AND (dateModifier == \(dateModifier)) AND (startTime == %@) AND (endTime == %@)", startTime as CVarArg, endTime as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "EventTemplate", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-    }
+//    func deleteEventTemplate(eventID: Int,
+//                             role: String,
+//                             dateModifier: Int,
+//                             startTime: Date,
+//                             endTime: Date)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (role == \"\(role)\") AND (eventID == \(eventID)) AND (dateModifier == \(dateModifier)) AND (startTime == %@) AND (endTime == %@)", startTime as CVarArg, endTime as CVarArg)
+//        let query: CKQuery = CKQuery(recordType: "EventTemplate", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        
+//        sem.wait()
+//    }
     
-    func saveEventTemplateRecordToCloudKit(_ sourceRecord: EventTemplate, teamID: Int)
+    func saveEventTemplateRecordToCloudKit(_ sourceRecord: EventTemplate)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (role == \"\(sourceRecord.role!)\") AND (eventID == \(sourceRecord.eventID)) AND (dateModifier == \(sourceRecord.dateModifier)) AND (startTime == %@) AND (endTime == %@)", sourceRecord.startTime!, sourceRecord.endTime!) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID)) AND (role == \"\(sourceRecord.role!)\") AND (eventID == \(sourceRecord.eventID)) AND (dateModifier == \(sourceRecord.dateModifier)) AND (startTime == %@) AND (endTime == %@)", sourceRecord.startTime!, sourceRecord.endTime!) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "EventTemplate", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -562,7 +562,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.dateModifier, forKey: "dateModifier")
                     record.setValue(sourceRecord.startTime, forKey: "startTime")
                     record.setValue(sourceRecord.endTime, forKey: "endTime")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
