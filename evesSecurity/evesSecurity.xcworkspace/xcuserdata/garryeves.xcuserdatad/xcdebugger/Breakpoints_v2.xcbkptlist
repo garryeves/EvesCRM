@@ -9,45 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519709422.159646"
+            filePath = "evesSecurity/securityViewController.swift"
+            timestampString = "519797111.885415"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2315"
-            endingLineNumber = "2315"
-            landmarkName = "getShifts(teamID:month:year:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519709422.15973"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2318"
-            endingLineNumber = "2318"
-            landmarkName = "getShifts(teamID:month:year:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519709422.159795"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2321"
-            endingLineNumber = "2321"
-            landmarkName = "getShifts(teamID:month:year:)"
+            startingLineNumber = "730"
+            endingLineNumber = "730"
+            landmarkName = "getReportTypes()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -58,155 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.159861"
+            timestampString = "519797111.888356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "757"
-            endingLineNumber = "757"
-            landmarkName = "myPickerDidFinish(_:selectedItem:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.159933"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
-            landmarkName = "btnReport(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160002"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "init(reportType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.16007"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
-            landmarkName = "btnReport(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160136"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2503"
-            endingLineNumber = "2503"
-            landmarkName = "getReports(teamID:reportType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160229"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2665"
-            endingLineNumber = "2665"
-            landmarkName = "updateReportsInCoreData()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160299"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2298"
-            endingLineNumber = "2298"
-            landmarkName = "saveReport(_:reportTitle:reportDescription:reportType:systemReport:teamID:orientation:columnTitle1:columnSource1:columnWidth1:columnTitle2:columnSource2:columnWidth2:columnTitle3:columnSource3:columnWidth3:columnTitle4:columnSource4:columnWidth4:columnTitle5:columnSource5:columnWidth5:columnTitle6:columnSource6:columnWidth6:columnTitle7:columnSource7:columnWidth7:columnTitle8:columnSource8:columnWidth8:columnTitle9:columnSource9:columnWidth9:columnTitle10:columnSource10:columnWidth10:columnTitle11:columnSource11:columnWidth11:columnTitle12:columnSource12:columnWidth12:columnTitle13:columnSource13:columnWidth13:columnWidth14:columnTitle14:columnSource14:selectionCriteria1:selectionCriteria2:selectionCriteria3:selectionCriteria4:sortOrder1:sortOrder2:sortOrder3:sortOrder4:updateTime:updateType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160356"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2371"
-            endingLineNumber = "2371"
-            landmarkName = "saveReport(_:reportTitle:reportDescription:reportType:systemReport:teamID:orientation:columnTitle1:columnSource1:columnWidth1:columnTitle2:columnSource2:columnWidth2:columnTitle3:columnSource3:columnWidth3:columnTitle4:columnSource4:columnWidth4:columnTitle5:columnSource5:columnWidth5:columnTitle6:columnSource6:columnWidth6:columnTitle7:columnSource7:columnWidth7:columnTitle8:columnSource8:columnWidth8:columnTitle9:columnSource9:columnWidth9:columnTitle10:columnSource10:columnWidth10:columnTitle11:columnSource11:columnWidth11:columnTitle12:columnSource12:columnWidth12:columnTitle13:columnSource13:columnWidth13:columnWidth14:columnTitle14:columnSource14:selectionCriteria1:selectionCriteria2:selectionCriteria3:selectionCriteria4:sortOrder1:sortOrder2:sortOrder3:sortOrder4:updateTime:updateType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "519709422.160414"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2439"
-            endingLineNumber = "2439"
-            landmarkName = "saveReport(_:reportTitle:reportDescription:reportType:systemReport:teamID:orientation:columnTitle1:columnSource1:columnWidth1:columnTitle2:columnSource2:columnWidth2:columnTitle3:columnSource3:columnWidth3:columnTitle4:columnSource4:columnWidth4:columnTitle5:columnSource5:columnWidth5:columnTitle6:columnSource6:columnWidth6:columnTitle7:columnSource7:columnWidth7:columnTitle8:columnSource8:columnWidth8:columnTitle9:columnSource9:columnWidth9:columnTitle10:columnSource10:columnWidth10:columnTitle11:columnSource11:columnWidth11:columnTitle12:columnSource12:columnWidth12:columnTitle13:columnSource13:columnWidth13:columnWidth14:columnTitle14:columnSource14:selectionCriteria1:selectionCriteria2:selectionCriteria3:selectionCriteria4:sortOrder1:sortOrder2:sortOrder3:sortOrder4:updateTime:updateType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.160471"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "828"
-            endingLineNumber = "828"
+            startingLineNumber = "842"
+            endingLineNumber = "842"
             landmarkName = "displayReportFields()"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,43 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.160527"
+            timestampString = "519797111.891039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "827"
-            endingLineNumber = "827"
-            landmarkName = "displayReportFields()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.160583"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "829"
-            endingLineNumber = "829"
-            landmarkName = "displayReportFields()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/securityViewController.swift"
-            timestampString = "519709422.160641"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "830"
-            endingLineNumber = "830"
+            startingLineNumber = "857"
+            endingLineNumber = "857"
             landmarkName = "displayReportFields()"
             landmarkType = "7">
          </BreakpointContent>

@@ -114,8 +114,8 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
                 
                 cell.lblRole.text = currentTemplate.roles!.roles![indexPath.row].role
                 cell.txtNum.text = "\(currentTemplate.roles!.roles![indexPath.row].numRequired)"
-                displayTime(cell.btnStart, workingTime: currentTemplate.roles!.roles![indexPath.row].endTime)
-                displayTime(cell.btnEnd, workingTime: currentTemplate.roles!.roles![indexPath.row].startTime)
+                displayTime(cell.btnStart, workingTime: currentTemplate.roles!.roles![indexPath.row].startTime)
+                displayTime(cell.btnEnd, workingTime: currentTemplate.roles!.roles![indexPath.row].endTime)
 
                 for myItem in eventDayArray
                 {

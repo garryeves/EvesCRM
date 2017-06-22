@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.19" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.16"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -599,7 +599,7 @@
                                     <action selector="btnSelect:" destination="c4c-EF-mMl" eventType="touchUpInside" id="FHa-wk-Z9C"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="55W-vi-RUm">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="55W-vi-RUm" userLabel="lblReportType">
                                 <rect key="frame" x="20" y="320" width="94" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="94" id="3oi-g6-aKg"/>
@@ -608,7 +608,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bef-cO-t7G">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bef-cO-t7G" userLabel="lblReport">
                                 <rect key="frame" x="224" y="320" width="52" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="52" id="qa5-oE-poy"/>
@@ -762,6 +762,8 @@
                         <outlet property="lbl9" destination="WEN-ck-eYn" id="UcS-Jg-F4Z"/>
                         <outlet property="lblAlerts" destination="fZQ-va-1E9" id="aXC-Vn-DwU"/>
                         <outlet property="lblDropdown" destination="Xs8-wA-yO4" id="1GR-z0-zWL"/>
+                        <outlet property="lblReport" destination="Bef-cO-t7G" id="OqB-Rg-AHq"/>
+                        <outlet property="lblReportType" destination="55W-vi-RUm" id="eqv-ay-SpI"/>
                         <outlet property="lblYear" destination="Hqb-S8-rt9" id="Dge-6b-XS0"/>
                         <outlet property="navBar" destination="dyG-WE-EZ2" id="fjt-8V-Rlr"/>
                         <outlet property="navBarTitle" destination="pLV-mQ-f7h" id="AbZ-L0-dnr"/>

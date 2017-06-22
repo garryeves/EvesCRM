@@ -59,6 +59,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var alertTableHeight: NSLayoutConstraint!
     @IBOutlet weak var lblAlerts: UILabel!
     @IBOutlet weak var btnReportType: UIButton!
+    @IBOutlet weak var lblReportType: UILabel!
+    @IBOutlet weak var lblReport: UILabel!
     
     fileprivate var contractList: projects!
     fileprivate var alertList: alerts!
@@ -71,6 +73,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     fileprivate var reportString: String = ""
     fileprivate var reportDate1: Date = Date()
     fileprivate var reportDate2: Date = Date()
+    
+    fileprivate var firstRun: Bool = true
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -133,10 +137,14 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     override func viewDidAppear(_ animated: Bool)
     {
-        DispatchQueue.global().async
+        if !firstRun
         {
-            myDBSync.sync()
+            DispatchQueue.global().async
+            {
+                myDBSync.sync()
+            }
         }
+        firstRun = false
     }
     
     override func didReceiveMemoryWarning() {
@@ -412,28 +420,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     @IBAction func btnReportType(_ sender: UIButton)
     {
-        displayList.removeAll()
-        
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
-        {
-            switch myItem
-            {
-                case "People":
-                    if currentUser.checkPermission(hrRoleType) != noPermission
-                    {
-                        displayList.append(myItem)
-                    }
-                
-                case "Financial":
-                    if currentUser.checkPermission(financialsRoleType) != noPermission
-                    {
-                        displayList.append(myItem)
-                    }
-                
-                default:
-                    displayList.append(myItem)
-            }
-        }
+        displayList = getReportTypes()
         
         if displayList.count > 0
         {
@@ -715,6 +702,34 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
     }
     
+    func getReportTypes() -> [String]
+    {
+        var teamArray: [String] = Array()
+        
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
+        {
+            switch myItem
+            {
+                case "People":
+                    if currentUser.checkPermission(hrRoleType) != noPermission
+                    {
+                        teamArray.append(myItem)
+                    }
+                
+                case "Financial":
+                    if currentUser.checkPermission(financialsRoleType) != noPermission
+                    {
+                        teamArray.append(myItem)
+                    }
+                
+                default:
+                    teamArray.append(myItem)
+            }
+        }
+        
+        return teamArray
+    }
+    
     func buildAlerts()
     {
         if alertList == nil
@@ -822,265 +837,289 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     func displayReportFields()
     {
-        if currentReport != nil
-        {
-            if currentReport.systemReport
-            {
-                switch currentReport.reportName
-                {
-                    case reportContractForMonth:
-                        lblDropdown.text = "Month"
-                        lblYear.text = "Year"
-                        if btnDropdown.currentTitle == "Select"
-                        {
-                            tblData1.isHidden = true
-                        }
-                        else
-                        {
-                            tblData1.isHidden = false
-                        }
-                        
-                        lblDropdown.isHidden = false
-                        btnDropdown.isHidden = false
-                        btnSelect1.isHidden = true
-                        btnSelect2.isHidden = true
-                        lblYear.isHidden = false
-                        btnYear.isHidden = false
-                        
-                        populateDropdowns()
-                    
-                    case reportWagesForMonth:
-                        lblDropdown.text = "Month"
-                        lblYear.text = "Year"
-                        if btnDropdown.currentTitle == "Select"
-                        {
-                            tblData1.isHidden = true
-                        }
-                        else
-                        {
-                            tblData1.isHidden = false
-                        }
-                        
-                        lblDropdown.isHidden = false
-                        btnDropdown.isHidden = false
-                        btnSelect1.isHidden = true
-                        btnSelect2.isHidden = true
-                        lblYear.isHidden = false
-                        btnYear.isHidden = false
-                        
-                        populateDropdowns()
-                    
-                    case reportContractForYear:
-                        lblDropdown.text = "Month"
-                        lblYear.text = "Year"
-                        if btnDropdown.currentTitle == "Select"
-                        {
-                            tblData1.isHidden = true
-                        }
-                        else
-                        {
-                            tblData1.isHidden = false
-                        }
-                        
-                        lblDropdown.isHidden = true
-                        btnDropdown.isHidden = true
-                        btnSelect1.isHidden = true
-                        btnSelect2.isHidden = true
-                        lblYear.isHidden = false
-                        btnYear.isHidden = false
-                    
-                    case reportContractDates:
-                        lblDropdown.isHidden = false
-                        lblDropdown.text = "Start Date"
-                        lblYear.isHidden = false
-                        lblYear.text = "End Date"
-                        tblData1.isHidden = true
-                        btnDropdown.isHidden = true
-                        btnYear.isHidden = true
-                        btnSelect1.isHidden = false
-                        btnSelect2.isHidden = false
-                    
-                default:
-                    print("unknown entry displayReportFields - \(currentReport.reportName)")
-                }
-            }
-            else
-            {
-                lblDropdown.isHidden = true
-                lblYear.isHidden = true
-                tblData1.isHidden = true
-                btnDropdown.isHidden = true
-                btnYear.isHidden = true
-                btnSelect1.isHidden = true
-                btnSelect2.isHidden = true
-                
-                if currentReport.columnWidth1 > 0.0
-                {
-                    lbl1.isHidden = false
-                    lbl1.text = currentReport.columnTitle1
-                }
-                else
-                {
-                    lbl1.isHidden = true
-                }
-                
-                if currentReport.columnWidth2 > 0.0
-                {
-                    lbl2.isHidden = false
-                    lbl2.text = currentReport.columnTitle2
-                }
-                else
-                {
-                    lbl2.isHidden = true
-                }
-                
-                if currentReport.columnWidth3 > 0.0
-                {
-                    lbl3.isHidden = false
-                    lbl3.text = currentReport.columnTitle3
-                }
-                else
-                {
-                    lbl13.isHidden = true
-                }
-                
-                if currentReport.columnWidth4 > 0.0
-                {
-                    lbl4.isHidden = false
-                    lbl4.text = currentReport.columnTitle4
-                }
-                else
-                {
-                    lbl4.isHidden = true
-                }
-                
-                if currentReport.columnWidth5 > 0.0
-                {
-                    lbl5.isHidden = false
-                    lbl5.text = currentReport.columnTitle5
-                }
-                else
-                {
-                    lbl5.isHidden = true
-                }
-                
-                if currentReport.columnWidth6 > 0.0
-                {
-                    lbl6.isHidden = false
-                    lbl6.text = currentReport.columnTitle6
-                }
-                else
-                {
-                    lbl6.isHidden = true
-                }
-                
-                if currentReport.columnWidth7 > 0.0
-                {
-                    lbl7.isHidden = false
-                    lbl7.text = currentReport.columnTitle7
-                }
-                else
-                {
-                    lbl7.isHidden = true
-                }
-                
-                if currentReport.columnWidth8 > 0.0
-                {
-                    lbl8.isHidden = false
-                    lbl8.text = currentReport.columnTitle8
-                }
-                else
-                {
-                    lbl8.isHidden = true
-                }
-                
-                if currentReport.columnWidth9 > 0.0
-                {
-                    lbl9.isHidden = false
-                    lbl9.text = currentReport.columnTitle9
-                }
-                else
-                {
-                    lbl9.isHidden = true
-                }
-                
-                if currentReport.columnWidth10 > 0.0
-                {
-                    lbl10.isHidden = false
-                    lbl10.text = currentReport.columnTitle10
-                }
-                else
-                {
-                    lbl10.isHidden = true
-                }
-                
-                if currentReport.columnWidth11 > 0.0
-                {
-                    lbl11.isHidden = false
-                    lbl11.text = currentReport.columnTitle11
-                }
-                else
-                {
-                    lbl11.isHidden = true
-                }
-                
-                if currentReport.columnWidth12 > 0.0
-                {
-                    lbl12.isHidden = false
-                    lbl12.text = currentReport.columnTitle12
-                }
-                else
-                {
-                    lbl12.isHidden = true
-                }
-                
-                if currentReport.columnWidth13 > 0.0
-                {
-                    lbl13.isHidden = false
-                    lbl13.text = currentReport.columnTitle13
-                }
-                else
-                {
-                    lbl3.isHidden = true
-                }
-                
-                if currentReport.columnWidth14 > 0.0
-                {
-                    lbl14.isHidden = false
-                    lbl14.text = currentReport.columnTitle4
-                }
-                else
-                {
-                    lbl14.isHidden = true
-                }
-                
-            }
-        }
-        else
+        if getReportTypes().count == 0
         {
             lblDropdown.isHidden = true
-            lblDropdown.text = "Select"
             lblYear.isHidden = true
-            lblYear.text = "End Date"
             tblData1.isHidden = true
             btnDropdown.isHidden = true
             btnYear.isHidden = true
             btnSelect1.isHidden = true
             btnSelect2.isHidden = true
-            lbl1.isHidden = true
-            lbl2.isHidden = true
-            lbl3.isHidden = true
-            lbl4.isHidden = true
-            lbl5.isHidden = true
-            lbl6.isHidden = true
-            lbl7.isHidden = true
-            lbl8.isHidden = true
-            lbl9.isHidden = true
-            lbl10.isHidden = true
-            lbl11.isHidden = true
-            lbl12.isHidden = true
-            lbl13.isHidden = true
-            lbl14.isHidden = true
+            btnMaintainReports.isHidden = true
+            btnReport.isHidden = true
+            btnReportType.isHidden = true
+            lblReportType.isHidden = true
+            lblReport.isHidden = true
+        }
+        else
+        {
+            btnMaintainReports.isHidden = false
+            btnReport.isHidden = false
+            btnReportType.isHidden = false
+            lblReportType.isHidden = false
+            lblReport.isHidden = false
+            
+            if currentReport != nil
+            {
+                if currentReport.systemReport
+                {
+                    switch currentReport.reportName
+                    {
+                        case reportContractForMonth:
+                            lblDropdown.text = "Month"
+                            lblYear.text = "Year"
+                            if btnDropdown.currentTitle == "Select"
+                            {
+                                tblData1.isHidden = true
+                            }
+                            else
+                            {
+                                tblData1.isHidden = false
+                            }
+                            
+                            lblDropdown.isHidden = false
+                            btnDropdown.isHidden = false
+                            btnSelect1.isHidden = true
+                            btnSelect2.isHidden = true
+                            lblYear.isHidden = false
+                            btnYear.isHidden = false
+                            
+                            populateDropdowns()
+                        
+                        case reportWagesForMonth:
+                            lblDropdown.text = "Month"
+                            lblYear.text = "Year"
+                            if btnDropdown.currentTitle == "Select"
+                            {
+                                tblData1.isHidden = true
+                            }
+                            else
+                            {
+                                tblData1.isHidden = false
+                            }
+                            
+                            lblDropdown.isHidden = false
+                            btnDropdown.isHidden = false
+                            btnSelect1.isHidden = true
+                            btnSelect2.isHidden = true
+                            lblYear.isHidden = false
+                            btnYear.isHidden = false
+                            
+                            populateDropdowns()
+                        
+                        case reportContractForYear:
+                            lblDropdown.text = "Month"
+                            lblYear.text = "Year"
+                            if btnDropdown.currentTitle == "Select"
+                            {
+                                tblData1.isHidden = true
+                            }
+                            else
+                            {
+                                tblData1.isHidden = false
+                            }
+                            
+                            lblDropdown.isHidden = true
+                            btnDropdown.isHidden = true
+                            btnSelect1.isHidden = true
+                            btnSelect2.isHidden = true
+                            lblYear.isHidden = false
+                            btnYear.isHidden = false
+                        
+                        case reportContractDates:
+                            lblDropdown.isHidden = false
+                            lblDropdown.text = "Start Date"
+                            lblYear.isHidden = false
+                            lblYear.text = "End Date"
+                            tblData1.isHidden = true
+                            btnDropdown.isHidden = true
+                            btnYear.isHidden = true
+                            btnSelect1.isHidden = false
+                            btnSelect2.isHidden = false
+                        
+                    default:
+                        print("unknown entry displayReportFields - \(currentReport.reportName)")
+                    }
+                }
+                else
+                {
+                    lblDropdown.isHidden = true
+                    lblYear.isHidden = true
+                    tblData1.isHidden = true
+                    btnDropdown.isHidden = true
+                    btnYear.isHidden = true
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
+                    
+                    if currentReport.columnWidth1 > 0.0
+                    {
+                        lbl1.isHidden = false
+                        lbl1.text = currentReport.columnTitle1
+                    }
+                    else
+                    {
+                        lbl1.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth2 > 0.0
+                    {
+                        lbl2.isHidden = false
+                        lbl2.text = currentReport.columnTitle2
+                    }
+                    else
+                    {
+                        lbl2.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth3 > 0.0
+                    {
+                        lbl3.isHidden = false
+                        lbl3.text = currentReport.columnTitle3
+                    }
+                    else
+                    {
+                        lbl13.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth4 > 0.0
+                    {
+                        lbl4.isHidden = false
+                        lbl4.text = currentReport.columnTitle4
+                    }
+                    else
+                    {
+                        lbl4.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth5 > 0.0
+                    {
+                        lbl5.isHidden = false
+                        lbl5.text = currentReport.columnTitle5
+                    }
+                    else
+                    {
+                        lbl5.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth6 > 0.0
+                    {
+                        lbl6.isHidden = false
+                        lbl6.text = currentReport.columnTitle6
+                    }
+                    else
+                    {
+                        lbl6.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth7 > 0.0
+                    {
+                        lbl7.isHidden = false
+                        lbl7.text = currentReport.columnTitle7
+                    }
+                    else
+                    {
+                        lbl7.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth8 > 0.0
+                    {
+                        lbl8.isHidden = false
+                        lbl8.text = currentReport.columnTitle8
+                    }
+                    else
+                    {
+                        lbl8.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth9 > 0.0
+                    {
+                        lbl9.isHidden = false
+                        lbl9.text = currentReport.columnTitle9
+                    }
+                    else
+                    {
+                        lbl9.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth10 > 0.0
+                    {
+                        lbl10.isHidden = false
+                        lbl10.text = currentReport.columnTitle10
+                    }
+                    else
+                    {
+                        lbl10.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth11 > 0.0
+                    {
+                        lbl11.isHidden = false
+                        lbl11.text = currentReport.columnTitle11
+                    }
+                    else
+                    {
+                        lbl11.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth12 > 0.0
+                    {
+                        lbl12.isHidden = false
+                        lbl12.text = currentReport.columnTitle12
+                    }
+                    else
+                    {
+                        lbl12.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth13 > 0.0
+                    {
+                        lbl13.isHidden = false
+                        lbl13.text = currentReport.columnTitle13
+                    }
+                    else
+                    {
+                        lbl3.isHidden = true
+                    }
+                    
+                    if currentReport.columnWidth14 > 0.0
+                    {
+                        lbl14.isHidden = false
+                        lbl14.text = currentReport.columnTitle4
+                    }
+                    else
+                    {
+                        lbl14.isHidden = true
+                    }
+                    
+                }
+            }
+            else
+            {
+                lblDropdown.isHidden = true
+                lblDropdown.text = "Select"
+                lblYear.isHidden = true
+                lblYear.text = "End Date"
+                tblData1.isHidden = true
+                btnDropdown.isHidden = true
+                btnYear.isHidden = true
+                btnSelect1.isHidden = true
+                btnSelect2.isHidden = true
+                lbl1.isHidden = true
+                lbl2.isHidden = true
+                lbl3.isHidden = true
+                lbl4.isHidden = true
+                lbl5.isHidden = true
+                lbl6.isHidden = true
+                lbl7.isHidden = true
+                lbl8.isHidden = true
+                lbl9.isHidden = true
+                lbl10.isHidden = true
+                lbl11.isHidden = true
+                lbl12.isHidden = true
+                lbl13.isHidden = true
+                lbl14.isHidden = true
+            }
         }
     }
     

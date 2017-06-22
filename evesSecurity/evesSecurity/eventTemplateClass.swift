@@ -395,11 +395,16 @@ extension coreDatabase
     func getEventTemplateForSync(_ syncDate: Date) -> [EventTemplate]
     {
         let fetchRequest = NSFetchRequest<EventTemplate>(entityName: "EventTemplate")
+  
         
+        
+//let workingdate = Date().add(.hour, amount: -2)
+//        
+//        let predicate = NSPredicate(format: "(updateTime >= %@)", workingdate as CVarArg)
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
-        
+  
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
         do

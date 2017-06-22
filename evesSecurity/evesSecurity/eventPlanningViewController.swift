@@ -781,7 +781,7 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        if selectedItem > 0
+        if selectedItem >= 0
         {
             // We have a new object, with a selected item, so we can go ahead and create a new summary row
             switch source
