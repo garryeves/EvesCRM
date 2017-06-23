@@ -75,7 +75,7 @@ class eventTemplateHead: NSObject
     {
         super.init()
         
-        myTemplateID = myDatabaseConnection.getNextID("EventTemplateHead")
+        myTemplateID = myDatabaseConnection.getNextID("EventTemplateHead", teamID: teamID)
         myTeamID = teamID
         save()
     }

@@ -187,6 +187,12 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 clientList.clients[indexPath.row].delete()
                 refreshScreen()
             }
+            else if tableView == tblContracts
+            {
+                contractsList.projects[indexPath.row].delete()
+                contractsList = projects(clientID: selectedClient.clientID)
+                tblContracts.reloadData()
+            }
         }
     }
 

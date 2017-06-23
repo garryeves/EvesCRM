@@ -230,7 +230,7 @@ class address: NSObject
     {
         super.init()
         
-        myAddressID = myDatabaseConnection.getNextID("Address")
+        myAddressID = myDatabaseConnection.getNextID("Address", teamID: teamID)
         myTeamID = teamID
         
         save()

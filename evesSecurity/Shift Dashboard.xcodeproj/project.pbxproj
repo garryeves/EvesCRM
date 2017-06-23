@@ -294,13 +294,13 @@
 		3496532F1EC1F0A800210A46 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
 				34EEE5F11EECCDC50006B921 /* alertsClass.swift */,
 				34CEEA381EC2EB5E00F85A11 /* addressClass.swift */,
-				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
 				34CEEA421EC30B7700F85A11 /* Contacts.swift */,
 				34CEE9F11EC2C99C00F85A11 /* ContactDetails.swift */,
 				34CEE97F1EC2C41600F85A11 /* decodesClass.swift */,
+				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
+				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
 				3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */,
 				343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */,
 				343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */,

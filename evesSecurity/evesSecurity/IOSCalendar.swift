@@ -77,42 +77,42 @@ class iOSCalendar
     
     fileprivate func getEventsForDateRange() -> [EKEvent]
     {
-        var events: [EKEvent] = []
+        let events: [EKEvent] = []
         
-        let baseDate = Date()
-        
-        /* The event starts date */
-        //Calculate - Days * hours * mins * secs
-        
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
-        // This is string value so need to convert to integer, and subtract from 0 to get a negative
-        
-        let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
-        
-        let startDate = baseDate.addingTimeInterval(myStartDateValue)
-        
-        /* The end date */
-        //Calculate - Days * hours * mins * secs
-        
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
-        // This is string value so need to convert to integer
-        
-        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
-        
-        let endDate = baseDate.addingTimeInterval(myEndDateValue)
-        
-        /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEvents(
-            withStart: startDate,
-            end: endDate,
-            calendars: nil)
-        
-        /* Fetch all the events that fall between the starting and the ending dates */
-        
-        if globalEventStore.sources.count > 0
-        {
-            events = globalEventStore.events(matching: searchPredicate)
-        }
+//        let baseDate = Date()
+//        
+//        /* The event starts date */
+//        //Calculate - Days * hours * mins * secs
+//        
+//        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
+//        // This is string value so need to convert to integer, and subtract from 0 to get a negative
+//        
+//        let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+//        
+//        let startDate = baseDate.addingTimeInterval(myStartDateValue)
+//        
+//        /* The end date */
+//        //Calculate - Days * hours * mins * secs
+//        
+//        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+//        // This is string value so need to convert to integer
+//        
+//        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+//        
+//        let endDate = baseDate.addingTimeInterval(myEndDateValue)
+//        
+//        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+//        let searchPredicate = globalEventStore.predicateForEvents(
+//            withStart: startDate,
+//            end: endDate,
+//            calendars: nil)
+//        
+//        /* Fetch all the events that fall between the starting and the ending dates */
+//        
+//        if globalEventStore.sources.count > 0
+//        {
+//            events = globalEventStore.events(matching: searchPredicate)
+//        }
         return events
     }
     

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.19" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.16"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -60,7 +60,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TXd-ks-qFG" userLabel="tblContracts">
-                                <rect key="frame" x="195" y="331" width="175" height="653"/>
+                                <rect key="frame" x="195" y="331" width="175" height="633"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="PFF-9O-dVT"/>
@@ -98,7 +98,7 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B10-rA-Bja" userLabel="btnAddContract">
-                                <rect key="frame" x="295" y="994" width="92" height="30"/>
+                                <rect key="frame" x="295" y="974" width="92" height="30"/>
                                 <state key="normal" title="Add Contract"/>
                                 <connections>
                                     <action selector="btnAddContract:" destination="lPG-hE-jiD" eventType="touchUpInside" id="zRE-P7-uwP"/>
@@ -117,7 +117,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="YC8-ix-JSl" userLabel="tblRates">
-                                <rect key="frame" x="370" y="356" width="378" height="628"/>
+                                <rect key="frame" x="370" y="356" width="378" height="608"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellRates" id="VNQ-Ks-KBq" customClass="ratesListItem" customModule="Shift_Dashboard" customModuleProvider="target">
@@ -210,7 +210,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VyM-Xz-SRv" userLabel="btnAdd">
-                                <rect key="frame" x="470" y="994" width="99" height="30"/>
+                                <rect key="frame" x="470" y="974" width="99" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="99" id="dD6-J8-8Zi"/>
                                 </constraints>
@@ -270,7 +270,7 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fUD-mq-a6b" userLabel="tblClients">
-                                <rect key="frame" x="20" y="74" width="175" height="950"/>
+                                <rect key="frame" x="20" y="74" width="175" height="930"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="APV-kX-Raf"/>
@@ -353,8 +353,8 @@
                             <constraint firstItem="iRh-c5-6yP" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="10" id="bJJ-QQ-NDG"/>
                             <constraint firstItem="fUD-mq-a6b" firstAttribute="top" secondItem="pjb-2a-Kxl" secondAttribute="bottom" constant="10" id="bju-PW-4gZ"/>
                             <constraint firstItem="LTz-MK-W8Q" firstAttribute="leading" secondItem="TXd-ks-qFG" secondAttribute="trailing" constant="10" id="eZz-0j-yfc"/>
-                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="fUD-mq-a6b" secondAttribute="bottom" id="ea6-9d-vIJ"/>
-                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="B10-rA-Bja" secondAttribute="bottom" id="fRE-dd-5DF"/>
+                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="fUD-mq-a6b" secondAttribute="bottom" constant="20" id="ea6-9d-vIJ"/>
+                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="B10-rA-Bja" secondAttribute="bottom" constant="20" id="fRE-dd-5DF"/>
                             <constraint firstItem="Z7H-te-wOS" firstAttribute="leading" secondItem="1WK-tX-RGx" secondAttribute="trailing" id="hJf-9t-gYX"/>
                             <constraint firstItem="1WK-tX-RGx" firstAttribute="top" secondItem="56m-mF-H73" secondAttribute="bottom" constant="5" id="hae-E0-hty"/>
                             <constraint firstItem="qSW-h4-2gx" firstAttribute="top" secondItem="pjb-2a-Kxl" secondAttribute="bottom" constant="15" id="hxj-sU-h3n"/>
@@ -362,7 +362,7 @@
                             <constraint firstItem="VyM-Xz-SRv" firstAttribute="leading" secondItem="TXd-ks-qFG" secondAttribute="trailing" constant="100" id="oDo-dx-2Px"/>
                             <constraint firstItem="gZB-5U-vcP" firstAttribute="leading" secondItem="qSW-h4-2gx" secondAttribute="trailing" constant="5" id="oQv-gg-j2d"/>
                             <constraint firstItem="rpr-5B-Zew" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="10" id="p3G-ka-ogs"/>
-                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="VyM-Xz-SRv" secondAttribute="bottom" id="sIz-HM-dUu"/>
+                            <constraint firstItem="Qm7-wu-ImY" firstAttribute="top" secondItem="VyM-Xz-SRv" secondAttribute="bottom" constant="20" id="sIz-HM-dUu"/>
                             <constraint firstItem="1WK-tX-RGx" firstAttribute="leading" secondItem="LTz-MK-W8Q" secondAttribute="trailing" id="uMd-VT-wyJ"/>
                             <constraint firstItem="TXd-ks-qFG" firstAttribute="top" secondItem="vNQ-mF-JM8" secondAttribute="bottom" constant="10" id="vIL-Jc-6uS"/>
                             <constraint firstItem="fUD-mq-a6b" firstAttribute="leading" secondItem="IpU-sK-xGF" secondAttribute="leadingMargin" id="vhd-JL-0Dv"/>

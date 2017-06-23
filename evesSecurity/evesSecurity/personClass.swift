@@ -332,7 +332,7 @@ class person: NSObject
     {
         super.init()
         
-        myPersonID = myDatabaseConnection.getNextID("Person")
+        myPersonID = myDatabaseConnection.getNextID("Person", teamID: teamID)
         myTeamID = teamID
         
         save()

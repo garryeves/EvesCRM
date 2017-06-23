@@ -149,6 +149,15 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
+    {
+        if tableView == tblRoles
+        {
+            return UITableViewCellEditingStyle.delete
+        }
+        return UITableViewCellEditingStyle.none
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
         if tableView == tblRoles
@@ -518,7 +527,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     {
         let WEDate = workDay.getWeekEndingDate
         
-        let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", saveToCloud: false)
+        let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", teamID: teamID, saveToCloud: false)
         
         let newShift = shift(projectID: projectID, workDate: workDay, weekEndDate: WEDate, teamID: teamID, shiftLineID: shiftLineID, type: eventShiftType, saveToCloud: saveToCloud)
         newShift.shiftDescription = shiftDescription
@@ -810,20 +819,20 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         
         switch source
         {
-        case "startTime":
-            btnStart.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
+            case "startTime":
+                btnStart.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
 
-            shiftRecord.startTime = selectedDate
-            shiftRecord.save()
-            
-        case "endTime":
-            btnEnd.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
-            
-            shiftRecord.endTime = selectedDate
-            shiftRecord.save()
-            
-        default:
-            print("eventRoleItem myPickerDidFinish-Date got unexpected entry \(source)")
+                shiftRecord.startTime = selectedDate
+                shiftRecord.save()
+                
+            case "endTime":
+                btnEnd.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
+                
+                shiftRecord.endTime = selectedDate
+                shiftRecord.save()
+                
+            default:
+                print("eventRoleItem myPickerDidFinish-Date got unexpected entry \(source)")
         }
     }
 }

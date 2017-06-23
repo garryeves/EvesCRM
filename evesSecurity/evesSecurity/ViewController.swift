@@ -99,7 +99,7 @@ class ViewController: UIViewController, myCommunicationDelegate
     func loadMainScreen()
     {
         myDatabaseConnection.recordsProcessed = 0
-        
+myDatabaseConnection.setDecodeForTeamID()
         let myReachability = Reachability()
         if myReachability.isConnectedToNetwork()
         {

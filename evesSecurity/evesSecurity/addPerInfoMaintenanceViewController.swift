@@ -54,7 +54,29 @@ class addPerInfoMaintenanceViewController: UIViewController, UIPopoverPresentati
 
         return cell
     }
-
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
+    {
+        if tableView == tblInfo
+        {
+            return UITableViewCellEditingStyle.delete
+        }
+        return UITableViewCellEditingStyle.none
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if tableView == tblInfo
+        {
+            if editingStyle == .delete
+            {
+                addInfoRecords.personAdditionalInfos[indexPath.row].delete()
+                addInfoRecords = personAdditionalInfos(teamID: currentUser!.currentTeam!.teamID)
+                tblInfo.reloadData()
+            }
+        }
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "choices"
@@ -129,18 +151,13 @@ class personAddInfoItem: UITableViewCell
 {
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var lblType: UILabel!
-    @IBOutlet weak var btnRemove: UIButton!
-
+    
     var addInfoID: Int!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnRemove(_ sender: UIButton)
-    {
     }
 }
 

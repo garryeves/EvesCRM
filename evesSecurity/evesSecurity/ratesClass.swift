@@ -163,7 +163,7 @@ class rate: NSObject
     {
         super.init()
         
-        myRateID = myDatabaseConnection.getNextID("Rates")
+        myRateID = myDatabaseConnection.getNextID("Rates", teamID: teamID)
         myClientID = clientID
         myTeamID = teamID
         

@@ -462,7 +462,7 @@ class task: NSObject
     {
         super.init()
         
-        myTaskID = myDatabaseConnection.getNextID("Task")
+        myTaskID = myDatabaseConnection.getNextID("Task", teamID: teamID)
         
         myDueDate = getDefaultDate() as Date!
         myStartDate = getDefaultDate() as Date!
@@ -527,7 +527,7 @@ class task: NSObject
     {
         super.init()
         
-        myTaskID = myDatabaseConnection.getNextID("Task")
+        myTaskID = myDatabaseConnection.getNextID("Task", teamID: oldTask.teamID)
         myTitle = oldTask.title
         myDetails = oldTask.details
         myDueDate = dueDate
@@ -1455,7 +1455,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
+            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: teamID)
         }
         catch
         {

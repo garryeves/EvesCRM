@@ -12,11 +12,11 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getDecodeValue(_ codeKey: String) -> String
+    func getDecodeValue(_ codeKey: String, teamID: Int) -> [Decodes]
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         //     let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
-        let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\")")
+        let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") AND (teamID == \(teamID))")
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
@@ -24,19 +24,12 @@ extension coreDatabase
         do
         {
             let fetchResults = try objectContext.fetch(fetchRequest)
-            if fetchResults.count == 0
-            {
-                return ""
-            }
-            else
-            {
-                return fetchResults[0].decode_value!
-            }
+            return fetchResults
         }
         catch
         {
             print("Error occurred during execution: \(error)")
-            return ""
+            return []
         }
     }
     
@@ -68,11 +61,11 @@ extension coreDatabase
         }
     }
     
-    func getVisibleDecodes() -> [Decodes]
+    func getVisibleDecodes(teamID: Int) -> [Decodes]
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
-        let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         
@@ -90,11 +83,11 @@ extension coreDatabase
         }
     }
     
-    func getDecodes() -> [Decodes]
+    func getDecodes(teamID: Int) -> [Decodes]
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         
@@ -112,12 +105,14 @@ extension coreDatabase
         }
     }
  
-    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
+    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, teamID: Int, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        // first check to see if decode exists, if not we create
         var myDecode: Decodes!
         
-        if getDecodeValue(codeKey) == ""
+        // first check to see if decode exists, if not we create
+        let myDecodes = getDecodeValue(codeKey, teamID: teamID)
+        
+        if myDecodes.count == 0
         { // Add
             myDecode = Decodes(context: objectContext)
             
@@ -125,6 +120,7 @@ extension coreDatabase
             myDecode.decode_value = codeValue
             myDecode.decodeType = codeType
             myDecode.decode_privacy = decode_privacy
+            myDecode.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -139,38 +135,23 @@ extension coreDatabase
         }
         else
         { // Update
-            let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-            let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
-            
-            // Set the predicate on the fetch request
-            fetchRequest.predicate = predicate
-            
-            // Execute the fetch request, and cast the results to an array of  objects
-            do
-            {
-                let myDecodes = try objectContext.fetch(fetchRequest)
-                myDecode = myDecodes[0]
-                myDecode.decode_value = codeValue
-                myDecode.decodeType = codeType
-                myDecode.decode_privacy = decode_privacy
+            myDecode = myDecodes[0]
+            myDecode.decode_value = codeValue
+            myDecode.decodeType = codeType
+            myDecode.decode_privacy = decode_privacy
 
-                if updateType == "CODE"
+            if updateType == "CODE"
+            {
+                myDecode.updateTime =  NSDate()
+                if myDecode.updateType != "Add"
                 {
-                    myDecode.updateTime =  NSDate()
-                    if myDecode.updateType != "Add"
-                    {
-                        myDecode.updateType = "Update"
-                    }
-                }
-                else
-                {
-                    myDecode.updateTime = updateTime as NSDate
-                    myDecode.updateType = updateType
+                    myDecode.updateType = "Update"
                 }
             }
-            catch
+            else
             {
-                print("Error occurred during execution: \(error)")
+                myDecode.updateTime = updateTime as NSDate
+                myDecode.updateType = updateType
             }
         }
         
@@ -240,44 +221,45 @@ extension coreDatabase
     
     func setNextDeviceID()
     {
-        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-        let predicate = NSPredicate(format: "(decode_name == \"Device\") && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        var storeInt: Int = 1
-        
-        // Execute the fetch request, and cast the results to an array of  objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            if fetchResults.count > 0
-            {
-                // Increment table value by 1 and save back to database
-                storeInt = Int(fetchResults[0].decode_value!)! + 1
-            }
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            storeInt = 0
-        }
-        
-        if storeInt > 0
-        {
-            let myValue = "\(coreDatabaseName) Sync \(storeInt)"
-            
-            writeDefaultString(coreDatabaseName, value: myValue)
-
-            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private", updateCloud: false)
-        }
+        // Not doing private decodes at the moment so can delete this out
+//        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
+//        let predicate = NSPredicate(format: "(decode_name == \"Device\") && (updateType != \"Delete\")")
+//
+//        // Set the predicate on the fetch request
+//        fetchRequest.predicate = predicate
+//
+//        var storeInt: Int = 1
+//
+//        // Execute the fetch request, and cast the results to an array of  objects
+//        do
+//        {
+//            let fetchResults = try objectContext.fetch(fetchRequest)
+//            if fetchResults.count > 0
+//            {
+//                // Increment table value by 1 and save back to database
+//                storeInt = Int(fetchResults[0].decode_value!)! + 1
+//            }
+//        }
+//        catch
+//        {
+//            print("Error occurred during execution: \(error)")
+//            storeInt = 0
+//        }
+//
+//        if storeInt > 0
+//        {
+//            let myValue = "\(coreDatabaseName) Sync \(storeInt)"
+//
+//            writeDefaultString(coreDatabaseName, value: myValue)
+//
+//            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private", updateCloud: false)
+//        }
     }
 
-    func getNextID(_ tableName: String, saveToCloud: Bool = true, initialValue: Int = 1) -> Int
+    func getNextID(_ tableName: String, teamID: Int, saveToCloud: Bool = true, initialValue: Int = 1) -> Int
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-        let predicate = NSPredicate(format: "(decode_name == \"\(tableName)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decode_name == \"\(tableName)\") && (updateType != \"Delete\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -290,7 +272,7 @@ extension coreDatabase
             {
                 // Create table entry
                 let storeKey = "\(initialValue)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", updateCloud: saveToCloud)
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", teamID: teamID, updateCloud: saveToCloud)
                 return initialValue
             }
             else
@@ -299,7 +281,7 @@ extension coreDatabase
                 let storeint = Int(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", updateCloud: saveToCloud)
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", teamID: teamID, updateCloud: saveToCloud)
                 return storeint
             }
         }
@@ -343,7 +325,7 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@) AND (decode_privacy != \"Private\")", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -382,6 +364,64 @@ extension coreDatabase
         saveContext()
     }
     
+    private func updateSyncDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
+    {
+        var myDecode: Decodes!
+        
+        // first check to see if decode exists, if not we create
+        let myDecodes = getDecodeValue(codeKey, teamID: 0)
+        
+        if myDecodes.count > 0
+        { // Add
+            myDecode = Decodes(context: objectContext)
+            
+            myDecode.decode_name = codeKey
+            myDecode.decode_value = codeValue
+            myDecode.decodeType = codeType
+            myDecode.decode_privacy = decode_privacy
+            myDecode.teamID = 0
+            
+            if updateType == "CODE"
+            {
+                myDecode.updateTime =  NSDate()
+                myDecode.updateType = "Add"
+            }
+            else
+            {
+                myDecode.updateTime = updateTime as NSDate
+                myDecode.updateType = updateType
+            }
+        }
+        else
+        { // Update
+            myDecode = myDecodes[0]
+            myDecode.decode_value = codeValue
+            myDecode.decodeType = codeType
+            myDecode.decode_privacy = decode_privacy
+            
+            if updateType == "CODE"
+            {
+                myDecode.updateTime =  NSDate()
+                if myDecode.updateType != "Add"
+                {
+                    myDecode.updateType = "Update"
+                }
+            }
+            else
+            {
+                myDecode.updateTime = updateTime as NSDate
+                myDecode.updateType = updateType
+            }
+        }
+        
+        saveContext()
+        
+        if updateCloud
+        {
+            saveDecodeToCloud()
+        }
+    }
+    
     func setSyncDateforTable(tableName: String, syncDate: Date, updateCloud: Bool = true)
     {
         let myDateFormatter = DateFormatter()
@@ -390,7 +430,7 @@ extension coreDatabase
         
         let dateString = myDateFormatter.string(from: syncDate)
         
-        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private", updateCloud: updateCloud)
+        myDatabaseConnection.updateSyncDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private", updateCloud: updateCloud)
     }
     
     func getSyncDateForTable(tableName: String) -> Date
@@ -416,6 +456,29 @@ extension coreDatabase
 
         return syncDate
     }
+    
+    func setDecodeForTeamID()
+    {
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
+        let predicate = NSPredicate(format: "(teamID == 0) AND (decode_privacy != \"Private\")")
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                self.objectContext.delete(myItem as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
 }
 
 extension CloudKitInteraction
@@ -424,22 +487,19 @@ extension CloudKitInteraction
     {
         let syncDate = Date()
         
-//        for myTeam in userTeams(userID: currentUser.userID).UserTeams
-//        {
-            for myItem in myDatabaseConnection.getDecodesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Decodes"))
+        for myItem in myDatabaseConnection.getDecodesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Decodes"))
+        {
+            if myItem.decode_privacy == "Public"
             {
-                if myItem.decode_privacy == "Public"
-                {
-                    savePublicDecodesRecordToCloudKit(myItem)
-                }
-                else
-                {
-                    // At this moment we do not need to sync private decodes, as they are only device specific items
-    //                savePrivateDecodesRecordToCloudKit(myItem)
-                }
+                savePublicDecodesRecordToCloudKit(myItem)
             }
-            myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate, updateCloud: false)
-//        }
+            else
+            {
+                // At this moment we do not need to sync private decodes, as they are only device specific items
+//                savePrivateDecodesRecordToCloudKit(myItem)
+            }
+        }
+        myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate, updateCloud: false)
     }
 
     func updatePublicDecodesInCoreData()
@@ -485,7 +545,7 @@ extension CloudKitInteraction
     func savePublicDecodesRecordToCloudKit(_ sourceRecord: Decodes)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\") AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
         
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -671,6 +731,7 @@ extension CloudKitInteraction
                     todoRecord.setValue(sourceRecord.decodeType, forKey: "decodeType")
                     todoRecord.setValue(sourceRecord.decode_value, forKey: "decode_value")
                     todoRecord.setValue(sourceRecord.decode_privacy, forKey: "decode_privacy")
+                    todoRecord.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -724,6 +785,12 @@ extension CloudKitInteraction
             updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         var updateType = ""
         
         if sourceRecord.object(forKey: "updateType") != nil
@@ -738,7 +805,7 @@ extension CloudKitInteraction
         
         self.recordCount += 1
 
-        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, updateCloud: false, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, teamID: teamID, updateCloud: false, updateTime: updateTime, updateType: updateType)
         
         self.recordCount -= 1
     }

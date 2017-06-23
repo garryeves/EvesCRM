@@ -79,7 +79,7 @@ class personAdditionalInfo: NSObject
     {
         super.init()
         
-        myAddInfoID = myDatabaseConnection.getNextID("personAdditionalInfo")
+        myAddInfoID = myDatabaseConnection.getNextID("personAdditionalInfo", teamID: teamID)
         myTeamID = teamID
         
         save()

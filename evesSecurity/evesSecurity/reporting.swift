@@ -1217,7 +1217,7 @@ class report: NSObject
     init(teamID: Int)
     {
         myTeamID = teamID
-        myReportID = myDatabaseConnection.getNextID("Reports")
+        myReportID = myDatabaseConnection.getNextID("Reports", teamID: teamID)
         
     }
     

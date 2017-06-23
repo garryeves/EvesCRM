@@ -1006,7 +1006,7 @@ class shift: NSObject
     {
         super.init()
         
-        myShiftID = myDatabaseConnection.getNextID("Shifts", saveToCloud: saveToCloud)
+        myShiftID = myDatabaseConnection.getNextID("Shifts", teamID: teamID, saveToCloud: saveToCloud)
         myProjectID = projectID
         myTeamID = teamID
         myWeekEndDate = weekEndDate

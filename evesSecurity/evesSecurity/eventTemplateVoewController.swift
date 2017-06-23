@@ -422,27 +422,13 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         {
             startTime = selectedDate
             
-            if selectedDate == getDefaultDate()
-            {
-                btnStartTime.setTitle("Select", for: .normal)
-            }
-            else
-            {
-                displayTime(btnStartTime, workingTime: selectedDate)
-            }
+            displayTime(btnStartTime, workingTime: selectedDate)
         }
         else if source == "endTime"
         {
             endTime = selectedDate
             
-            if selectedDate == getDefaultDate()
-            {
-                btnEndTime.setTitle("Select", for: .normal)
-            }
-            else
-            {
-                displayTime(btnEndTime, workingTime: selectedDate)
-            }
+            displayTime(btnEndTime, workingTime: selectedDate)
         }
         checkCanAdd()
     }

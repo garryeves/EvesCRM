@@ -139,6 +139,24 @@ extension coreDatabase
                 myItem.updateType = updateType
             }
         }
+        else
+        {
+            myItem = myReturn[0]
+            
+            if updateType == "CODE"
+            {
+                myItem.updateTime =  NSDate()
+                if myItem.updateType != "Add"
+                {
+                    myItem.updateType = "Update"
+                }
+            }
+            else
+            {
+                myItem.updateTime = updateTime as NSDate
+                myItem.updateType = updateType
+            }
+        }
 
         saveContext()
 

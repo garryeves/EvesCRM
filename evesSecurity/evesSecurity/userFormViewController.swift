@@ -167,6 +167,15 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         }
     }
     
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
+    {
+        if tableView == tblUsers
+        {
+            return UITableViewCellEditingStyle.delete
+        }
+        return UITableViewCellEditingStyle.none
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
         if currentUser.checkPermission(adminRoleType) == writePermission

@@ -727,7 +727,7 @@ class project: NSObject // 10k level
     {
         super.init()
         
-        myProjectID = myDatabaseConnection.getNextID("Projects")
+        myProjectID = myDatabaseConnection.getNextID("Projects", teamID: teamID)
         
         // Set dates to a really daft value so that it stores into the database
         
@@ -1019,34 +1019,25 @@ class project: NSObject // 10k level
         }
     }
     
-    func delete() -> Bool
+    func delete()
     {
         if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
-            if myTasks.count > 0
-            {
-                return false
-            }
-            else
-            {
-                myProjectStatus = "Deleted"
-                save()
-                
-                // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
-                
-                // Go and see if another item has set as its predecessor
-                
-                let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
-                
-                if fromCurrentPredecessor > 0
-                {  // This item is a predecessor
-                    let tempSuccessor = project(projectID: fromCurrentPredecessor)
-                    tempSuccessor.predecessor = myPredecessor
-                }
-                return true
+            myProjectStatus = "Archived"
+            save()
+            
+            // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
+            
+            // Go and see if another item has set as its predecessor
+            
+            let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
+            
+            if fromCurrentPredecessor > 0
+            {  // This item is a predecessor
+                let tempSuccessor = project(projectID: fromCurrentPredecessor)
+                tempSuccessor.predecessor = myPredecessor
             }
         }
-        return true
     }
 }
 
@@ -1196,7 +1187,6 @@ extension coreDatabase
     
     func getProjectSuccessor(_ projectID: Int)->Int
     {
-        
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
@@ -1212,7 +1202,14 @@ extension coreDatabase
         do
         {
             let fetchResults = try objectContext.fetch(fetchRequest)
-            return Int(fetchResults[0].projectID)
+            if fetchResults.count > 0
+            {
+                return Int(fetchResults[0].projectID)
+            }
+            else
+            {
+                return 0
+            }
         }
         catch
         {
@@ -1755,7 +1752,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
+            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: teamID)
         }
         catch
         {

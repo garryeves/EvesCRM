@@ -150,7 +150,7 @@ class client: NSObject
     {
         super.init()
         
-        myClientID = myDatabaseConnection.getNextID("Client")
+        myClientID = myDatabaseConnection.getNextID("Client", teamID: teamID)
         
         myTeamID = teamID
         
