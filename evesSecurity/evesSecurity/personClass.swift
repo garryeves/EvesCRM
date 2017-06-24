@@ -148,7 +148,7 @@ class person: NSObject
     fileprivate var myPersonID: Int = 0
     fileprivate var myClientID: Int = 0
     fileprivate var myProjectID: Int = 0
-    fileprivate var myName: String = ""
+    fileprivate var myName: String = "Name"
     fileprivate var myGender: String = ""
     fileprivate var myNote: String = ""
     fileprivate var myDob: Date = getDefaultDate()
@@ -825,7 +825,7 @@ extension CloudKitInteraction
 {
     func savePersonToCloudKit()
     {
-        for myItem in myDatabaseConnection.getPersonForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Person"))
+        for myItem in myDatabaseConnection.getPersonForSync(getSyncDateForTable(tableName: "Person"))
         {
             savePersonRecordToCloudKit(myItem)
         }
@@ -833,7 +833,7 @@ extension CloudKitInteraction
     
     func updatePersonInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Person") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Person") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Person", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

@@ -364,99 +364,6 @@ extension coreDatabase
         saveContext()
     }
     
-    private func updateSyncDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        var myDecode: Decodes!
-        
-        // first check to see if decode exists, if not we create
-        let myDecodes = getDecodeValue(codeKey, teamID: 0)
-        
-        if myDecodes.count > 0
-        { // Add
-            myDecode = Decodes(context: objectContext)
-            
-            myDecode.decode_name = codeKey
-            myDecode.decode_value = codeValue
-            myDecode.decodeType = codeType
-            myDecode.decode_privacy = decode_privacy
-            myDecode.teamID = 0
-            
-            if updateType == "CODE"
-            {
-                myDecode.updateTime =  NSDate()
-                myDecode.updateType = "Add"
-            }
-            else
-            {
-                myDecode.updateTime = updateTime as NSDate
-                myDecode.updateType = updateType
-            }
-        }
-        else
-        { // Update
-            myDecode = myDecodes[0]
-            myDecode.decode_value = codeValue
-            myDecode.decodeType = codeType
-            myDecode.decode_privacy = decode_privacy
-            
-            if updateType == "CODE"
-            {
-                myDecode.updateTime =  NSDate()
-                if myDecode.updateType != "Add"
-                {
-                    myDecode.updateType = "Update"
-                }
-            }
-            else
-            {
-                myDecode.updateTime = updateTime as NSDate
-                myDecode.updateType = updateType
-            }
-        }
-        
-        saveContext()
-        
-        if updateCloud
-        {
-            saveDecodeToCloud()
-        }
-    }
-    
-    func setSyncDateforTable(tableName: String, syncDate: Date, updateCloud: Bool = true)
-    {
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = .full
-        myDateFormatter.timeStyle = .full
-        
-        let dateString = myDateFormatter.string(from: syncDate)
-        
-        myDatabaseConnection.updateSyncDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private", updateCloud: updateCloud)
-    }
-    
-    func getSyncDateForTable(tableName: String) -> Date
-    {
-        let syncDateText = getSyncDecodeValue(myDBSync.getSyncString(tableName))
-        var syncDate: Date = Date()
-        let myDateFormatter = DateFormatter()
-        
-        if syncDateText == ""
-        {
-            myDateFormatter.dateStyle = DateFormatter.Style.short
-            myDateFormatter.timeStyle = .none
-            
-            syncDate = myDateFormatter.date(from: "01/01/15")!
-        }
-        else
-        {
-            myDateFormatter.dateStyle = .full
-            myDateFormatter.timeStyle = .full
-            
-            syncDate = myDateFormatter.date(from: syncDateText)!
-        }
-
-        return syncDate
-    }
-    
     func setDecodeForTeamID()
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
@@ -487,7 +394,7 @@ extension CloudKitInteraction
     {
         let syncDate = Date()
         
-        for myItem in myDatabaseConnection.getDecodesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Decodes"))
+        for myItem in myDatabaseConnection.getDecodesForSync(getSyncDateForTable(tableName: "Decodes"))
         {
             if myItem.decode_privacy == "Public"
             {
@@ -499,7 +406,7 @@ extension CloudKitInteraction
 //                savePrivateDecodesRecordToCloudKit(myItem)
             }
         }
-        myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate, updateCloud: false)
+        setSyncDateforTable(tableName: "Decodes", syncDate: syncDate)
     }
 
     func updatePublicDecodesInCoreData()

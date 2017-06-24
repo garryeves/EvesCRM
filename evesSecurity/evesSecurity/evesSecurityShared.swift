@@ -96,7 +96,7 @@ extension DBSync
         
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Team", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -114,7 +114,7 @@ extension DBSync
         myCloudDB.updatePublicDecodesInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Decode", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -132,7 +132,7 @@ extension DBSync
         myCloudDB.updateAddressInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Addresses", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Addresses", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -149,7 +149,7 @@ extension DBSync
         myCloudDB.updateClientInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Clients", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Clients", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -166,7 +166,7 @@ extension DBSync
         myCloudDB.updateContactInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Contacts", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Contacts", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -183,7 +183,7 @@ extension DBSync
         myCloudDB.updateDropdownsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -200,7 +200,7 @@ extension DBSync
         myCloudDB.updatePersonInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Person", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Person", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -217,7 +217,7 @@ extension DBSync
         myCloudDB.updatePersonAdditionalInfoInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -234,7 +234,7 @@ extension DBSync
         myCloudDB.updatePersonAddInfoEntryInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -251,7 +251,7 @@ extension DBSync
         myCloudDB.updateProjectsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Projects", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -268,7 +268,7 @@ extension DBSync
         myCloudDB.updateRatesInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Rates", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Rates", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -285,7 +285,7 @@ extension DBSync
         myCloudDB.updateShiftsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Shifts", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "Shifts", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -302,7 +302,7 @@ extension DBSync
         myCloudDB.updateUserRolesInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -319,7 +319,7 @@ extension DBSync
         myCloudDB.updateEventTemplateInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -336,7 +336,7 @@ extension DBSync
         myCloudDB.updateEventTemplateHeadInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -353,7 +353,7 @@ extension DBSync
         myCloudDB.updateUserTeamsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: false)
+            setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true
@@ -370,7 +370,7 @@ extension DBSync
         myCloudDB.updateReportsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "Reports", syncDate: syncDate, updateCloud: true)
+            setSyncDateforTable(tableName: "Reports", syncDate: syncDate)
         }
         
         myCloudDB.saveOK = true

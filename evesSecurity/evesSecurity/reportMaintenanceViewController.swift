@@ -156,9 +156,14 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     {
         displayList.removeAll()
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
+        if currentUser.checkPermission(financialsRoleType) != noPermission
         {
-            displayList.append(myItem)
+            displayList.append(financialReportType)
+        }
+        
+        if currentUser.checkPermission(hrRoleType) != noPermission
+        {
+            displayList.append(peopleReportType)
         }
         
         if displayList.count > 0
@@ -269,7 +274,7 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
                 print("Report maintenance btnReport - hit default - \(sender)")
         }
         
-        if currentReport.reportType == reportPeopleType
+        if currentReport.reportType == peopleReportType
         {
             populatePeopleFields()
             
@@ -430,7 +435,7 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     {
         if currentReport != nil
         {
-            if btnType.currentTitle! == reportPeopleType
+            if btnType.currentTitle! == peopleReportType
             {
                 btnReport1.isHidden = false
                 btnReport3.isHidden = true

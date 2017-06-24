@@ -89,7 +89,7 @@ class clients: NSObject
 class client: NSObject
 {
     fileprivate var myClientID: Int = 0
-    fileprivate var myClientName: String = ""
+    fileprivate var myClientName: String = "New Client"
     fileprivate var myClientContact: Int = 0
     fileprivate var myClientNote: String = ""
     fileprivate var myTeamID: Int = 0
@@ -493,7 +493,7 @@ extension CloudKitInteraction
 {
     func saveClientToCloudKit()
     {
-        for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
+        for myItem in myDatabaseConnection.getClientsForSync(getSyncDateForTable(tableName: "Clients"))
         {
             saveClientRecordToCloudKit(myItem)
         }
@@ -501,7 +501,7 @@ extension CloudKitInteraction
     
     func updateClientInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Clients") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Clients") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

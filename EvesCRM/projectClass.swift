@@ -321,7 +321,7 @@ class project: NSObject // 10k level
 {
     fileprivate var myProjectEndDate: Date!
     fileprivate var myProjectID: Int = 0
-    fileprivate var myProjectName: String = ""
+    fileprivate var myProjectName: String = "New Contract"
     fileprivate var myProjectStartDate: Date!
     fileprivate var myProjectStatus: String = ""
     fileprivate var myReviewFrequency: Int = 0
@@ -1838,7 +1838,7 @@ extension CloudKitInteraction
 {
     func saveProjectsToCloudKit()
     {
-        for myItem in myDatabaseConnection.getProjectsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
+        for myItem in myDatabaseConnection.getProjectsForSync(getSyncDateForTable(tableName: "Projects"))
         {
             saveProjectsRecordToCloudKit(myItem)
         }
@@ -1846,7 +1846,7 @@ extension CloudKitInteraction
 
     func updateProjectsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         

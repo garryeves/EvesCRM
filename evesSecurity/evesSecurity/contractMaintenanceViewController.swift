@@ -297,10 +297,9 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     {
         displayList.removeAll()
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "ProjectType"))!
-        {
-            displayList.append(myItem)
-        }
+        displayList.append(eventProjectType)
+        displayList.append(regularProjectType)
+        displayList.append(salesProjectType)
         
         if displayList.count > 0
         {

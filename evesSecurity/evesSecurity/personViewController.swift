@@ -578,7 +578,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         let currentName = workingPerson.name
         let newName = txtName.text!
         
-        if currentName != "" && newName != currentName
+        if (currentName != "" && currentName != "Name") && newName != currentName
         {
             let alert = UIAlertController(title: "Change Name", message:
                 "Change name from \(currentName) to \(txtName.text!)", preferredStyle: UIAlertControllerStyle.alert)
@@ -621,9 +621,31 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             alert.addAction(noOption)
             self.present(alert, animated: false, completion: nil)
         }
-        else if workingPerson.name == "" && newName != ""
+        else if (workingPerson.name == "" || workingPerson.name == "Name") && (newName != "" && newName != "Name")
         {
             workingPerson.name = newName
+            
+            if postAction == "refresh"
+            {
+                self.refreshScreen()
+            }
+            else if postAction == "exit"
+            {
+                self.dismiss(animated: true, completion: nil)
+                self.communicationDelegate?.refreshScreen!()
+            }
+            else
+            {
+                self.tblPeople.reloadData()
+            }
+        }
+        else
+        {
+            if postAction == "exit"
+            {
+                self.dismiss(animated: true, completion: nil)
+                self.communicationDelegate?.refreshScreen!()
+            }
         }
     }
     
@@ -665,6 +687,14 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblShifts.isHidden = true
         lblRoster.isHidden = true
         switchRoster.isHidden = true
+        if currentUser.checkPermission(hrRoleType) == writePermission
+        {
+            btnAdd.isEnabled = true
+        }
+        else
+        {
+            btnAdd.isEnabled = false
+        }
     }
     
     func showFields()
@@ -687,6 +717,15 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblShifts.isHidden = false
         lblRoster.isHidden = false
         switchRoster.isHidden = false
+        
+        if currentUser.checkPermission(hrRoleType) == writePermission
+        {
+            btnAdd.isEnabled = true
+        }
+        else
+        {
+           btnAdd.isEnabled = false
+        }
     }
     
     func keyboardWillShow(_ notification: Notification)

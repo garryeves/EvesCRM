@@ -1513,7 +1513,7 @@ extension CloudKitInteraction
 {
     func saveTaskToCloudKit()
     {     
-        for myItem in myDatabaseConnection.getTaskForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Task"))
+        for myItem in myDatabaseConnection.getTaskForSync(getSyncDateForTable(tableName: "Task"))
         {
             saveTaskRecordToCloudKit(myItem)
         }
@@ -1521,7 +1521,7 @@ extension CloudKitInteraction
 
     func updateTaskInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Task") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Task") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         

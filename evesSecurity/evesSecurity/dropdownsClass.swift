@@ -430,9 +430,11 @@ extension coreDatabase
         // first delete the unneeded ones
         let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
         
+        
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "((dropDownType == \"Project\") || (dropDownType == \"Stages\")) AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "((dropDownType == 'ProjectType') OR (dropDownType == 'Reports') OR (dropDownType == 'RoleAccess') OR (dropDownType == 'RoleType') OR (dropDownType ==  'ShiftType') OR (dropDownType == 'TeamState')) AND (updateType != \"Delete\")")
+        
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -599,15 +601,6 @@ extension coreDatabase
             print("Error occurred during execution: D \(error.localizedDescription)")
         }
         saveContext()
-        
-        
-        
-        
-        
-        
-        
-        
-        
     }
 }
 
@@ -615,7 +608,7 @@ extension CloudKitInteraction
 {
     func saveDropdownsToCloudKit()
     {
-        for myItem in myDatabaseConnection.getDropdownsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))
+        for myItem in myDatabaseConnection.getDropdownsForSync(getSyncDateForTable(tableName: "Dropdowns"))
         {
             saveDropdownsRecordToCloudKit(myItem)
         }
@@ -623,7 +616,7 @@ extension CloudKitInteraction
     
     func updateDropdownsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Dropdowns") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

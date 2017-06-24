@@ -467,7 +467,7 @@ extension CloudKitInteraction
 {
     func saveEventTemplateToCloudKit()
     {
-        for myItem in myDatabaseConnection.getEventTemplateForSync(myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplate"))
+        for myItem in myDatabaseConnection.getEventTemplateForSync(getSyncDateForTable(tableName: "EventTemplate"))
         {
             saveEventTemplateRecordToCloudKit(myItem)
         }
@@ -475,7 +475,7 @@ extension CloudKitInteraction
     
     func updateEventTemplateInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplate") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "EventTemplate") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "EventTemplate", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

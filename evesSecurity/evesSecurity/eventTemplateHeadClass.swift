@@ -376,7 +376,7 @@ extension CloudKitInteraction
 {
     func saveEventTemplateHeadToCloudKit()
     {
-        for myItem in myDatabaseConnection.getEventTemplateHeadForSync(myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplateHead"))
+        for myItem in myDatabaseConnection.getEventTemplateHeadForSync(getSyncDateForTable(tableName: "EventTemplateHead"))
         {
             saveEventTemplateHeadRecordToCloudKit(myItem)
         }
@@ -384,7 +384,7 @@ extension CloudKitInteraction
     
     func updateEventTemplateHeadInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplateHead") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "EventTemplateHead") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

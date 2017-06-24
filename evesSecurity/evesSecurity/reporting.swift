@@ -19,7 +19,8 @@ let reportContractForYear = "Contract Profit for Year"
 let reportEventPlan = "Event Plan"
 let reportContractDates = "Contract between Dates"
 
-let reportPeopleType = "People"
+let financialReportType = "Financial"
+let peopleReportType = "People"
 
 let shareExclutionArray = [ UIActivityType.addToReadingList,
                             //UIActivityType.airDrop,
@@ -1129,7 +1130,7 @@ class report: NSObject
         {
             retVal = false
         }
-        else if myReportType == reportPeopleType
+        else if myReportType == peopleReportType
         {
             for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
             {
@@ -1169,7 +1170,7 @@ class report: NSObject
         {
             retVal = false
         }
-        else if myReportType == reportPeopleType
+        else if myReportType == peopleReportType
         {
             for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
             {
@@ -1218,7 +1219,6 @@ class report: NSObject
     {
         myTeamID = teamID
         myReportID = myDatabaseConnection.getNextID("Reports", teamID: teamID)
-        
     }
     
     init(reportID: Int)
@@ -1775,7 +1775,7 @@ class report: NSObject
         // Execute the query associated with the report, and run it
         myLines.removeAll()
         
-        if reportType == reportPeopleType
+        if reportType == peopleReportType
         {
             if mySelectionCriteria1 != ""
             {
@@ -1832,7 +1832,7 @@ class report: NSObject
             {
                 // Apply a sort order
                 
-                if myReportType == reportPeopleType
+                if myReportType == peopleReportType
                 {
                     if mySortOrder1 == "Name"
                     {
@@ -2651,7 +2651,7 @@ extension CloudKitInteraction
 {
     func saveReportsToCloudKit()
     {
-        for myItem in myDatabaseConnection.getReportsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Reports"))
+        for myItem in myDatabaseConnection.getReportsForSync(getSyncDateForTable(tableName: "Reports"))
         {
             saveReportsRecordToCloudKit(myItem)
         }
@@ -2659,7 +2659,7 @@ extension CloudKitInteraction
     
     func updateReportsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Reports") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Reports") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "reports", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

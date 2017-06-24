@@ -424,7 +424,7 @@ extension CloudKitInteraction
 {
     func saveUserRolesToCloudKit()
     {
-        for myItem in myDatabaseConnection.getUserRolesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "UserRoles"))
+        for myItem in myDatabaseConnection.getUserRolesForSync(getSyncDateForTable(tableName: "UserRoles"))
         {
             saveUserRolesRecordToCloudKit(myItem)
         }
@@ -432,7 +432,7 @@ extension CloudKitInteraction
     
     func updateUserRolesInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserRoles") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "UserRoles") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)

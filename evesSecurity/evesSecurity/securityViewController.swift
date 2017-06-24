@@ -706,27 +706,16 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         var teamArray: [String] = Array()
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
+        if currentUser.checkPermission(financialsRoleType) != noPermission
         {
-            switch myItem
-            {
-                case "People":
-                    if currentUser.checkPermission(hrRoleType) != noPermission
-                    {
-                        teamArray.append(myItem)
-                    }
-                
-                case "Financial":
-                    if currentUser.checkPermission(financialsRoleType) != noPermission
-                    {
-                        teamArray.append(myItem)
-                    }
-                
-                default:
-                    teamArray.append(myItem)
-            }
+            teamArray.append(financialReportType)
         }
         
+        if currentUser.checkPermission(hrRoleType) != noPermission
+        {
+            teamArray.append(peopleReportType)
+        }
+
         return teamArray
     }
     

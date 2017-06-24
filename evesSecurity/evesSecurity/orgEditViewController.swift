@@ -157,10 +157,9 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     {
         displayList.removeAll()
         
-        for myItem in (workingOrganisation?.getDropDown(dropDownType: "TeamState"))!
-        {
-            displayList.append(myItem)
-        }
+        displayList.append(openTeamState)
+        displayList.append(holdTeamState)
+        displayList.append(closedTeamState)
         
         if displayList.count > 0
         {

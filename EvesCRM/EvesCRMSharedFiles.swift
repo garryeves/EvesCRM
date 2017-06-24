@@ -91,6 +91,15 @@ func writeDefaultInt(_ keyName: String, value: Int)
     defaults.synchronize()
 }
 
+func writeDefaultDate(_ keyName: String, value: Date)
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    defaults.set(value, forKey: keyName)
+    
+    defaults.synchronize()
+}
+
 func readDefaultString(_ keyName: String) -> String
 {
     let defaults = UserDefaults(suiteName: defaultsName)!
@@ -119,6 +128,23 @@ func readDefaultInt(_ keyName: String) -> Int
     }
 }
 
+func readDefaultDate(_ keyName: String) -> Date
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    if defaults.object(forKey: keyName) != nil
+    {
+        let tempDate = defaults.object(forKey: keyName) as? Date
+        return tempDate!
+    }
+    else
+    {
+        let dateStringFormatter = DateFormatter()
+        dateStringFormatter.dateFormat = "yyyy-MM-dd"
+        return dateStringFormatter.date(from: "2016-01-01")!
+    }
+}
+
 func removeDefaultString(_ keyName: String)
 {
     let defaults = UserDefaults(suiteName: defaultsName)!
@@ -126,6 +152,16 @@ func removeDefaultString(_ keyName: String)
     defaults.removeObject(forKey: keyName)
     
     defaults.synchronize()
+}
+
+func setSyncDateforTable(tableName: String, syncDate: Date)
+{
+    writeDefaultDate(tableName, value: syncDate)
+}
+
+func getSyncDateForTable(tableName: String) -> Date
+{
+    return readDefaultDate(tableName)
 }
 
 struct TableData

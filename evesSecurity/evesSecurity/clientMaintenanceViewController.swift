@@ -296,6 +296,18 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         lblStaff.isHidden = true
         lblClient.isHidden = true
         lblGP.isHidden = true
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
+        {
+            btnAdd.isEnabled = true
+            btnAddClient.isEnabled = true
+            btnAddContract.isEnabled = true
+        }
+        else
+        {
+            btnAdd.isEnabled = false
+            btnAddClient.isEnabled = false
+            btnAddContract.isEnabled = false
+        }
     }
     
     func showFields()
@@ -317,6 +329,18 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         lblStaff.isHidden = false
         lblClient.isHidden = false
         lblGP.isHidden = false
+        if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
+        {
+            btnAdd.isEnabled = true
+            btnAddClient.isEnabled = true
+            btnAddContract.isEnabled = true
+        }
+        else
+        {
+            btnAdd.isEnabled = false
+            btnAddClient.isEnabled = false
+            btnAddContract.isEnabled = false
+        }
     }
     
     func refreshScreen()

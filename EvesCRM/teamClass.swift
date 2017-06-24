@@ -21,6 +21,12 @@ let calloutShiftType = "On Call"
 let overtimeShiftType = "Overtime"
 let regularShiftType = "Regular"
 
+let openTeamState = "Open"
+let holdTeamState = "On Hold"
+let closedTeamState = "Closed"
+
+let organisationTeamType = "Organisation"
+
 class teams: NSObject
 {
     private var myTeams: [team] = Array()
@@ -308,8 +314,8 @@ class team: NSObject
         notificationCenter.removeObserver(NotificationTeamCountQueryDone)
         
         myTeamID = myCloudDB.teamCount() + 1
-        myStatus = "Open"
-        myType = "Organisation"
+        myStatus = openTeamState
+        myType = organisationTeamType
         
         // Now lets call to create the team in cloudkit
 
@@ -338,8 +344,6 @@ class team: NSObject
         
         save(false)
         
-        populateTeamStateDropDown()
-        sleep(1)
         populateRolesDropDown()
         sleep(1)
         populateProjectStageDropDown()
@@ -348,36 +352,16 @@ class team: NSObject
         sleep(1)
         populatePrivacyDropDown()
         sleep(1)
-        populateRoleTypesDropDown()
-        sleep(1)
-        populateRoleAccessDropDown()
-        sleep(1)
         populateAddressDropDown()
         sleep(1)
         populateContactsDropDown()
         sleep(1)
-        populateProjectTypeDropDown()
-        sleep(1)
         populateShowRoles()
-        sleep(1)
-        populateShiftTypeDropDown()
-        sleep(1)
-        populateReportsDropdown()
         sleep(1)
         populateReports()
         sleep(1)
 
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
-    }
-    
-    private func populateTeamStateDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "Open", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "OnHold", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "Closed", teamID: myTeamID)
-        usleep(500)
     }
     
     private func populateRolesDropDown()
@@ -456,20 +440,6 @@ class team: NSObject
         usleep(500)
     }
     
-    private func populateShiftTypeDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: shiftShiftType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: eventShiftType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: calloutShiftType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: overtimeShiftType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: regularShiftType, teamID: myTeamID)
-        usleep(500)
-    }
-    
     private func populatePrivacyDropDown()
     {
         myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Private", teamID: myTeamID)
@@ -478,16 +448,6 @@ class team: NSObject
         usleep(500)
     }
     
-    private func populateRoleAccessDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "None", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Read", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Write", teamID: myTeamID)
-        usleep(500)
-    }
-
     private func populateAddressDropDown()
     {
         myDatabaseConnection.saveDropdowns("Address", dropdownValue: "Home", teamID: myTeamID)
@@ -512,16 +472,6 @@ class team: NSObject
         usleep(500)
     }
     
-    private func populateProjectTypeDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Event Project", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Regular Project", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Sales Project", teamID: myTeamID)
-        usleep(500)
-    }
-    
     private func populateShowRoles()
     {
         myDatabaseConnection.saveDropdowns("Event Roles", dropdownValue: "1st Aid", teamID: myTeamID)
@@ -537,32 +487,6 @@ class team: NSObject
         myDatabaseConnection.saveDropdowns("Event Roles", dropdownValue: "Steward", teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("Event Roles", dropdownValue: "Team Lead", teamID: myTeamID)
-        usleep(500)
-    }
-    
-    func populateRoleTypesDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: adminRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: rosteringRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: invoicingRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: financialsRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: hrRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: salesRoleType, teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: pmRoleType, teamID: myTeamID)
-        usleep(500)
-    }
-
-    private func populateReportsDropdown()
-    {
-        myDatabaseConnection.saveDropdowns("Reports", dropdownValue: "Financial", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("Reports", dropdownValue: "People", teamID: myTeamID)
         usleep(500)
     }
     
@@ -1164,7 +1088,7 @@ extension CloudKitInteraction
     
     func saveTeamToCloudKit()
     {
-        for myItem in myDatabaseConnection.getTeamsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Team"))
+        for myItem in myDatabaseConnection.getTeamsForSync(getSyncDateForTable(tableName: "Team"))
         {
             saveTeamRecordToCloudKit(myItem)
         }
@@ -1172,7 +1096,7 @@ extension CloudKitInteraction
     
     func updateTeamInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Team") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", getSyncDateForTable(tableName: "Team") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
