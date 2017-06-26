@@ -262,6 +262,25 @@ class team: NSObject
         }
     }
     
+    var subscriptionDateString: String
+    {
+        get
+        {
+            if mySubscriptionDate == nil
+            {
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: Date())
+            }
+            else
+            {
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: mySubscriptionDate)
+            }
+        }
+    }
+    
     var subscriptionLevel: Int
     {
         get
@@ -394,7 +413,7 @@ class team: NSObject
         usleep(500)
         myDatabaseConnection.saveDropdowns("Event Project", dropdownValue: "Completed", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Event Project", dropdownValue: "Archived", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Event Project", dropdownValue: archivedProjectStatus, teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("Event Project", dropdownValue: "On Hold", teamID: myTeamID)
         usleep(500)
@@ -413,7 +432,7 @@ class team: NSObject
         usleep(500)
         myDatabaseConnection.saveDropdowns("Regular Project", dropdownValue: "Completed", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Regular Project", dropdownValue: "Archived", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Regular Project", dropdownValue: archivedProjectStatus, teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("Regular Project", dropdownValue: "On Hold", teamID: myTeamID)
         usleep(500)
@@ -434,7 +453,7 @@ class team: NSObject
         usleep(500)
         myDatabaseConnection.saveDropdowns("Sales Project", dropdownValue: "Contract Not Won", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Sales Project", dropdownValue: "Archived", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Sales Project", dropdownValue: archivedProjectStatus, teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("Sales Project", dropdownValue: "On Hold", teamID: myTeamID)
         usleep(500)

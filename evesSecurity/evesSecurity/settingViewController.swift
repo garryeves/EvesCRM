@@ -16,6 +16,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnDropbown: UIButton!
     @IBOutlet weak var btnSwitchUsers: UIButton!
+    @IBOutlet weak var btnRestore: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -66,6 +67,12 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     {
         let dropdownEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "dropdownMaintenance") as! dropdownMaintenanceViewController
         self.present(dropdownEditViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnRestore(_ sender: UIButton)
+    {
+        let deletedItemsViewControl = self.storyboard?.instantiateViewController(withIdentifier: "securityDeletedItems") as! securityDeletedItemsViewController
+        self.present(deletedItemsViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnSwitchUsers(_ sender: UIButton)
@@ -133,12 +140,14 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
             btnTeam.isEnabled = true
             btnPerAddInfo.isEnabled = true
             btnDropbown.isEnabled = true
+            btnRestore.isEnabled = true
         }
         else
         {
             btnTeam.isEnabled = false
             btnPerAddInfo.isEnabled = false
             btnDropbown.isEnabled = false
+            btnRestore.isEnabled = false
         }
     }
 }

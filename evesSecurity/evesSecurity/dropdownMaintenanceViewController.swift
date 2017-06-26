@@ -110,7 +110,7 @@ class dropdownMaintenanceViewController: UIViewController, UITableViewDataSource
         {
             if editingStyle == .delete
             {
-                if valueList.dropdowns[indexPath.row].dropdownValue != "Archived"
+                if valueList.dropdowns[indexPath.row].dropdownValue != archivedProjectStatus
                 {
                     valueList.dropdowns[indexPath.row].delete()
                     refreshScreen()
@@ -118,7 +118,7 @@ class dropdownMaintenanceViewController: UIViewController, UITableViewDataSource
                 else
                 {
                     let alert = UIAlertController(title: "Dropdown Maintenance", message:
-                        "You can not delete the Archived value.  This is a System Required value.", preferredStyle: .alert)
+                        "You can not delete the \(archivedProjectStatus) value.  This is a System Required value.", preferredStyle: .alert)
                     
                     let yesOption = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                     

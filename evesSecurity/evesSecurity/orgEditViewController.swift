@@ -19,12 +19,15 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     @IBOutlet weak var txtTaxNo: UITextField!
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnSave: UIBarButtonItem!
-
+    @IBOutlet weak var lblSubscription: UILabel!
+    @IBOutlet weak var btnRenewal: UIButton!
+    
     private var newUserCreated: Bool = false
     private var displayList: [String] = Array()
     
     var workingOrganisation: team?
     var communicationDelegate: myCommunicationDelegate?
+    
     @IBOutlet weak var btnStatus: UIButton!
     
     override func viewDidLoad()
@@ -88,6 +91,12 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             btnUsers.isEnabled = true
             btnStatus.isEnabled = true
             btnStatus.setTitle(workingOrganisation!.status, for: .normal)
+            
+            
+            notificationCenter.addObserver(self, selector: #selector(self.loadSubscriptionData), name: NotificationUserCountQueryDone, object: nil)
+            
+            myCloudDB.getUserCount()
+            loadSubscriptionData()
         }
         
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -125,6 +134,13 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             communicationDelegate?.userCreated!(currentUser, teamID: workingOrganisation!.teamID)
         }
     }
+    
+    @IBAction func btnRenewal(_ sender: UIButton)
+    {
+        let renewViewControl = loginStoryboard.instantiateViewController(withIdentifier: "renewalView") as! IAPViewController
+        self.present(renewViewControl, animated: true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -259,6 +275,15 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         if deviceIdiom == .pad
         {
             bottomContraint.constant = CGFloat(20)
+        }
+    }
+    
+    func loadSubscriptionData()
+    {
+        notificationCenter.removeObserver(NotificationUserCountQueryDone)
+        DispatchQueue.main.async
+        {
+            self.lblSubscription.text = "Using \(myCloudDB.userCount()) of \(self.workingOrganisation!.subscriptionLevel) users.  Your subscription will renew on \(self.workingOrganisation!.subscriptionDateString)"
         }
     }
     

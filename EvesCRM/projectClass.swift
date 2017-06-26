@@ -19,6 +19,8 @@ let alertProjectNoStartOrEnd = "project no start or end"
 let alertProjectNoStart = "project no start"
 let alertProjectNoEnd = "project no end"
 
+let archivedProjectStatus = "Archived"
+
 struct monthlyFinancialsStruct
 {
     var month: String
@@ -477,7 +479,7 @@ class project: NSObject // 10k level
         {
             myProjectStatus = newValue
             
-            if newValue == "Archived"
+            if newValue == archivedProjectStatus
             {
                 checkForRepeat()
             }
@@ -744,7 +746,7 @@ class project: NSObject // 10k level
     {
         super.init()
         
-        // GRE whatever calls projects should check to make sure it is not marked as "Archived", as we are not deleting Projects, only marking them as archived
+        // GRE whatever calls projects should check to make sure it is not marked as archivedProjectStatus, as we are not deleting Projects, only marking them as archivedProjectStatus
         let myProjects = myDatabaseConnection.getProjectDetails(projectID)
         
         for myProject in myProjects
@@ -1023,7 +1025,7 @@ class project: NSObject // 10k level
     {
         if currentUser.checkPermission(pmRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
-            myProjectStatus = "Archived"
+            myProjectStatus = archivedProjectStatus
             save()
             
             // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
@@ -1137,7 +1139,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (areaID == \(GTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (areaID == \(GTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
@@ -1272,11 +1274,11 @@ extension coreDatabase
         {
             if type == ""
             {
-                predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+                predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID))")
             }
             else
             {
-                predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+                predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID))")
             }
             
             // Set the predicate on the fetch request
@@ -1325,7 +1327,7 @@ extension coreDatabase
         
         let tempDate = Date().add(.day, amount: startWeeksAhead * 7)
         
-        let predicate = NSPredicate(format: "(type == \"\(eventProjectType)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate <= %@)", tempDate as CVarArg)
+        let predicate = NSPredicate(format: "(type == \"\(eventProjectType)\") AND (projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate <= %@)", tempDate as CVarArg)
             
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1358,7 +1360,7 @@ extension coreDatabase
         {
             var predicate: NSPredicate
 
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND ((projectStartDate == nil) OR (projectStartDate <= %@) OR (projectStartDate == %@)) AND ((projectEndDate == nil) OR (projectEndDate >= %@) OR (projectEndDate == %@))", Date() as CVarArg, getDefaultDate() as CVarArg, Date() as CVarArg, getDefaultDate() as CVarArg)
+            predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND ((projectStartDate == nil) OR (projectStartDate <= %@) OR (projectStartDate == %@)) AND ((projectEndDate == nil) OR (projectEndDate >= %@) OR (projectEndDate == %@))", Date() as CVarArg, getDefaultDate() as CVarArg, Date() as CVarArg, getDefaultDate() as CVarArg)
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -1398,11 +1400,11 @@ extension coreDatabase
         
         if type == ""
         {
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (clientID == \(clientID))")
         }
         else
         {
-            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (clientID == \(clientID))")
         }
             // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1427,7 +1429,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate >= %@) AND (projectEndDate <= %@)", startDate as CVarArg, endDate as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate >= %@) AND (projectEndDate <= %@)", startDate as CVarArg, endDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1452,7 +1454,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type = \"\")")
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type = \"\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1477,7 +1479,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1502,7 +1504,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate != %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate != %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1527,7 +1529,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate != %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (teamID == \(teamID)) AND (projectStartDate != %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1552,7 +1554,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type != \"\(eventProjectType)\")")
+        let predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type != \"\(eventProjectType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1568,6 +1570,49 @@ extension coreDatabase
             print("Error occurred during execution: \(error)")
             return []
         }
+    }
+    
+    func getDeletedProjects(_ teamID: Int)->[Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "((updateType == \"Delete\") OR (projectStatus == \"\(archivedProjectStatus)\")) AND (teamID == \(teamID))")
+        
+        let sortDescriptor = NSSortDescriptor(key: "updateTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error ocurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func restoreProject(_ projectID: Int)
+    {
+        for myItem in getProjectDetails(projectID)
+        {
+            if myItem.projectStatus == archivedProjectStatus
+            {
+                myItem.projectStatus = "Open"
+            }
+            
+            myItem.updateType = "Update"
+            myItem.updateTime = NSDate()
+        }
+        saveContext()
     }
     
     func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String, updateTime: Date =  Date(), updateType: String = "CODE")

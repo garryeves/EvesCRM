@@ -397,7 +397,7 @@ func writeRowToArray(_ displayText: String, table: inout [TableData], targetObje
 //        {
 //            let myDetails = myDatabaseConnection.getProjectDetails(Int(myProject.projectID))
 //        
-//            if myDetails[0].projectStatus != "Archived"
+//            if myDetails[0].projectStatus != archivedProjectStatus
 //            {
 //                titleText = myDetails[0].projectName!
 //                titleText += " : "

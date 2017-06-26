@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -213,7 +213,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jfb-aI-r6m" userLabel="txtNotes">
-                                <rect key="frame" x="91" y="224" width="637" height="730"/>
+                                <rect key="frame" x="91" y="224" width="637" height="680"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -282,6 +282,22 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ey-gk-eKo" userLabel="lblSubscription">
+                                <rect key="frame" x="20" y="929" width="588" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X5V-RE-C8G" userLabel="btnRenewal">
+                                <rect key="frame" x="628" y="924" width="120" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="dNo-Hl-n4p"/>
+                                </constraints>
+                                <state key="normal" title="Set up Renewal"/>
+                                <connections>
+                                    <action selector="btnRenewal:" destination="BL0-sa-lTT" eventType="touchUpInside" id="xC8-PN-Qqk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -301,20 +317,25 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                             <constraint firstItem="hrc-VN-1O1" firstAttribute="top" secondItem="sY4-D3-tTY" secondAttribute="bottom" constant="20" id="JJa-Gw-kWh"/>
                             <constraint firstItem="MBC-PD-JlK" firstAttribute="centerX" secondItem="nBh-lo-hSX" secondAttribute="centerX" id="KV4-DQ-0pu"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ewj-fb-Z9O" secondAttribute="trailing" constant="20" id="Kpa-1j-pkj"/>
+                            <constraint firstItem="MBC-PD-JlK" firstAttribute="top" secondItem="X5V-RE-C8G" secondAttribute="bottom" constant="20" id="N8u-qf-fz1"/>
                             <constraint firstItem="sY4-D3-tTY" firstAttribute="leading" secondItem="4uz-9j-Atp" secondAttribute="trailing" constant="5" id="OpH-5d-MbN"/>
                             <constraint firstItem="wf7-1A-aXq" firstAttribute="top" secondItem="8Bh-ZS-1t0" secondAttribute="bottom" constant="25" id="P3W-lb-iUM"/>
                             <constraint firstItem="sY4-D3-tTY" firstAttribute="top" secondItem="8Bh-ZS-1t0" secondAttribute="bottom" constant="20" id="R0o-e3-Aie"/>
-                            <constraint firstItem="MBC-PD-JlK" firstAttribute="top" secondItem="Jfb-aI-r6m" secondAttribute="bottom" constant="20" id="RVH-ol-j8t"/>
+                            <constraint firstItem="X5V-RE-C8G" firstAttribute="top" secondItem="Jfb-aI-r6m" secondAttribute="bottom" constant="20" id="R8f-hE-ps6"/>
                             <constraint firstItem="wf7-1A-aXq" firstAttribute="leading" secondItem="sY4-D3-tTY" secondAttribute="trailing" constant="10" id="TXW-GR-B2o"/>
                             <constraint firstItem="EnC-Tu-qmt" firstAttribute="top" secondItem="sY4-D3-tTY" secondAttribute="bottom" constant="25" id="YmM-SA-P9Z"/>
                             <constraint firstItem="8Bh-ZS-1t0" firstAttribute="leading" secondItem="0SA-9q-wzJ" secondAttribute="trailing" constant="5" id="dsK-Xy-1fv"/>
+                            <constraint firstItem="1Ey-gk-eKo" firstAttribute="leading" secondItem="nBh-lo-hSX" secondAttribute="leading" constant="20" id="ef2-jY-Orm"/>
                             <constraint firstAttribute="trailingMargin" secondItem="4zf-C3-z8g" secondAttribute="trailing" constant="20" id="f42-wR-09S"/>
                             <constraint firstItem="Ewj-fb-Z9O" firstAttribute="top" secondItem="8Bh-ZS-1t0" secondAttribute="bottom" constant="20" id="fGQ-sW-tqM"/>
                             <constraint firstItem="Rt8-j4-FBe" firstAttribute="leading" secondItem="nBh-lo-hSX" secondAttribute="leadingMargin" id="hdD-8z-CnG"/>
                             <constraint firstItem="Jfb-aI-r6m" firstAttribute="top" secondItem="hrc-VN-1O1" secondAttribute="bottom" constant="20" id="jJJ-QM-QF2"/>
+                            <constraint firstItem="X5V-RE-C8G" firstAttribute="leading" secondItem="1Ey-gk-eKo" secondAttribute="trailing" constant="20" id="lc3-DZ-tug"/>
                             <constraint firstItem="0SA-9q-wzJ" firstAttribute="leading" secondItem="nBh-lo-hSX" secondAttribute="leadingMargin" constant="20" id="oHR-AD-ZzI"/>
                             <constraint firstItem="8Bh-ZS-1t0" firstAttribute="top" secondItem="Rt8-j4-FBe" secondAttribute="bottom" constant="10" id="oP3-uw-E8i"/>
+                            <constraint firstAttribute="trailing" secondItem="X5V-RE-C8G" secondAttribute="trailing" constant="20" id="okX-HA-ArM"/>
                             <constraint firstItem="Rt8-j4-FBe" firstAttribute="top" secondItem="5dF-iM-ioz" secondAttribute="bottom" id="puA-EV-rwl"/>
+                            <constraint firstItem="1Ey-gk-eKo" firstAttribute="top" secondItem="Jfb-aI-r6m" secondAttribute="bottom" constant="25" id="sOn-Ey-UtY"/>
                             <constraint firstItem="4zf-C3-z8g" firstAttribute="width" secondItem="hrc-VN-1O1" secondAttribute="width" id="svx-56-asW"/>
                             <constraint firstItem="4zf-C3-z8g" firstAttribute="top" secondItem="sY4-D3-tTY" secondAttribute="bottom" constant="20" id="uwv-Rr-Fem"/>
                             <constraint firstItem="Llm-L4-9ud" firstAttribute="leading" secondItem="nBh-lo-hSX" secondAttribute="leadingMargin" constant="20" id="wIj-Ed-LTE"/>
@@ -325,9 +346,11 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                     <connections>
                         <outlet property="bottomContraint" destination="H1p-Ix-kEv" id="3bC-2P-K1l"/>
                         <outlet property="btnBack" destination="EJE-vT-JNf" id="cSn-Ov-QGA"/>
+                        <outlet property="btnRenewal" destination="X5V-RE-C8G" id="oUl-5w-Y3o"/>
                         <outlet property="btnSave" destination="SZX-KA-5ci" id="5F8-KL-l6E"/>
                         <outlet property="btnStatus" destination="Ewj-fb-Z9O" id="Fix-Ge-ZhB"/>
                         <outlet property="btnUsers" destination="MBC-PD-JlK" id="fZa-wj-7Qd"/>
+                        <outlet property="lblSubscription" destination="1Ey-gk-eKo" id="Bru-5J-kME"/>
                         <outlet property="txtCompanyNo" destination="hrc-VN-1O1" id="6dw-wu-mlD"/>
                         <outlet property="txtExternalID" destination="sY4-D3-tTY" id="kc9-7D-tO2"/>
                         <outlet property="txtNotes" destination="Jfb-aI-r6m" id="gyb-47-jtu"/>
@@ -494,7 +517,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="swe-1V-xkf" id="zE7-af-ogx">
-                                            <rect key="frame" x="0.0" y="0.0" width="200" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5P-L2-xuo">
@@ -565,14 +588,14 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 </constraints>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellRoles" id="Wb0-Bf-9Cw" customClass="userPermissions" customModule="Shift_Dashboard" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="210" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="260" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="Wb0-Bf-9Cw" id="sTU-Lm-SSK">
-                                            <rect key="frame" x="0.0" y="0.0" width="210" height="43.5"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Wb0-Bf-9Cw" id="sTU-Lm-SSK">
+                                            <rect key="frame" x="0.0" y="0.0" width="260" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtM-qd-Dpl" userLabel="lblRole">
-                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="43.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtM-qd-Dpl" userLabel="lblRole">
+                                                    <rect key="frame" x="0.0" y="0.0" width="150" height="43.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="150" id="V5K-xh-SX3"/>
                                                     </constraints>
@@ -580,8 +603,8 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MG4-dL-bIL" userLabel="btnPermission">
-                                                    <rect key="frame" x="105" y="0.0" width="100" height="43.5"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MG4-dL-bIL" userLabel="btnPermission">
+                                                    <rect key="frame" x="155" y="0.0" width="100" height="43.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="100" id="fj6-T5-1tQ"/>
                                                     </constraints>
@@ -720,7 +743,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nmX-tn-Fcf">
-                                <rect key="frame" x="40" y="519" width="226.5" height="41"/>
+                                <rect key="frame" x="40" y="519" width="225.5" height="41"/>
                                 <string key="text">Password hint 
 (in case you forget password)</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -728,7 +751,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zoY-25-zg2" userLabel="txtHint">
-                                <rect key="frame" x="271.5" y="514" width="456.5" height="30"/>
+                                <rect key="frame" x="270.5" y="514" width="457.5" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -835,7 +858,7 @@ This passowrd is only valid on this device.  If you forget the password ther
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zGR-57-yRS" id="EhZ-zq-x9b">
-                                            <rect key="frame" x="0.0" y="0.0" width="200" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jkh-SM-T95" userLabel="lblName">
@@ -870,7 +893,7 @@ This passowrd is only valid on this device.  If you forget the password ther
                                         <rect key="frame" x="0.0" y="28" width="508" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="38F-Wl-hqJ" id="rnc-ic-beQ">
-                                            <rect key="frame" x="0.0" y="0.0" width="508" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="508" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tsf-M8-xEc" userLabel="lblName">
@@ -958,6 +981,140 @@ This passowrd is only valid on this device.  If you forget the password ther
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OkA-vK-DVA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2370.3125" y="116.60156249999999"/>
+        </scene>
+        <!--IAP View-->
+        <scene sceneID="ZQl-Eb-7ze">
+            <objects>
+                <viewController storyboardIdentifier="renewalView" id="ULs-tW-Awr" userLabel="IAP View" customClass="IAPViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="V6q-Iu-pUJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="W3B-Xn-vYM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4r9-Rg-xr6">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qly-YS-Fsb">
+                                <rect key="frame" x="20" y="20" width="728" height="44"/>
+                                <items>
+                                    <navigationItem title="Purchase Subscription" id="7m1-5n-u8e">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="0FC-jo-09X" userLabel="btnBack">
+                                            <connections>
+                                                <action selector="btnBack:" destination="ULs-tW-Awr" id="rpu-HT-8Jk"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n4X-1j-39U" userLabel="tblIAPs">
+                                <rect key="frame" x="40" y="110" width="688" height="793"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellIAP" id="uaj-sX-PQx" customClass="IAPItem" customModule="Shift_Dashboard" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="688" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uaj-sX-PQx" id="QgY-Ak-ErY">
+                                            <rect key="frame" x="0.0" y="0.0" width="688" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t9M-zZ-ELD" userLabel="lblDescription">
+                                                    <rect key="frame" x="8" y="8" width="482" height="27.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lmo-1e-E0F" userLabel="btnSubscribe">
+                                                    <rect key="frame" x="610" y="8" width="70" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="70" id="4Gz-jU-p8e"/>
+                                                    </constraints>
+                                                    <state key="normal" title="Subscribe"/>
+                                                    <connections>
+                                                        <action selector="btnSubscribe:" destination="uaj-sX-PQx" eventType="touchUpInside" id="gIz-8i-i3z"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fsU-OQ-zsY" userLabel="lblCost">
+                                                    <rect key="frame" x="500" y="8" width="100" height="27"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="100" id="BVY-fa-gyp"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="fsU-OQ-zsY" firstAttribute="top" secondItem="QgY-Ak-ErY" secondAttribute="topMargin" id="9jV-oN-Iam"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="t9M-zZ-ELD" secondAttribute="bottom" id="Alz-vu-Fvb"/>
+                                                <constraint firstItem="t9M-zZ-ELD" firstAttribute="top" secondItem="QgY-Ak-ErY" secondAttribute="topMargin" id="Mc2-Wx-8mV"/>
+                                                <constraint firstItem="lmo-1e-E0F" firstAttribute="top" secondItem="QgY-Ak-ErY" secondAttribute="topMargin" id="WYW-Ug-gQW"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="lmo-1e-E0F" secondAttribute="bottom" id="XCQ-m8-RXI"/>
+                                                <constraint firstItem="lmo-1e-E0F" firstAttribute="leading" secondItem="fsU-OQ-zsY" secondAttribute="trailing" constant="10" id="bPA-hQ-uar"/>
+                                                <constraint firstItem="fsU-OQ-zsY" firstAttribute="leading" secondItem="t9M-zZ-ELD" secondAttribute="trailing" constant="10" id="kBj-o8-4BO"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="fsU-OQ-zsY" secondAttribute="bottom" id="lTy-NQ-lB1"/>
+                                                <constraint firstItem="t9M-zZ-ELD" firstAttribute="leading" secondItem="QgY-Ak-ErY" secondAttribute="leadingMargin" id="wAB-5y-S9l"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="lmo-1e-E0F" secondAttribute="trailing" id="wEJ-0e-kbQ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="btnSubscribe" destination="lmo-1e-E0F" id="GvD-fb-t5f"/>
+                                            <outlet property="lblCost" destination="fsU-OQ-zsY" id="UMB-OI-zoo"/>
+                                            <outlet property="lblDescription" destination="t9M-zZ-ELD" id="pwM-kv-OvL"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="ULs-tW-Awr" id="6Bl-EU-Ntn"/>
+                                    <outlet property="delegate" destination="ULs-tW-Awr" id="4ah-hn-K4C"/>
+                                </connections>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IEr-2K-KGD">
+                                <rect key="frame" x="50" y="84" width="88" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cost" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boR-bR-msa">
+                                <rect key="frame" x="538" y="84" width="100" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="Ul7-E8-sCe"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subscriptions will auto-renewal unless you Cancel them" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C8S-sz-VqR">
+                                <rect key="frame" x="266" y="953" width="426" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="boR-bR-msa" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="IEr-2K-KGD" secondAttribute="trailing" constant="10" id="0od-Od-X3u"/>
+                            <constraint firstItem="IEr-2K-KGD" firstAttribute="leading" secondItem="4r9-Rg-xr6" secondAttribute="leadingMargin" constant="30" id="7jW-SM-apM"/>
+                            <constraint firstItem="qly-YS-Fsb" firstAttribute="leading" secondItem="4r9-Rg-xr6" secondAttribute="leadingMargin" id="FZE-Ry-NJi"/>
+                            <constraint firstItem="IEr-2K-KGD" firstAttribute="top" secondItem="qly-YS-Fsb" secondAttribute="bottom" constant="20" id="Kbn-Eu-kJZ"/>
+                            <constraint firstItem="n4X-1j-39U" firstAttribute="leading" secondItem="4r9-Rg-xr6" secondAttribute="leadingMargin" constant="20" id="Ku1-AW-xWp"/>
+                            <constraint firstItem="qly-YS-Fsb" firstAttribute="top" secondItem="V6q-Iu-pUJ" secondAttribute="bottom" id="P35-8G-HRc"/>
+                            <constraint firstItem="C8S-sz-VqR" firstAttribute="top" secondItem="n4X-1j-39U" secondAttribute="bottom" constant="50" id="ZEd-dj-JFS"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="boR-bR-msa" secondAttribute="trailing" constant="110" id="csF-Bc-iHA"/>
+                            <constraint firstItem="boR-bR-msa" firstAttribute="top" secondItem="qly-YS-Fsb" secondAttribute="bottom" constant="20" id="dbK-su-cTl"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qly-YS-Fsb" secondAttribute="trailing" id="leo-MX-bgg"/>
+                            <constraint firstItem="W3B-Xn-vYM" firstAttribute="top" secondItem="C8S-sz-VqR" secondAttribute="bottom" constant="50" id="mdk-mM-Gk1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="n4X-1j-39U" secondAttribute="trailing" constant="20" id="oaK-Sw-0xP"/>
+                            <constraint firstItem="C8S-sz-VqR" firstAttribute="leading" secondItem="4r9-Rg-xr6" secondAttribute="leadingMargin" constant="246" id="uxe-eF-elP"/>
+                            <constraint firstItem="n4X-1j-39U" firstAttribute="top" secondItem="IEr-2K-KGD" secondAttribute="bottom" constant="5" id="zcB-cW-JTI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tblIAPs" destination="n4X-1j-39U" id="bUh-LY-fWh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G1V-Tu-Mvz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3044.53125" y="117.18749999999999"/>
         </scene>
     </scenes>
 </document>

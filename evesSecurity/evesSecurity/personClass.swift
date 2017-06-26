@@ -680,6 +680,44 @@ extension coreDatabase
         }
     }
     
+    func getDeletedPeople(_ teamID: Int)->[Person]
+    {
+        let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType == \"Delete\") AND (teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "updateTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func restorePerson(_ personID: Int)
+    {
+        for myItem in getPersonDetails(personID)
+        {
+            myItem.updateType = "Update"
+            myItem.updateTime = NSDate()
+        }
+        saveContext()
+    }
+    
     func resetAllPerson()
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")

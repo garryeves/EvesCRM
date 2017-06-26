@@ -207,7 +207,7 @@ class client: NSObject
             
             for myProject in projects(clientID: myClientID).projects
             {
-                myProject.projectStatus = "Archived"
+                myProject.projectStatus = archivedProjectStatus
             }
             
             // Now delete the client
@@ -349,7 +349,44 @@ extension coreDatabase
             return []
         }
     }
-
+    
+    func getDeletedClients(_ teamID: Int) -> [Clients]
+    {
+        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (updateType == \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "updateTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func restoreClient(_ clientID: Int)
+    {
+        for myItem in getClientDetails(clientID: clientID)
+        {
+            myItem.updateType = "Update"
+            myItem.updateTime = NSDate()
+        }
+        saveContext()
+    }
     
     func getClients(teamID: Int) -> [Clients]
     {

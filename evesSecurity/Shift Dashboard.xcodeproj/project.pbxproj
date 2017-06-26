@@ -12,11 +12,14 @@
 		34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */; };
 		34050F701EC82C8F00CC7CBE /* timeSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */; };
 		3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */; };
+		340A02AB1F00B97C00E425C9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 340A02AA1F00B97C00E425C9 /* StoreKit.framework */; };
 		341323831EC3EA9700BBDE1E /* personClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323821EC3EA9700BBDE1E /* personClass.swift */; };
 		3413238B1EC40A1D00BBDE1E /* dropdownsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */; };
 		3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238E1EC42F1F00BBDE1E /* ratesClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
+		3423CC1D1F00CE9E0093B915 /* IAPClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423CC1C1F00CE9E0093B915 /* IAPClass.swift */; };
+		3434C2181F00E3D10030DD18 /* IAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3434C2171F00E3D10030DD18 /* IAPViewController.swift */; };
 		343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */; };
 		343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */; };
 		343757D61ED3FA3A00A9D313 /* eventTemplateClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */; };
@@ -53,6 +56,7 @@
 		34B35A831ECEC2D600B4FFD7 /* Projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */; };
 		34B35A851ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B35A841ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift */; };
 		34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */; };
+		34BB33901EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BB338F1EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift */; };
 		34C462781EC81D810037D79E /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C462771EC81D810037D79E /* userFormViewController.swift */; };
 		34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */; };
 		34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */; };
@@ -105,11 +109,14 @@
 		34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerViewController.swift; sourceTree = "<group>"; };
 		34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = timeSelectViewController.swift; sourceTree = "<group>"; };
 		3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userRolesClass.swift; sourceTree = "<group>"; };
+		340A02AA1F00B97C00E425C9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		341323821EC3EA9700BBDE1E /* personClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personClass.swift; sourceTree = "<group>"; };
 		3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = dropdownsClass.swift; sourceTree = "<group>"; };
 		3413238E1EC42F1F00BBDE1E /* ratesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ratesClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
+		3423CC1C1F00CE9E0093B915 /* IAPClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPClass.swift; sourceTree = "<group>"; };
+		3434C2171F00E3D10030DD18 /* IAPViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPViewController.swift; sourceTree = "<group>"; };
 		343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventPlanningViewController.swift; sourceTree = "<group>"; };
 		343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventTemplateVoewController.swift; sourceTree = "<group>"; };
 		343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventTemplateClass.swift; sourceTree = "<group>"; };
@@ -154,6 +161,7 @@
 		34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Projects.storyboard; sourceTree = "<group>"; };
 		34B35A841ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contractMaintenanceViewController.swift; sourceTree = "<group>"; };
 		34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactsViewController.swift; sourceTree = "<group>"; };
+		34BB338F1EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = securityDeletedItemsViewController.swift; sourceTree = "<group>"; };
 		34C462771EC81D810037D79E /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userFormViewController.swift; sourceTree = "<group>"; };
 		34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
 		34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
@@ -216,6 +224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				340A02AB1F00B97C00E425C9 /* StoreKit.framework in Frameworks */,
 				D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */,
 				347BCEC61EC56DAC006B95BA /* CloudKit.framework in Frameworks */,
 			);
@@ -305,6 +314,7 @@
 				343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */,
 				343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */,
 				34B01DCA1EE3B89200B836C8 /* extensions.swift */,
+				3423CC1C1F00CE9E0093B915 /* IAPClass.swift */,
 				34D797941ED7BEB90045DFD9 /* IOSCalendar.swift */,
 				34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */,
 				341323821EC3EA9700BBDE1E /* personClass.swift */,
@@ -362,6 +372,7 @@
 				347BCEC11EC563F0006B95BA /* orgEditViewController.swift */,
 				343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */,
 				343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */,
+				3434C2171F00E3D10030DD18 /* IAPViewController.swift */,
 				3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */,
 				347BCEBF1EC55D88006B95BA /* newUserViewController.swift */,
 				34968CDF1ECACA350009798B /* personViewController.swift */,
@@ -369,6 +380,7 @@
 				3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */,
 				34991C091EF25BDE00D99B0D /* reportMaintenanceViewController.swift */,
 				344BF8281EC94D4B0066CD35 /* securityViewController.swift */,
+				34BB338F1EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift */,
 				344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */,
 				344BF82B1EC954C70066CD35 /* settingViewController.swift */,
 				3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */,
@@ -391,6 +403,7 @@
 		FF3209C55564F5826792BA74 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				340A02AA1F00B97C00E425C9 /* StoreKit.framework */,
 				347BCEC51EC56DAC006B95BA /* CloudKit.framework */,
 				3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */,
 			);
@@ -472,6 +485,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
 							com.apple.Push = {
@@ -620,6 +636,7 @@
 				34CEE9AA1EC2C61500F85A11 /* taskClass.swift in Sources */,
 				3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */,
 				34CEEA3F1EC303CC00F85A11 /* clientsClass.swift in Sources */,
+				3423CC1D1F00CE9E0093B915 /* IAPClass.swift in Sources */,
 				34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */,
 				3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */,
 				34CEE9761EC2C1A900F85A11 /* reachability.swift in Sources */,
@@ -630,6 +647,7 @@
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
 				34991C0A1EF25BDE00D99B0D /* reportMaintenanceViewController.swift in Sources */,
 				34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */,
+				34BB33901EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */,
 				3492932E1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift in Sources */,
@@ -642,6 +660,7 @@
 				34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */,
 				3413238B1EC40A1D00BBDE1E /* dropdownsClass.swift in Sources */,
 				34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */,
+				3434C2181F00E3D10030DD18 /* IAPViewController.swift in Sources */,
 				34C462781EC81D810037D79E /* userFormViewController.swift in Sources */,
 				34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */,
 				34CEE9DC1EC2C79600F85A11 /* taskUpdatesClass.swift in Sources */,
