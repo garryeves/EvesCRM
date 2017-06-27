@@ -122,11 +122,27 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 currentEvent = eventList.projects[indexPath.row]
                 
                 eventDays.removeAll()
-                eventDays.append(currentEvent.projectStartDate.add(.day, amount: -2).startOfDay)
-                eventDays.append(currentEvent.projectStartDate.add(.day, amount: -1).startOfDay)
-                eventDays.append(currentEvent.projectStartDate.startOfDay)
-                eventDays.append(currentEvent.projectStartDate.add(.day, amount: 1).startOfDay)
-                eventDays.append(currentEvent.projectStartDate.add(.day, amount: 2).startOfDay)
+                
+                // Here we are going to build up the list of possible days
+                
+                
+                
+                if currentEvent.projectStartDate == currentEvent.projectEndDate
+                {
+                    eventDays.append(currentEvent.projectStartDate.startOfDay)
+                }
+                else
+                {
+                    var tempDate = currentEvent.projectStartDate
+                    
+                    while tempDate <= currentEvent.projectEndDate
+                    {
+                        eventDays.append(tempDate.startOfDay)
+                        tempDate = tempDate.add(.day, amount: 1)
+                    }
+                    
+                }
+            
                 btnDate.setTitle(currentEvent.projectStartDate.formatDateToString, for: .normal)
                 if currentEvent.projectStatus != ""
                 {

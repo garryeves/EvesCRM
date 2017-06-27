@@ -18,6 +18,7 @@ let NotificationUserLoaded = Notification.Name("NotificationUserLoaded")
 let NotificationUserListLoaded = Notification.Name("NotificationUserListLoaded")
 let NotificationValidateUser = Notification.Name("NotificationValidateUser")
 let NotificationExistingUserQueryDone = Notification.Name("NotificationExistingUserQueryDone")
+let NotificationTeamOwnerQueryDone = Notification.Name("NotificationTeamOwnerQueryDone")
 
 class userItems: NSObject
 {
@@ -519,6 +520,35 @@ extension CloudKitInteraction
     func validatedUserID() -> Int
     {
         return recordsInTable
+    }
+    
+    func getUserList(userList: String)
+    {
+        self.teamOwnerRecords.removeAll()
+        
+        let predicate: NSPredicate = NSPredicate(format: "userID IN { \(userList) }")
+        let query: CKQuery = CKQuery(recordType: "DBUsers", predicate: predicate)
+        
+        let operation = CKQueryOperation(query: query)
+        
+        operation.recordFetchedBlock = { (record) in
+            if record.object(forKey: "userID") != nil
+            {
+                let tempID = record.object(forKey: "userID") as! Int
+                let tempName = record.object(forKey: "name") as! String
+                
+                let tempItem = teamOwnerItem(userID: tempID, name: tempName)
+                self.teamOwnerRecords.append(tempItem)
+            }
+        }
+        let operationQueue = OperationQueue()
+        
+        executePublicQueryOperation(targetTable: "DBUsers", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamOwnerQueryDone)
+    }
+
+    func teamOwnerList() -> [teamOwnerItem]
+    {
+        return teamOwnerRecords
     }
     
     func createNewUser(_ userID: Int, name: String, email: String)

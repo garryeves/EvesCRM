@@ -72,6 +72,7 @@ class team: NSObject
     fileprivate var myMeetings: [Int] = Array()
     fileprivate var mySubscriptionDate: Date!
     fileprivate var mySubscriptionLevel: Int = 1
+    fileprivate var myTeamOwner: Int = 0
     
     var teamID: Int
     {
@@ -260,6 +261,10 @@ class team: NSObject
         {
             return mySubscriptionDate
         }
+        set
+        {
+            mySubscriptionDate = newValue
+        }
     }
     
     var subscriptionDateString: String
@@ -287,6 +292,22 @@ class team: NSObject
         {
             return mySubscriptionLevel
         }
+        set
+        {
+            mySubscriptionLevel = newValue
+        }
+    }
+    
+    var teamOwner: Int
+    {
+        get
+        {
+            return myTeamOwner
+        }
+        set
+        {
+            myTeamOwner = newValue
+        }
     }
     
     init(teamID: Int)
@@ -310,7 +331,8 @@ class team: NSObject
             myNextInvoiceNumber = Int(myItem.nextInvoiceNumber)
             mySubscriptionDate = myItem.subscriptionDate! as Date
             mySubscriptionLevel = Int(myItem.subscriptionLevel)
-
+            myTeamOwner = Int(myItem.teamOwner)
+            
             if myItem.logo != nil
             {
                 myCompanyLogo = UIImage(data: myItem.logo! as Data)
@@ -675,7 +697,7 @@ class team: NSObject
 //    
     func save(_ saveToCloud: Bool = true)
     {
-        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, subscriptionDate: mySubscriptionDate, subscriptionLevel: mySubscriptionLevel)
+        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, subscriptionDate: mySubscriptionDate, subscriptionLevel: mySubscriptionLevel, teamOwner: myTeamOwner)
         
         if logoChanged
         {
@@ -765,7 +787,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, subscriptionDate: Date, subscriptionLevel: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, subscriptionDate: Date, subscriptionLevel: Int, teamOwner: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -786,6 +808,7 @@ extension coreDatabase
             myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
             myTeam.subscriptionDate = subscriptionDate as NSDate
             myTeam.subscriptionLevel = Int64(subscriptionLevel)
+            myTeam.teamOwner = Int64(teamOwner)
             
             if updateType == "CODE"
             {
@@ -812,6 +835,7 @@ extension coreDatabase
             myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
             myTeam.subscriptionDate = subscriptionDate as NSDate
             myTeam.subscriptionLevel = Int64(subscriptionLevel)
+            myTeam.teamOwner = Int64(teamOwner)
             
             if updateType == "CODE"
             {
@@ -856,6 +880,30 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getTeamsIOwn(_ userID: Int)->[Team]
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamOwner == \(userID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1147,7 +1195,7 @@ extension CloudKitInteraction
 
     func replaceTeamInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) OR (teamOwner == \(currentUser.userID))")
         
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
@@ -1177,6 +1225,7 @@ extension CloudKitInteraction
             let companyRegNumber = record.object(forKey: "companyRegNumber") as! String
             let nextInvoiceNumber = record.object(forKey: "nextInvoiceNumber") as! Int
             let subscriptionLevel = record.object(forKey: "subscriptionLevel") as! Int
+            let teamOwner = record.object(forKey: "teamOwner") as! Int
             
             var subscriptionDate = Date()
             if record.object(forKey: "subscriptionDate") != nil
@@ -1191,7 +1240,7 @@ extension CloudKitInteraction
                 logo = NSData(contentsOf: asset.fileURL)
             }
             
-            myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, teamOwner: teamOwner, updateTime: updateTime, updateType: updateType)
             
             if logo != nil
             {
@@ -1243,6 +1292,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
                     record!.setValue(sourceRecord.subscriptionDate, forKey: "subscriptionDate")
                     record!.setValue(sourceRecord.subscriptionLevel, forKey: "subscriptionLevel")
+                    record!.setValue(sourceRecord.teamOwner, forKey: "teamOwner")
  
                     do
                     {
@@ -1298,6 +1348,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
                     record.setValue(sourceRecord.subscriptionDate, forKey: "subscriptionDate")
                     record.setValue(sourceRecord.subscriptionLevel, forKey: "subscriptionLevel")
+                    record.setValue(sourceRecord.teamOwner, forKey: "teamOwner")
                     
                     do
                     {
@@ -1361,7 +1412,8 @@ extension CloudKitInteraction
         let companyRegNumber = sourceRecord.object(forKey: "companyRegNumber") as! String
         let nextInvoiceNumber = sourceRecord.object(forKey: "nextInvoiceNumber") as! Int
         let subscriptionLevel = sourceRecord.object(forKey: "subscriptionLevel") as! Int
-
+        let teamOwner = sourceRecord.object(forKey: "teamOwner") as! Int
+        
         var subscriptionDate = Date()
         if sourceRecord.object(forKey: "subscriptionDate") != nil
         {
@@ -1382,7 +1434,7 @@ extension CloudKitInteraction
         
         self.recordCount += 1
         
-        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, teamOwner: teamOwner, updateTime: updateTime, updateType: updateType)
         
         if logo != nil
         {

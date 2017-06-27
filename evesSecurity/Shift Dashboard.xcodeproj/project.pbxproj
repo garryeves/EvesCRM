@@ -155,6 +155,7 @@
 		34991C071EF2427A00D99B0D /* reports.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = reports.storyboard; sourceTree = "<group>"; };
 		34991C091EF25BDE00D99B0D /* reportMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reportMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = monthlyRosterViewController.swift; sourceTree = "<group>"; };
+		349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 31.xcdatamodel"; sourceTree = "<group>"; };
 		34B01DCA1EE3B89200B836C8 /* extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Clients.storyboard; sourceTree = "<group>"; };
 		34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = clientMaintenanceViewController.swift; sourceTree = "<group>"; };
@@ -964,6 +965,7 @@
 		34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */,
 				3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */,
 				34CEE9F31EC2CBE800F85A11 /* EvesCRM 29.xcdatamodel */,
 				34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */,
@@ -995,7 +997,7 @@
 				34CEE9681EC2BD8F00F85A11 /* EvesCRM 9.xcdatamodel */,
 				34CEE9691EC2BD8F00F85A11 /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */;
+			currentVersion = 349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */;
 			name = EvesCRM.xcdatamodeld;
 			path = ../../EvesCRM/EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";

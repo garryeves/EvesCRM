@@ -597,108 +597,157 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     func refreshScreen()
     {
         navBarTitle.title = currentUser.currentTeam!.name
-        
-        let tempEvents = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventProjectType)
-        
-        if tempEvents.projects.count == 0
+
+        if currentUser.currentTeam!.subscriptionDate <= Date()
         {
-            btnEvents.isEnabled = false
+            btnSettings.isEnabled = true
+            btnShare.isEnabled = false
+            btnPeople.isHidden = true
+            btnClients.isHidden = true
+            tblData1.isHidden = true
+            btnRoster.isHidden = true
+            btnEvents.isHidden = true
+            tblAlerts.isHidden = true
+            btnReport.isHidden = true
+            btnMaintainReports.isHidden = true
+            lblDropdown.isHidden = true
+            btnDropdown.isHidden = true
+            lbl1.isHidden = true
+            lbl2.isHidden = true
+            lbl3.isHidden = true
+            lbl4.isHidden = true
+            lbl5.isHidden = true
+            lbl6.isHidden = true
+            lbl7.isHidden = true
+            lbl8.isHidden = true
+            lbl9.isHidden = true
+            lbl10.isHidden = true
+            lbl11.isHidden = true
+            lbl13.isHidden = true
+            lbl12.isHidden = true
+            lbl14.isHidden = true
+            btnMonthlyRoster.isHidden = true
+            lblYear.isHidden = true
+            btnYear.isHidden = true
+            btnSelect1.isHidden = true
+            btnSelect2.isHidden = true
+            lblAlerts.isHidden = true
+            btnReportType.isHidden = true
+            lblReportType.isHidden = true
+            lblReport.isHidden = true
+            
+            let alert = UIAlertController(title: "Subscription Expired", message:
+                "Your teams subscription has expired.  Please contact your Administrator in order to have the Subscription renewed.", preferredStyle: UIAlertControllerStyle.alert)
+            
+            let yesOption = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: nil)
+            
+            alert.addAction(yesOption)
+            self.present(alert, animated: false, completion: nil)
         }
         else
         {
-            btnEvents.isEnabled = true
-        }
-        
-        buildAlerts()
-        
-        tblAlerts.reloadData()
-        
-        displayReportFields()
-        
-        if currentUser != nil
-        {
-            runReport()
-        }
-        
-        var showRoster: Bool = false
-        var showEvents: Bool = false
-        var showMonthlyRoster: Bool = false
-        var showShare: Bool = false
-        var showPeople: Bool = false
-        var showClients: Bool = false
-        
-        if currentUser.checkPermission(rosteringRoleType) != noPermission
-        {
-            showRoster = true
-            showEvents = true
-            showMonthlyRoster = true
-        }
-        
-        if currentUser.checkPermission(pmRoleType) != noPermission
-        {
-            showClients = true
-            showPeople = true
-            showEvents = true
-            showMonthlyRoster = true
-            showRoster = true
-        }
-        
-        
-        if currentUser.checkPermission(financialsRoleType) != noPermission
-        {
-            showShare = true
-        }
-        
-        if currentUser.checkPermission(hrRoleType) != noPermission
-        {
-            showPeople = true
-        }
-        
-        if currentUser.checkPermission(salesRoleType) != noPermission
-        {
-            showClients = true
-        }
-        
-        if currentUser.checkPermission(invoicingRoleType) != noPermission
-        {
-            showClients = true
-        }
-        
-        btnRoster.isEnabled = false
-        btnEvents.isEnabled = false
-        btnMonthlyRoster.isEnabled = false
-        btnShare.isEnabled = false
-        btnPeople.isEnabled = false
-        btnClients.isEnabled = false
-        
-        if showRoster
-        {
-            btnRoster.isEnabled = true
-        }
-        
-        if showEvents
-        {
-            btnEvents.isEnabled = true
-        }
-        
-        if showMonthlyRoster
-        {
-            btnMonthlyRoster.isEnabled = true
-        }
-        
-        if showShare
-        {
-            btnShare.isEnabled = true
-        }
-        
-        if showPeople
-        {
-            btnPeople.isEnabled = true
-        }
-        
-        if showClients
-        {
-            btnClients.isEnabled = true
+            let tempEvents = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventProjectType)
+            
+            if tempEvents.projects.count == 0
+            {
+                btnEvents.isEnabled = false
+            }
+            else
+            {
+                btnEvents.isEnabled = true
+            }
+            
+            buildAlerts()
+            
+            tblAlerts.reloadData()
+            
+            displayReportFields()
+            
+            if currentUser != nil
+            {
+                runReport()
+            }
+            
+            var showRoster: Bool = false
+            var showEvents: Bool = false
+            var showMonthlyRoster: Bool = false
+            var showShare: Bool = false
+            var showPeople: Bool = false
+            var showClients: Bool = false
+            
+            if currentUser.checkPermission(rosteringRoleType) != noPermission
+            {
+                showRoster = true
+                showEvents = true
+                showMonthlyRoster = true
+            }
+            
+            if currentUser.checkPermission(pmRoleType) != noPermission
+            {
+                showClients = true
+                showPeople = true
+                showEvents = true
+                showMonthlyRoster = true
+                showRoster = true
+            }
+            
+            
+            if currentUser.checkPermission(financialsRoleType) != noPermission
+            {
+                showShare = true
+            }
+            
+            if currentUser.checkPermission(hrRoleType) != noPermission
+            {
+                showPeople = true
+            }
+            
+            if currentUser.checkPermission(salesRoleType) != noPermission
+            {
+                showClients = true
+            }
+            
+            if currentUser.checkPermission(invoicingRoleType) != noPermission
+            {
+                showClients = true
+            }
+            
+            btnRoster.isEnabled = false
+            btnEvents.isEnabled = false
+            btnMonthlyRoster.isEnabled = false
+            btnShare.isEnabled = false
+            btnPeople.isEnabled = false
+            btnClients.isEnabled = false
+            
+            if showRoster
+            {
+                btnRoster.isEnabled = true
+            }
+            
+            if showEvents
+            {
+                btnEvents.isEnabled = true
+            }
+            
+            if showMonthlyRoster
+            {
+                btnMonthlyRoster.isEnabled = true
+            }
+            
+            if showShare
+            {
+                btnShare.isEnabled = true
+            }
+            
+            if showPeople
+            {
+                btnPeople.isEnabled = true
+            }
+            
+            if showClients
+            {
+                btnClients.isEnabled = true
+            }
         }
     }
     

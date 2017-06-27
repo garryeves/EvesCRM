@@ -8,7 +8,13 @@
 
 import UIKit
 
-class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate
+struct teamOwnerItem
+{
+    var userID: Int
+    var name: String
+}
+
+class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, myCommunicationDelegate
 {
     @IBOutlet weak var txtOrgName: UITextField!
     @IBOutlet weak var txtExternalID: UITextField!
@@ -21,12 +27,16 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var lblSubscription: UILabel!
     @IBOutlet weak var btnRenewal: UIButton!
+    @IBOutlet weak var lblOwner: UILabel!
+    @IBOutlet weak var btnOwner: UIButton!
     
     private var newUserCreated: Bool = false
     private var displayList: [String] = Array()
     
     var workingOrganisation: team?
     var communicationDelegate: myCommunicationDelegate?
+    
+    var ownerList: [teamOwnerItem] = Array()
     
     @IBOutlet weak var btnStatus: UIButton!
     
@@ -80,6 +90,34 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         }
         else
         {
+            btnOwner.setTitle("Select", for: .normal)
+            if connected
+            {
+                var workingString = ""
+                var firstTime: Bool = true
+                
+                for myItem in userTeams(teamID: workingOrganisation!.teamID).UserTeams
+                {
+                    if !firstTime
+                    {
+                        workingString += ", "
+                    }
+                    firstTime = false
+                    workingString += "\(myItem.userID)"
+                }
+                
+                if workingString != ""
+                {
+                    notificationCenter.addObserver(self, selector: #selector(self.teamQueryDone), name: NotificationTeamOwnerQueryDone, object: nil)
+                    
+                    myCloudDB.getUserList(userList: workingString)
+                }
+            }
+            else
+            {
+                btnOwner.isEnabled = false
+            }
+            
             txtOrgName.text = workingOrganisation!.name
             txtExternalID.text = workingOrganisation!.externalID
             txtNotes.text = workingOrganisation!.note
@@ -138,6 +176,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     @IBAction func btnRenewal(_ sender: UIButton)
     {
         let renewViewControl = loginStoryboard.instantiateViewController(withIdentifier: "renewalView") as! IAPViewController
+        renewViewControl.communicationDelegate = self
         self.present(renewViewControl, animated: true, completion: nil)
     }
     
@@ -181,7 +220,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         {
             let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
             pickerView.modalPresentationStyle = .popover
-            pickerView.isModalInPopover = true
+  //          pickerView.isModalInPopover = true
             
             let popover = pickerView.popoverPresentationController!
             popover.delegate = self
@@ -198,10 +237,57 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         }
     }
     
+    @IBAction func btnOwner(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        for myItem in ownerList
+        {
+            displayList.append(myItem.name)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+ //           pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "teamOwner"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnStatus.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
     @IBAction func btnUsers(_ sender: UIButton)
     {
         let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
         self.present(userEditViewControl, animated: true, completion: nil)
+    }
+    
+    func teamQueryDone()
+    {
+        ownerList = myCloudDB.teamOwnerRecords
+        
+        for myItem in ownerList
+        {
+            if myItem.userID == workingOrganisation!.teamOwner
+            {
+                DispatchQueue.main.async
+                {
+                    self.btnOwner.setTitle(myItem.name, for: .normal)
+                }
+                break
+            }
+        }
     }
     
     func teamCreated(_ notification: Notification)
@@ -251,6 +337,11 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         {
             btnStatus.setTitle(displayList[selectedItem], for: .normal)
         }
+        else if source == "teamOwner"
+        {
+            btnOwner.setTitle(displayList[selectedItem], for: .normal)
+            workingOrganisation!.teamOwner = ownerList[selectedItem].userID
+        }
     }
     
     func keyboardWillShow(_ notification: Notification)
@@ -285,6 +376,13 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         {
             self.lblSubscription.text = "Using \(myCloudDB.userCount()) of \(self.workingOrganisation!.subscriptionLevel) users.  Your subscription will renew on \(self.workingOrganisation!.subscriptionDateString)"
         }
+    }
+    
+    func refreshScreen()
+    {
+        let tempID = workingOrganisation!.teamID
+        workingOrganisation = team(teamID: tempID)
+        loadSubscriptionData()
     }
     
 //    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {

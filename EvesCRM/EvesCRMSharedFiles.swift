@@ -164,6 +164,17 @@ func getSyncDateForTable(tableName: String) -> Date
     return readDefaultDate(tableName)
 }
 
+func updateSubscriptions(expiryDate: Date, numUsers: Int)
+{
+    for teamList in myDatabaseConnection.getTeamsIOwn(currentUser.userID)
+    {
+        let workingTeam = team(teamID: Int(teamList.teamID))
+        workingTeam.subscriptionDate = expiryDate.startOfDay
+        workingTeam.subscriptionLevel = numUsers
+        workingTeam.save()
+    }
+}
+
 struct TableData
 {
     var displayText: String

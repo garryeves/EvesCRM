@@ -64,6 +64,7 @@ class CloudKitInteraction
     var returnUserEntry: returnUser!
     var saveOK: Bool = true
     
+    var teamOwnerRecords: [teamOwnerItem] = Array()
     var workingCount: Int = 0
     
     fileprivate let secretKey = "djskfPnmjYUPFEUingljmyzdls"
