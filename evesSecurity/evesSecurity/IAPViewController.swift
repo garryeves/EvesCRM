@@ -85,8 +85,6 @@ class IAPViewController: UIViewController, UITableViewDataSource, UITableViewDel
         notificationCenter.removeObserver(NotificationIAPSPurchased)
         // Now we need to handle the return.  
         
-        updateSubscriptions(expiryDate: iap.purchasedExpiryDate, numUsers: iap.purchasedUsers)
-        
         communicationDelegate!.refreshScreen!()
         dismiss(animated: true, completion: nil)
     }

@@ -238,24 +238,27 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnAdd(_ sender: UIBarButtonItem)
     {
-        lblPassPhraseTitle.isHidden = true
-        lblPhrase.isHidden = true
-        lblPassPhraseExpiryTitle.isHidden = true
-        lblDate.isHidden = true
-        btnPassPhrase.isHidden = true
-        lblRoles.isHidden = true
-        tblRoles.isHidden = true
-        
-        lblName.isHidden = false
-        lblNameTitle.isHidden = false
-        txtEmail.isHidden = false
-        txtName.isHidden = false
-        btnAdd.isEnabled = false
-        workingUser = nil
-        txtEmail.text = ""
-        txtName.text = ""
-        
-        txtName.becomeFirstResponder()
+        if canAddUser()
+        {
+            lblPassPhraseTitle.isHidden = true
+            lblPhrase.isHidden = true
+            lblPassPhraseExpiryTitle.isHidden = true
+            lblDate.isHidden = true
+            btnPassPhrase.isHidden = true
+            lblRoles.isHidden = true
+            tblRoles.isHidden = true
+            
+            lblName.isHidden = false
+            lblNameTitle.isHidden = false
+            txtEmail.isHidden = false
+            txtName.isHidden = false
+            btnAdd.isEnabled = false
+            workingUser = nil
+            txtEmail.text = ""
+            txtName.text = ""
+            
+            txtName.becomeFirstResponder()
+        }
     }
     
     @IBAction func txtFieldChanged(_ sender: UITextField)
@@ -408,6 +411,37 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
                 self.populateForm()
             }
         }
+    }
+    
+    func canAddUser() -> Bool
+    {
+        // here we are going to see how many users are declared for the owners teams.
+        
+        let teamOwner = currentUser.currentTeam!.teamOwner
+
+        var userCount: Int = 0
+        
+        for myItem in myDatabaseConnection.getTeamsIOwn(teamOwner)
+        {
+            let tempTeam = userTeams(teamID: Int(myItem.teamID))
+            
+            userCount += tempTeam.UserTeams.count
+        }
+        
+        if userCount > currentUser.currentTeam!.subscriptionLevel
+        {
+            let alert = UIAlertController(title: "Subscription Number Expired", message:
+                "Your teams User count if \(userCount) has exceeded your permitted total of \(currentUser.currentTeam!.subscriptionLevel).  Either delete some users from your team, or contact your Administator to increase the maximum number of users.", preferredStyle: UIAlertControllerStyle.alert)
+            
+            let yesOption = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: nil)
+            
+            alert.addAction(yesOption)
+            self.present(alert, animated: false, completion: nil)
+            
+            return false
+        }
+        
+        return true
     }
 }
 

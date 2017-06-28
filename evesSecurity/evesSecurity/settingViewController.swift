@@ -149,6 +149,11 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
             btnDropbown.isEnabled = false
             btnRestore.isEnabled = false
         }
+        
+        if currentUser.currentTeam!.teamOwner == currentUser.userID
+        {
+            btnTeam.isEnabled = true
+        }
     }
 }
 

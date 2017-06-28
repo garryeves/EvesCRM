@@ -40,25 +40,9 @@ public typealias SessionId = String
 
 public struct PaidSubscription {
     
-    public enum Level {
-        case one
-        case all
-        
-        init?(productId: String) {
-            if productId.contains("oneaweek") {
-                self = .one
-            } else if productId.contains("allaccess") {
-                self = .all
-            } else {
-                return nil
-            }
-        }
-    }
-    
     public let productId: String
     public let purchaseDate: Date
     public let expiresDate: Date
-    public let level: Level
     
     public var isActive: Bool {
         // is current date between purchaseDate and expiresDate?
@@ -75,12 +59,10 @@ public struct PaidSubscription {
             else {
                 return nil
         }
-        
+
         self.productId = productId
         self.purchaseDate = purchaseDate
         self.expiresDate = expiresDate
-        self.level = Level(productId: productId) ?? .all // if we've botched the productId give them all access :]
-        
     }
 }
 
@@ -91,13 +73,12 @@ public struct Session {
     public var paidSubscriptions: [PaidSubscription]
     
     public var currentSubscription: PaidSubscription? {
-//        let activeSubscriptions = paidSubscriptions.filter { $0.isActive && $0.purchaseDate >= SelfieService.shared.simulatedStartDate }
-        
         let dateStringFormatter = DateFormatter()
         dateStringFormatter.dateFormat = "yyyy-MM-dd"
         let startDate = dateStringFormatter.date(from: "2016-01-01")!
+       
+        let activeSubscriptions = paidSubscriptions.filter { $0.purchaseDate >= startDate }
         
-        let activeSubscriptions = paidSubscriptions.filter { $0.isActive && $0.purchaseDate >= startDate }
         let sortedByMostRecentPurchase = activeSubscriptions.sorted { $0.purchaseDate > $1.purchaseDate }
         
         return sortedByMostRecentPurchase.first
@@ -114,11 +95,11 @@ public struct Session {
         if let receipt = parsedReceipt["receipt"] as? [String: Any], let purchases = receipt["in_app"] as? Array<[String: Any]> {
             var subscriptions = [PaidSubscription]()
             for purchase in purchases {
+
                 if let paidSubscription = PaidSubscription(json: purchase) {
                     subscriptions.append(paidSubscription)
                 }
             }
-            
             paidSubscriptions = subscriptions
         } else {
             paidSubscriptions = []
@@ -275,47 +256,15 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
                 {
                     case .purchased:
                         SKPaymentQueue.default().finishTransaction(transaction)
-                        switch productID
-                        {
-                            case IAPConsumableID:
-                                myPuchasedExpiryDate = Date().add(.month, amount: 2)
-                                myPurchasedUsers = 15
-                                
-                            case IAPSubscriptionID1m5:
-                                myPuchasedExpiryDate = Date().add(.month, amount: 1)
-                                myPurchasedUsers = 5
-                            
-                            case IAPSubscriptionID1m10:
-                                myPuchasedExpiryDate = Date().add(.month, amount: 1)
-                                myPurchasedUsers = 10
-                            
-                            case IAPSubscriptionID1m20:
-                                myPuchasedExpiryDate = Date().add(.month, amount: 1)
-                                myPurchasedUsers = 20
-                            
-                            case IAPSubscriptionID1y5:
-                                myPuchasedExpiryDate = Date().add(.year, amount: 1)
-                                myPurchasedUsers = 5
-                            
-                            case IAPSubscriptionID1y10:
-                                myPuchasedExpiryDate = Date().add(.year, amount: 1)
-                                myPurchasedUsers = 10
-                            
-                            case IAPSubscriptionID1y20:
-                                myPuchasedExpiryDate = Date().add(.year, amount: 1)
-                                myPurchasedUsers = 20
-                            
-                            case IAPSubscriptionIDtest:
-                                myPuchasedExpiryDate = Date().add(.day, amount: 7)
-                                myPurchasedUsers = 5
-                            
-                            default:
-                                myPuchasedExpiryDate = Date()
-                                myPurchasedUsers = 1
-                                
-                                print("paymentQueue - unknown product ID = \(productID)")
+                        
+                        uploadReceipt { (success) in
+                            DispatchQueue.main.async
+                            {
+                                self.processSuccess()
+                                notificationCenter.post(name: NotificationIAPSPurchased, object: nil)
+                            }
                         }
-                        notificationCenter.post(name: NotificationIAPSPurchased, object: nil)
+                        
                         break
                         
                     case .failed:
@@ -340,17 +289,79 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
         }
     }
     
+    func processSuccess()
+    {
+print("product = \(currentSubscription!.productId) purchase date = \(currentSubscription!.purchaseDate) expires date = \(currentSubscription!.expiresDate) isactive = \(currentSubscription!.isActive)")
+        
+        switch currentSubscription!.productId
+        {
+            case IAPConsumableID:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 15
+                
+            case IAPSubscriptionID1m5:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 5
+                
+            case IAPSubscriptionID1m10:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 10
+                
+            case IAPSubscriptionID1m20:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 20
+                
+            case IAPSubscriptionID1y5:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 5
+                
+            case IAPSubscriptionID1y10:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 10
+                
+            case IAPSubscriptionID1y20:
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
+                myPurchasedUsers = 20
+                
+            case IAPSubscriptionIDtest:
+print("Renewing test subscription")
+               // myPuchasedExpiryDate = currentSubscription!.expiresDate
+
+                myPuchasedExpiryDate = Date().add(.day, amount: 7)
+
+                myPurchasedUsers = 5
+                
+            default:
+                myPuchasedExpiryDate = Date()
+                myPurchasedUsers = 1
+                
+                print("processSuccess - unknown product ID = \(currentSubscription!.productId)")
+        }
+ 
+        updateSubscriptions(expiryDate: myPuchasedExpiryDate, numUsers: myPurchasedUsers)
+    }
+    
+    func checkReceipt()
+    {
+        uploadReceipt { (success) in
+            DispatchQueue.main.async
+            {
+                self.processSuccess()
+            }
+        }
+    }
+    
     func uploadReceipt(completion: ((_ success: Bool) -> Void)? = nil)
     {
         if let receiptData = loadReceipt()
         {
             upload(receipt: receiptData) { [weak self] (result) in
                 guard let strongSelf = self else { return }
-                
                 switch result
                 {
                     case .success(let result):
                         strongSelf.currentSessionId = result.sessionId
+
                         strongSelf.currentSubscription = result.currentSubscription
                         completion?(true)
                     case .failure(let error):
@@ -366,7 +377,7 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
         guard let url = Bundle.main.appStoreReceiptURL else {
             return nil
         }
-        
+
         do
         {
             let data = try Data(contentsOf: url)
@@ -388,7 +399,7 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
         ]
         let bodyData = try! JSONSerialization.data(withJSONObject: body, options: [])
         
-        let url = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")!
+        let url = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")!   // chnage sandbox to buy when ready for prod
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = bodyData
@@ -402,6 +413,7 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
             {
                 let json = try! JSONSerialization.jsonObject(with: responseData, options: []) as! Dictionary<String, Any>
                 let session = Session(receiptData: data, parsedReceipt: json)
+                
                 self.sessions[session.id] = session
                 let result = (sessionId: session.id, currentSubscription: session.currentSubscription)
                 completion(.success(result))

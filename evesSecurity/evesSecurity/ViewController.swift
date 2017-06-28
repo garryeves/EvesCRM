@@ -90,6 +90,10 @@ class ViewController: UIViewController, myCommunicationDelegate
     
     func callLoadMainScreen()
     {
+        let iapInstance = IAPHandler()
+        iapInstance.checkReceipt()
+        
+        
         DispatchQueue.main.async
         {
             Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.loadMainScreen), userInfo: nil, repeats: false)
