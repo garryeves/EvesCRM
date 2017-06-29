@@ -82,7 +82,7 @@
 		34EEE5F21EECCDC50006B921 /* alertsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EEE5F11EECCDC50006B921 /* alertsClass.swift */; };
 		34EFB4191EE2454800772C8C /* reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EFB4181EE2454800772C8C /* reporting.swift */; };
 		34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC32B11EC97C250053443D /* validatePasswordViewController.swift */; };
-		D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */; };
+		65887F20714DB64A8AA64BDF /* Pods_Shift_Dashboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5A26B60DBD10DF1719A504 /* Pods_Shift_Dashboard.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,7 +103,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		32D10F38106CA072E7F5B8C3 /* Pods-evesSecurity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.release.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.release.xcconfig"; sourceTree = "<group>"; };
+		1F5A26B60DBD10DF1719A504 /* Pods_Shift_Dashboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Shift_Dashboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = dropDownMenus.storyboard; sourceTree = "<group>"; };
 		34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = dateTimePickerViewController.swift; sourceTree = "<group>"; };
 		34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerViewController.swift; sourceTree = "<group>"; };
@@ -217,7 +217,8 @@
 		34EFB4181EE2454800772C8C /* reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reporting.swift; sourceTree = "<group>"; };
 		34FC32B11EC97C250053443D /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validatePasswordViewController.swift; sourceTree = "<group>"; };
 		3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_evesSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBDA3A3ECAE0F50940E17F68 /* Pods-evesSecurity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.debug.xcconfig"; sourceTree = "<group>"; };
+		43D412E29278CCE92FCC1722 /* Pods-Shift Dashboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shift Dashboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard.release.xcconfig"; sourceTree = "<group>"; };
+		EA96443DD3D0E19717F153B4 /* Pods-Shift Dashboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shift Dashboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,8 +227,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				340A02AB1F00B97C00E425C9 /* StoreKit.framework in Frameworks */,
-				D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */,
 				347BCEC61EC56DAC006B95BA /* CloudKit.framework in Frameworks */,
+				65887F20714DB64A8AA64BDF /* Pods_Shift_Dashboard.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,8 +396,8 @@
 		958FC654A5F313C7C735E1DD /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DBDA3A3ECAE0F50940E17F68 /* Pods-evesSecurity.debug.xcconfig */,
-				32D10F38106CA072E7F5B8C3 /* Pods-evesSecurity.release.xcconfig */,
+				EA96443DD3D0E19717F153B4 /* Pods-Shift Dashboard.debug.xcconfig */,
+				43D412E29278CCE92FCC1722 /* Pods-Shift Dashboard.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -407,6 +408,7 @@
 				340A02AA1F00B97C00E425C9 /* StoreKit.framework */,
 				347BCEC51EC56DAC006B95BA /* CloudKit.framework */,
 				3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */,
+				1F5A26B60DBD10DF1719A504 /* Pods_Shift_Dashboard.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -574,13 +576,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Shift Dashboard-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E94F0C3ADDEEDC6B12907556 /* [CP] Embed Pods Frameworks */ = {
@@ -589,13 +594,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DLRadioButton/DLRadioButton.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DLRadioButton.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EE6174A95B66530754477F9D /* [CP] Copy Pods Resources */ = {
@@ -610,7 +618,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -832,7 +840,7 @@
 		};
 		349653271EC1E5B900210A46 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBDA3A3ECAE0F50940E17F68 /* Pods-evesSecurity.debug.xcconfig */;
+			baseConfigurationReference = EA96443DD3D0E19717F153B4 /* Pods-Shift Dashboard.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -848,7 +856,7 @@
 		};
 		349653281EC1E5B900210A46 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 32D10F38106CA072E7F5B8C3 /* Pods-evesSecurity.release.xcconfig */;
+			baseConfigurationReference = 43D412E29278CCE92FCC1722 /* Pods-Shift Dashboard.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

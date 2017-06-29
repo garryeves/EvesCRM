@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DLRadioButton
 
 class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
@@ -20,7 +21,9 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var btnYear: UIButton!
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnShare: UIBarButtonItem!
-
+    @IBOutlet weak var btnIncludeRates: DLRadioButton!
+    @IBOutlet weak var btnNoRates: DLRadioButton!
+    
     var communicationDelegate: myCommunicationDelegate?
     
     var selectedPerson: person!
@@ -39,6 +42,10 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
             self.populateMonthList()
         }
 
+ //       btnIncludeRates.setTitle("Include Rates", for: .normal)
+ //       btnIncludeRates.setTitleColor(UIColor.black, for: .normal)
+//        btnIncludeRates.isIconOnRight = true
+        
         if month != nil
         {
             btnMonth.setTitle(month, for: .normal)
@@ -131,8 +138,9 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 cell.lblDate.text = workingReport.lines[indexPath.row].column1
                 cell.lblFrom.text = workingReport.lines[indexPath.row].column2
                 cell.lblTo.text = workingReport.lines[indexPath.row].column3
-                cell.lblContract.text = workingReport.lines[indexPath.row].column4
-                
+                cell.lblContract.text = workingReport.lines[indexPath.row].column5
+                cell.lblRate.text = workingReport.lines[indexPath.row].column4
+
                 return cell
             
             case tblPerson:
@@ -236,6 +244,21 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
+    @IBAction func btnIncludeRates(_ sender: DLRadioButton)
+    {
+        if sender == btnIncludeRates
+        {
+            btnNoRates.isSelected = !btnIncludeRates.isSelected
+        }
+        else
+        {
+            btnIncludeRates.isSelected = !btnNoRates.isSelected
+        }
+        
+        buildReport()
+        tblRoster.reloadData()
+    }
+    
     func buildReport()
     {
         workingReport = report(name: reportMonthlyRoster)
@@ -245,12 +268,14 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         workingReport.columnWidth2 = 12
         workingReport.columnWidth3 = 12
         workingReport.columnWidth4 = 28
+        workingReport.columnWidth5 = 28
         
         let headerLine = reportLine()
         headerLine.column1 = "Date"
         headerLine.column2 = "Start"
         headerLine.column3 = "End"
-        headerLine.column4 = "Where"
+        headerLine.column4 = "Rate"
+        headerLine.column5 = "Where"
         
         workingReport.header = headerLine
         
@@ -263,9 +288,19 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 workingLine.column1 = myShift.workDateString
                 workingLine.column2 = myShift.startTimeString
                 workingLine.column3 = myShift.endTimeString
+                
+                if btnIncludeRates.isSelected
+                {
+                    workingLine.column4 = myShift.rateDescription
+                }
+                else
+                {
+                    workingLine.column4 = ""
+                }
+                
                 let tempProject = project(projectID: myShift.projectID)
                 
-                workingLine.column4 = tempProject.projectName
+                workingLine.column5 = tempProject.projectName
                 
                 workingReport.append(workingLine)
             }
@@ -321,6 +356,8 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         tblPerson.isHidden = true
         lblYear.isHidden = true
         btnYear.isHidden = true
+        btnIncludeRates.isHidden = true
+        btnNoRates.isHidden = true
     }
     
     func showFields()
@@ -334,6 +371,8 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         tblPerson.isHidden = false
         lblYear.isHidden = false
         btnYear.isHidden = false
+        btnIncludeRates.isHidden = false
+        btnNoRates.isHidden = false
     }
     
     func refreshScreen()
@@ -378,6 +417,7 @@ class rosterDisplayItem: UITableViewCell
     @IBOutlet weak var lblTo: UILabel!
     @IBOutlet weak var lblContract: UILabel!
     @IBOutlet weak var lblFrom: UILabel!
+    @IBOutlet weak var lblRate: UILabel!
     
     override func layoutSubviews()
     {

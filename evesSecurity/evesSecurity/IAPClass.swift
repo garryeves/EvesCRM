@@ -324,11 +324,7 @@ print("product = \(currentSubscription!.productId) purchase date = \(currentSubs
                 myPurchasedUsers = 20
                 
             case IAPSubscriptionIDtest:
-print("Renewing test subscription")
-               // myPuchasedExpiryDate = currentSubscription!.expiresDate
-
-                myPuchasedExpiryDate = Date().add(.day, amount: 7)
-
+                myPuchasedExpiryDate = currentSubscription!.expiresDate
                 myPurchasedUsers = 5
                 
             default:
@@ -338,6 +334,7 @@ print("Renewing test subscription")
                 print("processSuccess - unknown product ID = \(currentSubscription!.productId)")
         }
  
+        myPuchasedExpiryDate = Date().add(.day, amount: 7)
         updateSubscriptions(expiryDate: myPuchasedExpiryDate, numUsers: myPurchasedUsers)
     }
     
