@@ -656,10 +656,14 @@ class team: NSObject
     {
         var retArray: [String] = Array()
         
-        for myItem in dropdowns(dropdownType: "RoleType", teamID: currentUser.currentTeam!.teamID).dropdowns
-        {
-            retArray.append(myItem.dropdownValue)
-        }
+        retArray.append(adminRoleType)
+        retArray.append(financialsRoleType)
+        retArray.append(hrRoleType)
+        retArray.append(invoicingRoleType)
+        retArray.append(pmRoleType)
+        retArray.append(rosteringRoleType)
+        retArray.append(salesRoleType)
+        
         return retArray
     }
     

@@ -599,8 +599,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         navBarTitle.title = currentUser.currentTeam!.name
 
         buildAlerts()
-        
-        if currentUser.currentTeam!.subscriptionDate <= Date()
+      
+        if currentUser.currentTeam!.subscriptionDate < Date().startOfDay
         {
             btnSettings.isEnabled = true
             btnShare.isEnabled = false
@@ -750,7 +750,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         let alert = UIAlertController(title: "Subscription Expired", message:
             "Your teams subscription has expired.  Please contact your Administrator in order to have the Subscription renewed.", preferredStyle: UIAlertControllerStyle.alert)
         
-        let yesOption = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: nil)
+        let yesOption = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
         
         alert.addAction(yesOption)
         self.present(alert, animated: false, completion: nil)

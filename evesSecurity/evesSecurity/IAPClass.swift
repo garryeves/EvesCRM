@@ -334,7 +334,7 @@ print("product = \(currentSubscription!.productId) purchase date = \(currentSubs
                 print("processSuccess - unknown product ID = \(currentSubscription!.productId)")
         }
  
-        myPuchasedExpiryDate = Date().add(.day, amount: 7)
+    //    myPuchasedExpiryDate = Date().add(.day, amount: 7)
         updateSubscriptions(expiryDate: myPuchasedExpiryDate, numUsers: myPurchasedUsers)
     }
     

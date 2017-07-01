@@ -17,11 +17,13 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnDropbown: UIButton!
     @IBOutlet weak var btnSwitchUsers: UIButton!
     @IBOutlet weak var btnRestore: UIButton!
+    @IBOutlet weak var btnNewTeam: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     
     private var displayList: [String] = Array()
     private var teamList: userTeams!
+    private var newTeam: team!
     
     override func viewDidLoad()
     {
@@ -116,6 +118,51 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
                 writeDefaultInt("teamID", value: currentUser.currentTeam!.teamID)
             }
         }
+    }
+    
+    @IBAction func btnNewTeam(_ sender: UIButton)
+    {
+        // Create a new team
+        
+        notificationCenter.addObserver(self, selector: #selector(self.teamCreated), name: NotificationTeamCreated, object: nil)
+        
+        btnSwitchUsers.isEnabled = false
+        btnTeam.isEnabled = false
+        btnPerAddInfo.isEnabled = false
+        btnDropbown.isEnabled = false
+        btnRestore.isEnabled = false
+        btnTeam.isEnabled = false
+        btnNewTeam.isEnabled = false
+        btnBack.isEnabled = false
+        btnPassword.isEnabled = false
+        
+        newTeam = team()
+    }
+    
+    func teamCreated()
+    {
+        notificationCenter.removeObserver(NotificationTeamCreated)
+        
+        // Add team to use
+        
+        currentUser.addTeamToUser(newTeam)
+        
+        newTeam.teamOwner = currentUser.userID
+        
+        currentUser.currentTeam = newTeam
+        
+        currentUser.addInitialUserRoles()
+        
+        // Pass this into team maintence screen
+        writeDefaultInt("teamID", value: newTeam!.teamID)
+        
+        refreshScreen()
+        btnBack.isEnabled = true
+        btnPassword.isEnabled = true
+        
+        let orgEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "orgEdit") as! orgEditViewController
+        orgEditViewControl.workingOrganisation = currentUser!.currentTeam
+        self.present(orgEditViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnBack(_ sender: Any)
