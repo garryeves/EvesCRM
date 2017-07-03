@@ -121,7 +121,7 @@ class task: NSObject
     fileprivate var myDueDate: Date!
     fileprivate var myStartDate: Date!
     fileprivate var myStatus: String = ""
-    fileprivate var myContexts: [Int] = Array()
+    fileprivate var myContexts: [context] = Array()
     fileprivate var myPriority: String = ""
     fileprivate var myEnergyLevel: String = ""
     fileprivate var myEstimatedTime: Int = 0
@@ -252,7 +252,7 @@ class task: NSObject
         }
     }
     
-    var contexts: [Int]
+    var contexts: [context]
     {
         get
         {
@@ -599,64 +599,64 @@ class task: NSObject
         
         // Save context link
         
-//        for myContext in myContexts
-//        {
-//            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID)
-//        }
+        for myContext in myContexts
+        {
+            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID, contextType: myContext.contextType)
+        }
         
         saveCalled = false
     }
     
-//    func addContext(_ contextID: Int)
-//    {
-//        var itemFound: Bool = false
-//        
-//        // first we need to make sure the context is not already present
-//        
-//        // Get the context name
-//        
-//        let myContext = context(contextID: contextID)
-//        
-//        let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
-//        
-//        for myItem in myCheck
-//        {
-//            let myRetrievedContext = context(contextID: Int(myItem.contextID))
-//            if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
-//            {
-//                itemFound = true
-//                break
-//            }
-//        }
-//        
-//        if !itemFound
-//        { // Not match found
-//            myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID)
-//            
-//            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
-//            myContexts.removeAll()
-//            
-//            for myContextItem in myContextList
-//            {
-//                let myNewContext = context(contextID: Int(myContextItem.contextID))
-//                myContexts.append(myNewContext)
-//            }
-//        }
-//    }
-//    
-//    func removeContext(_ contextID: Int)
-//    {
-//        myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID)
-//        
-//        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
-//        myContexts.removeAll()
-//        
-//        for myContextItem in myContextList
-//        {
-//            let myNewContext = context(contextID: Int(myContextItem.contextID))
-//            myContexts.append(myNewContext)
-//        }
-//    }
+    func addContext(_ contextID: Int, contextType: String)
+    {
+        var itemFound: Bool = false
+        
+        // first we need to make sure the context is not already present
+        
+        // Get the context name
+        
+        let myContext = context(contextID: contextID)
+        
+        let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
+        
+        for myItem in myCheck
+        {
+            let myRetrievedContext = context(contextID: Int(myItem.contextID))
+            if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
+            {
+                itemFound = true
+                break
+            }
+        }
+        
+        if !itemFound
+        { // Not match found
+            myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID, contextType: contextType)
+            
+            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
+            myContexts.removeAll()
+            
+            for myContextItem in myContextList
+            {
+                let myNewContext = context(contextID: Int(myContextItem.contextID))
+                myContexts.append(myNewContext)
+            }
+        }
+    }
+    
+    func removeContext(_ contextID: Int)
+    {
+        myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID)
+        
+        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
+        myContexts.removeAll()
+        
+        for myContextItem in myContextList
+        {
+            let myNewContext = context(contextID: Int(myContextItem.contextID))
+            myContexts.append(myNewContext)
+        }
+    }
     
     func delete() -> Bool
     {
@@ -1519,7 +1519,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateTaskInCoreData(teamID: Int)
+    func updateTaskInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Task") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)

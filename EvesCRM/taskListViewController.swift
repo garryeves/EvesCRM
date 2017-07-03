@@ -14,6 +14,8 @@ protocol MyTaskListDelegate
     func myTaskListDidFinish(_ controller:taskListViewController)
 }
 
+let NotificationShowTaskUpdate = Notification.Name("NotificationShowTaskUpdate")
+
 class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var displayView: UIView!
@@ -59,7 +61,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                 
             for myItem in myData
             {
-                let newTask = task(taskID: myItem.taskID)
+                let newTask = task(taskID: Int(myItem.taskID))
                 myTaskList.append(newTask)
             }
         }
@@ -160,15 +162,16 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             }
             else if myTaskList[indexPath.row].contexts.count == 1
             {
-                cell.txtContext.text = myTaskList[indexPath.row].contexts[0].name
+                cell.txtContext.text = ""
+             //   cell.txtContext.text = myTaskList[indexPath.row].contexts[0].name
             }
             else
             {
                 cell.txtContext.text = ""
-                for myItem in myTaskList[indexPath.row].contexts
-                {
-                    cell.txtContext.text = "\(cell.txtContext.text)\(myItem.name)\n"
-                }
+//                for myItem in myTaskList[indexPath.row].contexts
+//                {
+//                    cell.txtContext.text = "\(cell.txtContext.text)\(myItem.name)\n"
+//                }
             }
             cell.txtContext.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
             

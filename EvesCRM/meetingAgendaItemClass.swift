@@ -185,10 +185,7 @@ class meetingAgendaItem
             myDiscussionNotes = tempAgendaItems[0].discussionNotes!
             myDecisionMade = tempAgendaItems[0].decisionMade!
             myStatus = tempAgendaItems[0].status!
- //           if tempAgendaItems[0].meetingOrder != nil
- //           {
-                myMeetingOrder = Int(tempAgendaItems[0].meetingOrder)
- //           }
+            myMeetingOrder = Int(tempAgendaItems[0].meetingOrder)
             myActualStartTime = tempAgendaItems[0].actualStartTime! as Date
             myActualEndTime = tempAgendaItems[0].actualEndTime! as Date
         }
@@ -202,21 +199,21 @@ class meetingAgendaItem
     {
         switch rowType
         {
-        case "Welcome" :
-            myTitle = "Welcome"
-            myTimeAllocation = 5
-            
-        case "PreviousMinutes" :
-            myTitle = "Review of previous meeting actions"
-            myTimeAllocation = 10
-            
-        case "Close" :
-            myTitle = "Close meeting"
-            myTimeAllocation = 1
-            
-        default:
-            myTitle = "Unknown item"
-            myTimeAllocation = 10
+            case "Welcome" :
+                myTitle = "Welcome"
+                myTimeAllocation = 5
+                
+            case "PreviousMinutes" :
+                myTitle = "Review of previous meeting actions"
+                myTimeAllocation = 10
+                
+            case "Close" :
+                myTitle = "Close meeting"
+                myTimeAllocation = 1
+                
+            default:
+                myTitle = "Unknown item"
+                myTimeAllocation = 10
         }
         
         myStatus = "Open"
@@ -242,7 +239,7 @@ class meetingAgendaItem
     {
         let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: myAgendaID)[0]
         
-        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem, teamID: currentUser.currentTeam!.teamID)
+        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem)
         
         saveCalled = false
     }
@@ -331,7 +328,7 @@ extension coreDatabase
     {
         var mySavedItem: MeetingAgendaItem
         
-        let myAgendaItem = loadSpecificAgendaItem(meetingID,agendaID: agendaID)
+        let myAgendaItem = loadSpecificAgendaItem(meetingID, agendaID: agendaID)
         
         if myAgendaItem.count == 0
         {
@@ -386,36 +383,6 @@ extension coreDatabase
                 mySavedItem.updateTime = updateTime as NSDate
                 mySavedItem.updateType = updateType
             }
-        }
-        
-        saveContext()
-    }
-    
-    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let mySavedItem = MeetingAgendaItem(context: objectContext)
-        mySavedItem.meetingID = meetingID
-        mySavedItem.agendaID = Int64(agendaID)
-        mySavedItem.actualEndTime = actualEndTime as NSDate
-        mySavedItem.actualStartTime = actualStartTime as NSDate
-        mySavedItem.status = status
-        mySavedItem.decisionMade = decisionMade
-        mySavedItem.discussionNotes = discussionNotes
-        mySavedItem.timeAllocation = Int64(timeAllocation)
-        mySavedItem.owner = owner
-        mySavedItem.title = title
-        mySavedItem.meetingOrder = Int64(meetingOrder)
-        mySavedItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            mySavedItem.updateTime =  NSDate()
-            mySavedItem.updateType = "Add"
-        }
-        else
-        {
-            mySavedItem.updateTime = updateTime as NSDate
-            mySavedItem.updateType = updateType
         }
         
         saveContext()
@@ -704,20 +671,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
-    }
-    
-    func replaceAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID)
-    {
-        let myTask = MeetingTasks(context: objectContext)
-        myTask.agendaID = Int64(agendaID)
-        myTask.meetingID = meetingID
-        myTask.taskID = Int64(taskID)
-        myTask.updateTime =  NSDate()
-        myTask.updateType = "Add"
-        myTask.teamID = Int64(teamID)
-        
-        saveContext()
+        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
     func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID)->[MeetingTasks]
@@ -787,27 +741,6 @@ extension coreDatabase
             }
         }
         
-        saveContext()
-    }
-    
-    func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myTask = MeetingTasks(context: objectContext)
-        myTask.agendaID = Int64(agendaID)
-        myTask.meetingID = meetingID
-        myTask.taskID = Int64(taskID)
-        myTask.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myTask.updateTime =  NSDate()
-            myTask.updateType = "Add"
-        }
-        else
-        {
-            myTask.updateTime = updateTime as NSDate
-            myTask.updateType = updateType
-        }
         saveContext()
     }
     
@@ -959,110 +892,48 @@ extension CloudKitInteraction
 {
     func saveMeetingAgendaItemToCloudKit()
     {
-        for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem"))
+        for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(getSyncDateForTable(tableName: "MeetingAgendaItem"))
         {
-            saveMeetingAgendaItemRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveMeetingAgendaItemRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingAgendaItemInCoreData(teamID: Int)
+    func updateMeetingAgendaItemInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
             self.updateMeetingAgendaItemRecord(record)
-            self.recordCount -= 1
-
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "MeetingAgendaItem", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteMeetingAgendaItem(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
+//    func deleteMeetingAgendaItem(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
-    func replaceMeetingAgendaItemInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let meetingID = record.object(forKey: "meetingID") as! String
-            let agendaID = record.object(forKey: "agendaID") as! Int
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let actualEndTime = record.object(forKey: "actualEndTime") as! Date
-            let actualStartTime = record.object(forKey: "actualStartTime") as! Date
-            let decisionMade = record.object(forKey: "decisionMade") as! String
-            let discussionNotes = record.object(forKey: "discussionNotes") as! String
-            let owner = record.object(forKey: "owner") as! String
-            let status = record.object(forKey: "status") as! String
-            let timeAllocation = record.object(forKey: "timeAllocation") as! Int
-            let title = record.object(forKey: "title") as! String
-            let meetingOrder = record.object(forKey: "meetingOrder") as! Int
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-
-    func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem, teamID: Int)
+    func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1125,7 +996,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.timeAllocation, forKey: "timeAllocation")
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1195,108 +1066,63 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
     
     func saveMeetingTasksToCloudKit()
     {
-        //        NSLog("Syncing MeetingTasks")
-        for myItem in myDatabaseConnection.getMeetingTasksForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks"))
+        for myItem in myDatabaseConnection.getMeetingTasksForSync(getSyncDateForTable(tableName: "MeetingTasks"))
         {
-            saveMeetingTasksRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveMeetingTasksRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingTasksInCoreData(teamID: Int)
+    func updateMeetingTasksInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
             self.updateMeetingTasksRecord(record)
-            self.recordCount -= 1
-
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "MeetingTasks", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteMeetingTasks(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
+//    func deleteMeetingTasks(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
-    func replaceMeetingTasksInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let meetingID = record.object(forKey: "meetingID") as! String
-            let agendaID = record.object(forKey: "agendaID") as! Int
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let taskID = record.object(forKey: "taskID") as! Int
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-
-    func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks, teamID: Int)
+    func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1343,7 +1169,7 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1367,7 +1193,7 @@ extension CloudKitInteraction
 
     func updateMeetingTasksRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        let meetingID = sourceRecord.object(forKey: "meetingIDInt") as! String
         let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
@@ -1389,6 +1215,16 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

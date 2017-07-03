@@ -953,34 +953,6 @@ extension coreDatabase
         }
     }
     
-    func getMyTeams(_ myID: String)->[Team]
-    {
-        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-        let sortDescriptors = [sortDescriptor]
-        fetchRequest.sortDescriptors = sortDescriptors
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-    
     func getTeamsCount() -> Int
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")

@@ -7,8 +7,19 @@
 //
 
 import Foundation
+import UIKit
 
-
+class alertListItem: UITableViewCell
+{
+    @IBOutlet weak var lblAlert: UILabel!
+    @IBOutlet weak var lblName: UILabel!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+}
 
 class alerts: NSObject
 {

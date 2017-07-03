@@ -34,6 +34,8 @@ let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
 let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
 let reportsStoryboard = UIStoryboard(name: "reports", bundle: nil)
 let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
+let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
+let meetingStoryboard = UIStoryboard(name: "meetings", bundle: nil)
 
 #if os(OSX)
     import AppKit

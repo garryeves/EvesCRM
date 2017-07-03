@@ -17,6 +17,7 @@ protocol MyTaskDelegate
     func myTaskUpdateDidFinish(_ controller:taskUpdatesViewController, actionType: String, currentTask: task)
 }
 
+let NotificationRemoveTaskContext = Notification.Name("NotificationRemoveTaskContext")
 class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDelegate
 {
     var passedTask: task!
@@ -67,8 +68,8 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     fileprivate var pickerTarget: String = ""
     fileprivate var myStartDate: Date!
     fileprivate var myDueDate: Date!
-    fileprivate var myProjectID: Int32 = 0
-    fileprivate var myProjectDetails: [Projects] = Array()
+    fileprivate var myProjectID: Int = 0
+    fileprivate var myProjectDetails: [project] = Array()
     fileprivate var mySelectedRow: Int = 0
     fileprivate var kbHeight: CGFloat!
     fileprivate var colContextsHeight: CGFloat!
@@ -272,9 +273,9 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
 
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseContext", for: indexPath as IndexPath) as! myContextItem
         
-        cell.lblContext.text = passedTask.contexts[indexPath.row].name
+     //   cell.lblContext.text = passedTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", for: .normal)
-        cell.btnRemove.tag = Int(passedTask.contexts[indexPath.row].contextID)
+     //   cell.btnRemove.tag = Int(passedTask.contexts[indexPath.row].contextID)
          
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -361,28 +362,28 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
       //      txtNewContext.isHidden = false
       //      btnNewContext.isHidden = false
       //      txtNewContext.text = ""
-        
-            let myContextList = contexts()
-            
-            pickerOptions.removeAll(keepingCapacity: false)
-            
-            pickerOptions.append("")
-
-            for myContext in myContextList.people
-            {
-                pickerOptions.append(myContext.contextHierarchy)
-            }
-            
-            for myContext in myContextList.places
-            {
-                pickerOptions.append(myContext.contextHierarchy)
-            }
-            
-            for myContext in myContextList.tools
-            {
-                pickerOptions.append(myContext.contextHierarchy)
-            }
-            
+print("Garry - get owner list from people table")
+//            let myContextList = contexts()
+//            
+//            pickerOptions.removeAll(keepingCapacity: false)
+//            
+//            pickerOptions.append("")
+//
+//            for myContext in myContextList.people
+//            {
+//                pickerOptions.append(myContext.contextHierarchy)
+//            }
+//            
+//            for myContext in myContextList.places
+//            {
+//                pickerOptions.append(myContext.contextHierarchy)
+//            }
+//            
+//            for myContext in myContextList.tools
+//            {
+//                pickerOptions.append(myContext.contextHierarchy)
+//            }
+//            
             
             /*  Need to look at this as this needs to provide a better way of select contexts for the task
             
@@ -583,7 +584,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
             
             let myNewContext = context(contextName: txtNewContext.text!)
             
-            setContext(myNewContext.contextID)
+            setContext(myNewContext.contextID, contextType: myNewContext.contextType)
             lblNewContext.isHidden = true
             txtNewContext.isHidden = true
             btnNewContext.isHidden = true
@@ -601,24 +602,25 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         pickerOptions.append("")
         
         // Get the projects for the tasks current team ID
-        let myProjects = myDatabaseConnection.getProjects(passedTask.teamID)
+        let myProjects = projects(teamID: passedTask.teamID, includeEvents: true)
+//        let myProjects = myDatabaseConnection.getProjects(passedTask.teamID)
         
-        for myProject in myProjects
+        for myProject in myProjects.projects
         {
-            pickerOptions.append(myProject.projectName!)
+            pickerOptions.append(myProject.projectName)
             myProjectDetails.append(myProject)
         }
         
         // Now also add in the users projects for other team Ids they have access to
         
-        for myTeamItem in myDatabaseConnection.getMyTeams(myID)
+        for myTeamItem in userTeams(userID: currentUser.userID).UserTeams
         {
             if myTeamItem.teamID != passedTask.teamID
             {
-                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID)
-                for myProject in myProjects
+                let myProjects = projects(teamID: myTeamItem.teamID, includeEvents: true)
+                for myProject in myProjects.projects
                 {
-                    pickerOptions.append(myProject.projectName!)
+                    pickerOptions.append(myProject.projectName)
                     myProjectDetails.append(myProject)
                 }
             }
@@ -667,7 +669,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         {
             if txtEstTime.text != ""
             {
-                passedTask.estimatedTime = Int16(txtEstTime.text!)!
+                passedTask.estimatedTime = Int(txtEstTime.text!)!
             }
         }
     }
@@ -730,7 +732,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
             {
                 let myNewContext = context(contextName: pickerOptions[mySelectedRow])
                 
-                setContext(myNewContext.contextID)
+                setContext(myNewContext.contextID, contextType: myNewContext.contextType)
                 
                 /*
                 var matchFound: Bool = false
@@ -785,7 +787,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         {
             if txtRepeatInterval.text != ""
             {
-                passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+                passedTask.repeatInterval = Int(txtRepeatInterval.text!)!
             }
         }
     }
@@ -961,25 +963,25 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         btnRepeatBase.isHidden = true
     }
     
-    func getProjectName(_ projectID: Int32)
+    func getProjectName(_ projectID: Int)
     {
-        let myProjects = myDatabaseConnection.getProjectDetails(projectID)
+        let tempProject = project(projectID: projectID)
         
-        if myProjects.count == 0
+        if tempProject.projectName == ""
         {
             btnProject.setTitle("Click to set", for: .normal)
             myProjectID = 0
         }
         else
         {
-            btnProject.setTitle(myProjects[0].projectName, for: .normal)
-            myProjectID = myProjects[0].projectID
+            btnProject.setTitle(tempProject.projectName, for: .normal)
+            myProjectID = tempProject.projectID
         }
     }
     
-    func setContext(_ contextID: Int32)
+    func setContext(_ contextID: Int, contextType: String)
     {
-        passedTask.addContext(contextID)
+        passedTask.addContext(contextID, contextType: contextType)
         
         // Reload the collection data
         
@@ -988,7 +990,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     
     func removeTaskContext(_ notification: Notification)
     {
-        let contextToRemove = notification.userInfo!["itemNo"] as! Int32
+        let contextToRemove = notification.userInfo!["itemNo"] as! Int
         
         passedTask.removeContext(contextToRemove)
         
@@ -1429,12 +1431,12 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
 
         if txtEstTime.text != ""
         {
-            passedTask.estimatedTime = Int16(txtEstTime.text!)!
+            passedTask.estimatedTime = Int(txtEstTime.text!)!
         }
         
         if txtRepeatInterval.text != ""
         {
-            passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+            passedTask.repeatInterval = Int(txtRepeatInterval.text!)!
         }
         
         passedTask.save()

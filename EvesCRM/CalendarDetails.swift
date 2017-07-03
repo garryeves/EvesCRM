@@ -7,43 +7,60 @@
 //
 
 import Foundation
-import AddressBook
+//import AddressBook
 import EventKit
 import CoreData
 import CloudKit
 
 
+struct mergedCalendarItem
+{
+    var startDate: Date
+    var databaseItem: calendarItem?
+    var iCalItem: EKEvent?
+}
+
 class topCalendar: NSObject
 {
-    fileprivate var eventDetails: [calendarItem] = Array()
-    fileprivate var eventRecords: [EKEvent] = Array()
+    fileprivate var mergedList: [mergedCalendarItem] = Array()
     
-    var events: [EKEvent]
+    var appointments: [mergedCalendarItem]
     {
-        get
-        {
-            return eventRecords
-        }
+        return mergedList
     }
-    var calendarItems: [calendarItem]
-    {
-        get
-        {
-            return eventDetails
-        }
-    }
+//    var events: [EKEvent]
+//    {
+//        get
+//        {
+//            return eventRecords
+//        }
+//    }
+//    var calendarItems: [calendarItem]
+//    {
+//        get
+//        {
+//            return eventDetails
+//        }
+//    }
 
     func loadCalendarDetails(_ emailAddresses: [String], teamID: Int)
     {
+        mergedList.removeAll()
+        
         for myEmail in emailAddresses
         {
-            parseCalendarByEmail(myEmail, teamID: teamID)
-            loadMeetingsForContext(myEmail)
+            for myEvent in iOSCalendar(email: myEmail, teamID: teamID).events
+            {
+                let newItem = mergedCalendarItem(startDate: myEvent.startDate, databaseItem: nil, iCalItem: myEvent)
+                mergedList.append(newItem)
+            }
+        
+            loadMeetingsForContext(myEmail, teamID: teamID)
         }
         
         // Now sort the array into date order
         
-        eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+        mergedList.sort(by: {$0.startDate < $1.startDate})
     }
     
     func loadCalendarForEvent(_ meetingID: String, startDate: Date, teamID: Int)
@@ -71,21 +88,18 @@ class topCalendar: NSObject
             {
                 if "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)" == meetingID
                 {
-                    eventRecords.append(calItem)
                     let calendarEntry = calendarItem(event: calItem, attendee: nil, teamID: teamID)
                     
-                    eventDetails.append(calendarEntry)
-                    eventRecords.append(calItem)
+                    let newItem = mergedCalendarItem(startDate: calItem.startDate, databaseItem: calendarEntry, iCalItem: calItem)
+                    mergedList.append(newItem)
                 }
             }
         }
     }
 
-    fileprivate func loadMeetingsForContext(_ searchString: String)
+    fileprivate func loadMeetingsForContext(_ context: String, teamID: Int)
     {
-        var meetingFound: Bool = false
-        
-        let myMeetingArray = getMeetingsForDateRange()
+        let myMeetingArray = getMeetingsForDateRange(teamID)
         
         // Check through the meetings for ones that match the context
         
@@ -95,37 +109,52 @@ class topCalendar: NSObject
             
             for myAttendee in myAttendeeList
             {
-                if (myAttendee.name == searchString) || (myAttendee.email == searchString)
+                if (myAttendee.name == context) || (myAttendee.email == context)
                 {
-                    // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
-                    meetingFound = false
-                    for myCheck in eventDetails
+                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+                    
+                    // Check through the list of events to make sure we do not have a duplicate
+                    
+                    var itemMatched: Bool = false
+                    
+                    for myEvent in mergedList
                     {
-                        if myCheck.meetingID == myMeeting.meetingID
+                        if myEvent.startDate == calendarEntry.startDate
                         {
-                            meetingFound = true
-                            break
+                            if myEvent.iCalItem != nil
+                            {
+                                if myEvent.iCalItem?.eventIdentifier == calendarEntry.title
+                                {
+                                    itemMatched = true
+                                }
+                            }
+                            else if myEvent.databaseItem != nil
+                            {
+                                if myEvent.databaseItem?.title == calendarEntry.title
+                                {
+                                    itemMatched = true
+                                }
+                            }
                         }
                     }
                     
-                    if !meetingFound
+                    if !itemMatched
                     {
-                        let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+                        let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
                         
-                        eventDetails.append(calendarEntry)
-                        //        eventRecords.append(nil)
+                        mergedList.append(newItem)
                     }
                 }
             }
         }
     }
     
-    fileprivate func loadMeetingsForProject(_ searchString: String)
+    fileprivate func loadMeetingsForProject(_ searchString: String, teamID: Int)
     {
         var meetingFound: Bool = false
         var dateMatch: Bool = false
         
-        let myMeetingArray = getMeetingsForDateRange()
+        let myMeetingArray = getMeetingsForDateRange(teamID)
         
         // Check through the meetings for ones that match the context
         
@@ -136,15 +165,15 @@ class topCalendar: NSObject
                 // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
                 meetingFound = false
                 dateMatch = true
-                for myCheck in eventDetails
+                for myCheck in mergedList
                 {
-                    if myCheck.meetingID == myMeeting.meetingID
+                    if myCheck.databaseItem?.meetingID == myMeeting.meetingID
                     {
                         meetingFound = true
                         break
                     }
                     
-                    if myCheck.title == myMeeting.name
+                    if myCheck.databaseItem?.title == myMeeting.name
                     {  // Meeting names are the same
                         if myCheck.startDate == myMeeting.startTime! as Date
                         { // Dates are the same
@@ -158,54 +187,39 @@ class topCalendar: NSObject
                 if !meetingFound
                 {
                     let calendarEntry = calendarItem(meetingAgenda: myMeeting)
-                    
-                    eventDetails.append(calendarEntry)
+                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
+                    mergedList.append(newItem)
                 }
                 
                 if !dateMatch
                 {
                     let calendarEntry = calendarItem(meetingAgenda: myMeeting)
                     
-                    eventDetails.append(calendarEntry)
+                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
+                    mergedList.append(newItem)
                 }
             }
         }
     }
     
-    func loadCalendarDetails(_ projectName: String, teamID: Int)
+    func loadCalendarDetailsForProject(_ projectName: String, teamID: Int)
     {
-        parseCalendarByProject(projectName, teamID: teamID)
-        
-        loadMeetingsForProject(projectName)
+        loadMeetingsForProject(projectName, teamID: teamID)
         
         // now sort the array into date order
         
-        eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+        mergedList.sort(by: {$0.startDate < $1.startDate})
     }
 
-    fileprivate func getMeetingsForDateRange() -> [MeetingAgenda]
+    fileprivate func getMeetingsForDateRange(_ teamID: Int) -> [MeetingAgenda]
     {
-        let baseDate = Date()
+        let startDateModifier = readDefaultInt("CalBefore") as Int
         
-        /* The event starts date */
-        //Calculate - Days * hours * mins * secs
+        let startDate = Date().add(.day, amount: -(startDateModifier * 7))
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
-        // This is string value so need to convert to integer, and subtract from 0 to get a negative
+        let endDateModifier = readDefaultInt("CalAfter") as Int
         
-        let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
-        
-        let startDate = baseDate.addingTimeInterval(myStartDateValue)
-        
-        /* The end date */
-        //Calculate - Days * hours * mins * secs
-        
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
-        // This is string value so need to convert to integer
-        
-        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
-        
-        let endDate = baseDate.addingTimeInterval(myEndDateValue)
+        let endDate = Date().add(.day, amount: (endDateModifier * 7))
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
         _ = globalEventStore.predicateForEvents(
@@ -215,100 +229,100 @@ class topCalendar: NSObject
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
         
-        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, endDate: endDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, endDate: endDate as NSDate, teamID: teamID)
     }
 
     fileprivate func storeEvent(_ event: EKEvent, attendee: EKParticipant?, teamID: Int)
     {
         let calendarEntry = calendarItem(event: event, attendee: attendee, teamID: teamID)
         
-        eventDetails.append(calendarEntry)
-        eventRecords.append(event)
+        let newItem = mergedCalendarItem(startDate: event.startDate, databaseItem: calendarEntry, iCalItem: event)
+        mergedList.append(newItem)
     }
 }
 
-class topReminder: NSObject
-{
-    fileprivate var reminderDetails: [ReminderData] = Array()
-    fileprivate var reminderRecords: [EKReminder] = Array()
-    
-    func parseReminderDetails (_ search: String)
-    {
-        let cals = reminderStore.calendars(for: EKEntityType.reminder)
-        var myCalFound = false
-        
-        for cal in cals
-        {
-            if cal.title == search
-            {
-                myCalFound = true
-                targetReminderCal = cal
-            }
-        }
-        
-        if myCalFound
-        {
-            let predicate = reminderStore.predicateForIncompleteReminders(withDueDateStarting: nil, ending: nil, calendars: [targetReminderCal])
-            
-            var asyncDone = false
-            
-            reminderStore.fetchReminders(matching: predicate, completion: {reminders in
-                for reminder in reminders!
-                {
-                    let workingString: ReminderData = ReminderData(reminderText: reminder.title, reminderCalendar: reminder.calendar)
-                    
-                    if reminder.notes != nil
-                    {
-                        workingString.notes = reminder.notes!
-                    }
-                    workingString.priority = reminder.priority
-                    workingString.calendarItemIdentifier = reminder.calendarItemIdentifier
-                    self.reminderDetails.append(workingString)
-                    self.reminderRecords.append(reminder)
-                }
-                asyncDone = true
-            })
-            
-            // Bit of a nasty workaround but this is to allow async to finish
-            
-            while !asyncDone
-            {
-                usleep(500)
-            }
-        }
-    }
-    
-    func displayReminder() -> [TableData]
-    {
-        var tableContents: [TableData] = [TableData]()
-        
-        // Build up the details we want to show ing the calendar
-        
-        if reminderDetails.count == 0
-        {
-            writeRowToArray("No reminders list found", table: &tableContents)
-        }
-        else
-        {
-            for myReminder in reminderDetails
-            {
-                let myString = "\(myReminder.reminderText)"
-                
-                switch myReminder.priority
-                {
-                case 1: writeRowToArray(myString, table: &tableContents, displayFormat: "Red")  //  High priority
-                    
-                case 5: writeRowToArray(myString , table: &tableContents, displayFormat: "Orange") // Medium priority
-                    
-                default: writeRowToArray(myString , table: &tableContents)
-                }
-            }
-            
-        }
-        return tableContents
-    }
-
-}
+//class topReminder: NSObject
+//{
+//    fileprivate var reminderDetails: [ReminderData] = Array()
+//    fileprivate var reminderRecords: [EKReminder] = Array()
+//
+//    func parseReminderDetails (_ search: String)
+//    {
+//        let cals = reminderStore.calendars(for: EKEntityType.reminder)
+//        var myCalFound = false
+//
+//        for cal in cals
+//        {
+//            if cal.title == search
+//            {
+//                myCalFound = true
+//                targetReminderCal = cal
+//            }
+//        }
+//
+//        if myCalFound
+//        {
+//            let predicate = reminderStore.predicateForIncompleteReminders(withDueDateStarting: nil, ending: nil, calendars: [targetReminderCal])
+//
+//            var asyncDone = false
+//
+//            reminderStore.fetchReminders(matching: predicate, completion: {reminders in
+//                for reminder in reminders!
+//                {
+//                    let workingString: ReminderData = ReminderData(reminderText: reminder.title, reminderCalendar: reminder.calendar)
+//
+//                    if reminder.notes != nil
+//                    {
+//                        workingString.notes = reminder.notes!
+//                    }
+//                    workingString.priority = reminder.priority
+//                    workingString.calendarItemIdentifier = reminder.calendarItemIdentifier
+//                    self.reminderDetails.append(workingString)
+//                    self.reminderRecords.append(reminder)
+//                }
+//                asyncDone = true
+//            })
+//
+//            // Bit of a nasty workaround but this is to allow async to finish
+//
+//            while !asyncDone
+//            {
+//                usleep(500)
+//            }
+//        }
+//    }
+//
+//    func displayReminder() -> [TableData]
+//    {
+//        var tableContents: [TableData] = [TableData]()
+//
+//        // Build up the details we want to show ing the calendar
+//
+//        if reminderDetails.count == 0
+//        {
+//            writeRowToArray("No reminders list found", table: &tableContents)
+//        }
+//        else
+//        {
+//            for myReminder in reminderDetails
+//            {
+//                let myString = "\(myReminder.reminderText)"
+//
+//                switch myReminder.priority
+//                {
+//                case 1: writeRowToArray(myString, table: &tableContents, displayFormat: "Red")  //  High priority
+//
+//                case 5: writeRowToArray(myString , table: &tableContents, displayFormat: "Orange") // Medium priority
+//
+//                default: writeRowToArray(myString , table: &tableContents)
+//                }
+//            }
+//
+//        }
+//        return tableContents
+//    }
+//
+//}
 
 class calendarItem
 {
@@ -460,28 +474,28 @@ class calendarItem
         
         // We neeed to go and the the event details from the calendar, if they exist
         
-        let nextEvent = iOSCalendar()
+        let nextEvent = topCalendar()
         
         nextEvent.loadCalendarForEvent(myMeetingID, startDate: myStartDate, teamID: myTeamID)
         
-        if nextEvent.events.count == 0
+        if nextEvent.appointments.count == 0
         {
             // No event found, so do nothing else
         }
-        else if nextEvent.events.count == 1
+        else if nextEvent.appointments.count == 1
         {
             // only 1 found so set it
-            myEvent = nextEvent.events[0]
+            myEvent = nextEvent.appointments[0].iCalItem
         }
         else
         {
             // Multiple found, so find the one with the matching start date
             
-            for myItem in nextEvent.events
+            for myItem in nextEvent.appointments
             {
                 if myItem.startDate == myStartDate
                 {
-                    myEvent = myItem
+                    myEvent = myItem.iCalItem
                 }
             }
         }
@@ -953,7 +967,7 @@ class calendarItem
         // if this is for a repeating event then we need to add in the original startdate to the Notes
         let myAgenda = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myTeamID)[0]
         
-        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda, teamID: currentUser.currentTeam!.teamID)
+        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda)
         
         saveCalled = false
     }
@@ -2478,7 +2492,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgenda(_ meetingID: String, previousMeetingID : String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAgenda(_ meetingID: String, previousMeetingID: String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -2533,33 +2547,6 @@ extension coreDatabase
                 myAgenda.updateTime = updateTime as NSDate
                 myAgenda.updateType = updateType
             }
-        }
-        
-        saveContext()
-    }
- 
-    func replaceAgenda(_ meetingID: String, previousMeetingID : String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myAgenda = MeetingAgenda(context: objectContext)
-        myAgenda.meetingID = meetingID
-        myAgenda.previousMeetingID = previousMeetingID
-        myAgenda.name = name
-        myAgenda.chair = chair
-        myAgenda.minutes = minutes
-        myAgenda.location = location
-        myAgenda.startTime = startTime as NSDate
-        myAgenda.endTime = endTime as NSDate
-        myAgenda.minutesType = minutesType
-        myAgenda.teamID = Int64(teamID)
-        if updateType == "CODE"
-        {
-            myAgenda.updateTime =  NSDate()
-            myAgenda.updateType = "Add"
-        }
-        else
-        {
-            myAgenda.updateTime = updateTime as NSDate
-            myAgenda.updateType = updateType
         }
         
         saveContext()
@@ -2885,105 +2872,48 @@ extension CloudKitInteraction
 {
     func saveMeetingAgendaToCloudKit()
     {
-        for myItem in myDatabaseConnection.getMeetingAgendasForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda"))
+        for myItem in myDatabaseConnection.getMeetingAgendasForSync(getSyncDateForTable(tableName: "MeetingAgenda"))
         {
-            saveMeetingAgendaRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveMeetingAgendaRecordToCloudKit(myItem)
         }
     }
 
     func updateMeetingAgendaInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamListForMeetingAgenda(currentUser.userID))", getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
             self.updateMeetingAgendaRecord(record, teamID: currentUser.currentTeam!.teamID)
-            self.recordCount -= 1
-
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "MeetingAgenda", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteMeetingAgenda(mmetingID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(meetingID == \(mmetingID)) AND \(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
-
-    func replaceMeetingAgendaInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let meetingID = record.object(forKey: "meetingID") as! String
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let chair = record.object(forKey: "chair") as! String
-            let endTime = record.object(forKey: "endTime") as! Date
-            let location = record.object(forKey: "location") as! String
-            let minutes = record.object(forKey: "minutes") as! String
-            let minutesType = record.object(forKey: "minutesType") as! String
-            let name = record.object(forKey: "name") as! String
-            let previousMeetingID = record.object(forKey: "previousMeetingID") as! String
-            let startTime = record.object(forKey: "meetingStartTime") as! Date
-            let teamID = record.object(forKey: "actualTeamID") as! Int
-            
-            myDatabaseConnection.replaceAgenda(meetingID, previousMeetingID : previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-
-    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda, teamID: Int)
+//    func deleteMeetingAgenda(mmetingID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "(meetingID == \(mmetingID)) AND \(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
+    
+    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") AND (actualTeamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -3045,7 +2975,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
                     record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                     record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue("\(sourceRecord.teamID)", forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -3092,6 +3022,15 @@ extension CloudKitInteraction
         let startTime = sourceRecord.object(forKey: "meetingStartTime") as! Date
         let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
         
-        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID : previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.recordsToChange += 1
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
+        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID: previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

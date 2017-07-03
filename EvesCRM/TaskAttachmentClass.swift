@@ -107,7 +107,7 @@ extension CloudKitInteraction
 {
     func saveTaskAttachmentToCloudKit()
     {
-        for myItem in myDatabaseConnection.getTaskAttachmentsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment"))
+        for myItem in myDatabaseConnection.getTaskAttachmentsForSync(getSyncDateForTable(tableName: "TaskAttachment"))
         {
             saveTaskAttachmentRecordToCloudKit(myItem)
         }
@@ -115,76 +115,40 @@ extension CloudKitInteraction
 
     func updateTaskAttachmentInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "TaskAttachment") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
+
         operation.recordFetchedBlock = { (record) in
             self.updateTaskAttachmentRecord(record)
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "TaskAttachment", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteTaskAttachment()
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
-
-    func replaceTaskAttachmentInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-                //    let taskID = record.objectForKey("taskID") as! Int
-                //    let title = record.objectForKey("title") as! String
-                //    let updateTime = record.objectForKey("updateTime") as! NSDate
-                //    let updateType = record.objectForKey("updateType") as! String
-                //    let attachment = record.objectForKey("attachment") as! NSData
-                NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
-                //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
-                usleep(useconds_t(self.sleepTime))
-            }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
+//    func deleteTaskAttachment()
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+//        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
     func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (title == \"\(sourceRecord.title!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (title == \"\(sourceRecord.title!)\") AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -231,7 +195,7 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.attachment, forKey: "attachment")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -271,6 +235,16 @@ extension CloudKitInteraction
         //       }
         //    let attachment = sourceRecord.objectForKey("attachment") as! NSData
         NSLog("updateTaskAttachmentInCoreData - Still to be coded")
+        
+//        myDatabaseConnection.recordsToChange += 1
+//        
+//        while self.recordCount > 0
+//        {
+//            usleep(self.sleepTime)
+//        }
+//        
+//        self.recordCount += 1
         //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
+//        self.recordCount -= 1
     }
 }

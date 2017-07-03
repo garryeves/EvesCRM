@@ -9,8 +9,13 @@
 /* Begin PBXBuildFile section */
 		341B6C511F0736C8005A4576 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341B6C501F0736C8005A4576 /* CloudKit.framework */; };
 		341B6C531F073722005A4576 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341B6C521F073722005A4576 /* StoreKit.framework */; };
+		341DBCEC1F088876003163D3 /* addPerInfoMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DBCE81F088876003163D3 /* addPerInfoMaintenanceViewController.swift */; };
+		341DBCED1F088876003163D3 /* addressClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DBCE91F088876003163D3 /* addressClass.swift */; };
+		341DBCEE1F088876003163D3 /* addressesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DBCEA1F088876003163D3 /* addressesViewController.swift */; };
+		341DBCEF1F088876003163D3 /* alertsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DBCEB1F088876003163D3 /* alertsClass.swift */; };
+		3435640C1F09DA6300AAF53E /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3435640B1F09DA6300AAF53E /* contextClass.swift */; };
+		34444FFB1F09EB36007B9284 /* meetings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34444FF91F09EB36007B9284 /* meetings.storyboard */; };
 		344CEAFF1F07391F006FCFCE /* userRolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEAFA1F07391F006FCFCE /* userRolesClass.swift */; };
-		344CEB001F07391F006FCFCE /* UserRoleTypesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEAFB1F07391F006FCFCE /* UserRoleTypesClass.swift */; };
 		344CEB011F07391F006FCFCE /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEAFC1F07391F006FCFCE /* UsersClass.swift */; };
 		344CEB021F07391F006FCFCE /* userTeamsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEAFD1F07391F006FCFCE /* userTeamsClass.swift */; };
 		344CEB031F07391F006FCFCE /* validatePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEAFE1F07391F006FCFCE /* validatePasswordViewController.swift */; };
@@ -45,10 +50,11 @@
 		344CEB421F073A02006FCFCE /* reportMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB401F073A02006FCFCE /* reportMaintenanceViewController.swift */; };
 		344CEB431F073A02006FCFCE /* reports.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 344CEB411F073A02006FCFCE /* reports.storyboard */; };
 		344CEB461F073A21006FCFCE /* setPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB441F073A21006FCFCE /* setPasswordViewController.swift */; };
-		344CEB471F073A21006FCFCE /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB451F073A21006FCFCE /* settingViewController.swift */; };
 		344CEB4A1F073A33006FCFCE /* timeSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB481F073A33006FCFCE /* timeSelectViewController.swift */; };
 		344CEB4B1F073A33006FCFCE /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB491F073A33006FCFCE /* userFormViewController.swift */; };
 		344CEB4D1F073A63006FCFCE /* projectClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB4C1F073A63006FCFCE /* projectClass.swift */; };
+		34916CAA1F09F4010019E682 /* EvesToolbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34916CA91F09F4010019E682 /* EvesToolbox.swift */; };
+		34916CAC1F0A02820019E682 /* toolBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34916CAB1F0A02820019E682 /* toolBoxViewController.swift */; };
 		34D0FDCF1F073427009E5973 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FDCE1F073427009E5973 /* AppDelegate.swift */; };
 		34D0FDD11F073427009E5973 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FDD01F073427009E5973 /* ViewController.swift */; };
 		34D0FDD41F073427009E5973 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34D0FDD21F073427009E5973 /* Main.storyboard */; };
@@ -67,6 +73,24 @@
 		34D0FE321F07358D009E5973 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FE311F07358D009E5973 /* CalendarDetails.swift */; };
 		34D0FE341F0735BE009E5973 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FE331F0735BE009E5973 /* reachability.swift */; };
 		34D0FE361F0735D6009E5973 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FE351F0735D6009E5973 /* UserInfo.swift */; };
+		34FE98CD1F0889D5000A7E72 /* shiftMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98CA1F0889D5000A7E72 /* shiftMaintenanceViewController.swift */; };
+		34FE98CE1F0889D5000A7E72 /* Shifts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34FE98CB1F0889D5000A7E72 /* Shifts.storyboard */; };
+		34FE98CF1F0889D5000A7E72 /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98CC1F0889D5000A7E72 /* shiftsClass.swift */; };
+		34FE98D11F088A0B000A7E72 /* AgendaItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98D01F088A0B000A7E72 /* AgendaItemViewController.swift */; };
+		34FE98E11F088A35000A7E72 /* meetingAgendaItemClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98D51F088A35000A7E72 /* meetingAgendaItemClass.swift */; };
+		34FE98E21F088A35000A7E72 /* meetingAgendaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98D61F088A35000A7E72 /* meetingAgendaViewController.swift */; };
+		34FE98E31F088A35000A7E72 /* meetingAttendeeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98D71F088A35000A7E72 /* meetingAttendeeClass.swift */; };
+		34FE98E61F088A35000A7E72 /* meetingSupportingDocsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98DA1F088A35000A7E72 /* meetingSupportingDocsClass.swift */; };
+		34FE98E71F088A35000A7E72 /* meetingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98DB1F088A35000A7E72 /* meetingsViewController.swift */; };
+		34FE98FC1F088A6B000A7E72 /* TaskAttachmentClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98EC1F088A6B000A7E72 /* TaskAttachmentClass.swift */; };
+		34FE98FD1F088A6B000A7E72 /* taskClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98ED1F088A6B000A7E72 /* taskClass.swift */; };
+		34FE98FF1F088A6B000A7E72 /* taskContextsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98EF1F088A6B000A7E72 /* taskContextsClass.swift */; };
+		34FE99001F088A6B000A7E72 /* taskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98F01F088A6B000A7E72 /* taskListViewController.swift */; };
+		34FE99031F088A6B000A7E72 /* taskPredecessorClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98F31F088A6B000A7E72 /* taskPredecessorClass.swift */; };
+		34FE99041F088A6B000A7E72 /* tasks.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34FE98F41F088A6B000A7E72 /* tasks.storyboard */; };
+		34FE99071F088A6B000A7E72 /* taskUpdatesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98F71F088A6B000A7E72 /* taskUpdatesClass.swift */; };
+		34FE99081F088A6B000A7E72 /* taskUpdatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98F81F088A6B000A7E72 /* taskUpdatesViewController.swift */; };
+		34FE99091F088A6B000A7E72 /* taskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FE98F91F088A6B000A7E72 /* taskViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,8 +114,13 @@
 		341B6C4E1F0736C4005A4576 /* toolbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = toolbox.entitlements; sourceTree = "<group>"; };
 		341B6C501F0736C8005A4576 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		341B6C521F073722005A4576 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		341DBCE81F088876003163D3 /* addPerInfoMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = addPerInfoMaintenanceViewController.swift; path = ../../evesSecurity/evesSecurity/addPerInfoMaintenanceViewController.swift; sourceTree = "<group>"; };
+		341DBCE91F088876003163D3 /* addressClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = addressClass.swift; path = ../../evesSecurity/evesSecurity/addressClass.swift; sourceTree = "<group>"; };
+		341DBCEA1F088876003163D3 /* addressesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = addressesViewController.swift; path = ../../evesSecurity/evesSecurity/addressesViewController.swift; sourceTree = "<group>"; };
+		341DBCEB1F088876003163D3 /* alertsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = alertsClass.swift; path = ../../evesSecurity/evesSecurity/alertsClass.swift; sourceTree = "<group>"; };
+		3435640B1F09DA6300AAF53E /* contextClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = contextClass.swift; path = ../../EvesCRM/contextClass.swift; sourceTree = "<group>"; };
+		34444FFA1F09EB36007B9284 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = ../../EvesCRM/Base.lproj/meetings.storyboard; sourceTree = "<group>"; };
 		344CEAFA1F07391F006FCFCE /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userRolesClass.swift; path = ../../evesSecurity/evesSecurity/userRolesClass.swift; sourceTree = "<group>"; };
-		344CEAFB1F07391F006FCFCE /* UserRoleTypesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserRoleTypesClass.swift; path = ../../evesSecurity/evesSecurity/UserRoleTypesClass.swift; sourceTree = "<group>"; };
 		344CEAFC1F07391F006FCFCE /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UsersClass.swift; path = ../../evesSecurity/evesSecurity/UsersClass.swift; sourceTree = "<group>"; };
 		344CEAFD1F07391F006FCFCE /* userTeamsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userTeamsClass.swift; path = ../../evesSecurity/evesSecurity/userTeamsClass.swift; sourceTree = "<group>"; };
 		344CEAFE1F07391F006FCFCE /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = validatePasswordViewController.swift; path = ../../evesSecurity/evesSecurity/validatePasswordViewController.swift; sourceTree = "<group>"; };
@@ -126,10 +155,11 @@
 		344CEB401F073A02006FCFCE /* reportMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = reportMaintenanceViewController.swift; path = ../../evesSecurity/evesSecurity/reportMaintenanceViewController.swift; sourceTree = "<group>"; };
 		344CEB411F073A02006FCFCE /* reports.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = reports.storyboard; path = ../../evesSecurity/evesSecurity/reports.storyboard; sourceTree = "<group>"; };
 		344CEB441F073A21006FCFCE /* setPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = setPasswordViewController.swift; path = ../../evesSecurity/evesSecurity/setPasswordViewController.swift; sourceTree = "<group>"; };
-		344CEB451F073A21006FCFCE /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = settingViewController.swift; path = ../../evesSecurity/evesSecurity/settingViewController.swift; sourceTree = "<group>"; };
 		344CEB481F073A33006FCFCE /* timeSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = timeSelectViewController.swift; path = ../../evesSecurity/evesSecurity/timeSelectViewController.swift; sourceTree = "<group>"; };
 		344CEB491F073A33006FCFCE /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userFormViewController.swift; path = ../../evesSecurity/evesSecurity/userFormViewController.swift; sourceTree = "<group>"; };
 		344CEB4C1F073A63006FCFCE /* projectClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectClass.swift; path = ../../EvesCRM/projectClass.swift; sourceTree = "<group>"; };
+		34916CA91F09F4010019E682 /* EvesToolbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesToolbox.swift; sourceTree = "<group>"; };
+		34916CAB1F0A02820019E682 /* toolBoxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toolBoxViewController.swift; sourceTree = "<group>"; };
 		34D0FDCB1F073427009E5973 /* toolbox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toolbox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D0FDCE1F073427009E5973 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34D0FDD01F073427009E5973 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -184,6 +214,25 @@
 		34D0FE311F07358D009E5973 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CalendarDetails.swift; path = ../../EvesCRM/CalendarDetails.swift; sourceTree = "<group>"; };
 		34D0FE331F0735BE009E5973 /* reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = reachability.swift; path = ../../EvesCRM/reachability.swift; sourceTree = "<group>"; };
 		34D0FE351F0735D6009E5973 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = ../../EvesCRM/UserInfo.swift; sourceTree = "<group>"; };
+		34FE98CA1F0889D5000A7E72 /* shiftMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = shiftMaintenanceViewController.swift; path = ../../evesSecurity/evesSecurity/shiftMaintenanceViewController.swift; sourceTree = "<group>"; };
+		34FE98CB1F0889D5000A7E72 /* Shifts.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Shifts.storyboard; path = ../../evesSecurity/evesSecurity/Shifts.storyboard; sourceTree = "<group>"; };
+		34FE98CC1F0889D5000A7E72 /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = shiftsClass.swift; path = ../../evesSecurity/evesSecurity/shiftsClass.swift; sourceTree = "<group>"; };
+		34FE98D01F088A0B000A7E72 /* AgendaItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AgendaItemViewController.swift; path = ../../EvesCRM/AgendaItemViewController.swift; sourceTree = "<group>"; };
+		34FE98D51F088A35000A7E72 /* meetingAgendaItemClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingAgendaItemClass.swift; path = ../../EvesCRM/meetingAgendaItemClass.swift; sourceTree = "<group>"; };
+		34FE98D61F088A35000A7E72 /* meetingAgendaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingAgendaViewController.swift; path = ../../EvesCRM/meetingAgendaViewController.swift; sourceTree = "<group>"; };
+		34FE98D71F088A35000A7E72 /* meetingAttendeeClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingAttendeeClass.swift; path = ../../EvesCRM/meetingAttendeeClass.swift; sourceTree = "<group>"; };
+		34FE98DA1F088A35000A7E72 /* meetingSupportingDocsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingSupportingDocsClass.swift; path = ../../EvesCRM/meetingSupportingDocsClass.swift; sourceTree = "<group>"; };
+		34FE98DB1F088A35000A7E72 /* meetingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingsViewController.swift; path = ../../EvesCRM/meetingsViewController.swift; sourceTree = "<group>"; };
+		34FE98EC1F088A6B000A7E72 /* TaskAttachmentClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskAttachmentClass.swift; path = ../../EvesCRM/TaskAttachmentClass.swift; sourceTree = "<group>"; };
+		34FE98ED1F088A6B000A7E72 /* taskClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskClass.swift; path = ../../EvesCRM/taskClass.swift; sourceTree = "<group>"; };
+		34FE98EF1F088A6B000A7E72 /* taskContextsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskContextsClass.swift; path = ../../EvesCRM/taskContextsClass.swift; sourceTree = "<group>"; };
+		34FE98F01F088A6B000A7E72 /* taskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskListViewController.swift; path = ../../EvesCRM/taskListViewController.swift; sourceTree = "<group>"; };
+		34FE98F31F088A6B000A7E72 /* taskPredecessorClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskPredecessorClass.swift; path = ../../EvesCRM/taskPredecessorClass.swift; sourceTree = "<group>"; };
+		34FE98F41F088A6B000A7E72 /* tasks.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = tasks.storyboard; path = ../../EvesCRM/tasks.storyboard; sourceTree = "<group>"; };
+		34FE98F71F088A6B000A7E72 /* taskUpdatesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskUpdatesClass.swift; path = ../../EvesCRM/taskUpdatesClass.swift; sourceTree = "<group>"; };
+		34FE98F81F088A6B000A7E72 /* taskUpdatesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskUpdatesViewController.swift; path = ../../EvesCRM/taskUpdatesViewController.swift; sourceTree = "<group>"; };
+		34FE98F91F088A6B000A7E72 /* taskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskViewController.swift; path = ../../EvesCRM/taskViewController.swift; sourceTree = "<group>"; };
+		34FE990A1F0892F0000A7E72 /* EvesCRM 32.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 32.xcdatamodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +331,7 @@
 				34D0FE021F07349F009E5973 /* CloudKitInteraction.swift */,
 				34D0FE2B1F073547009E5973 /* DBSync.swift */,
 				34D0FE031F07349F009E5973 /* EvesCRMSharedFiles.swift */,
+				34916CA91F09F4010019E682 /* EvesToolbox.swift */,
 				344CEB1C1F073992006FCFCE /* extensions.swift */,
 				34D0FE331F0735BE009E5973 /* reachability.swift */,
 				34D0FE351F0735D6009E5973 /* UserInfo.swift */,
@@ -293,22 +343,33 @@
 		34D0FE001F07346F009E5973 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				341DBCE91F088876003163D3 /* addressClass.swift */,
+				341DBCEB1F088876003163D3 /* alertsClass.swift */,
 				34D0FE311F07358D009E5973 /* CalendarDetails.swift */,
 				344CEB061F073973006FCFCE /* clientsClass.swift */,
 				34D0FE2F1F073578009E5973 /* ContactDetails.swift */,
 				344CEB071F073973006FCFCE /* Contacts.swift */,
+				3435640B1F09DA6300AAF53E /* contextClass.swift */,
 				34D0FE2D1F073561009E5973 /* decodesClass.swift */,
 				344CEB0F1F073973006FCFCE /* dropdownsClass.swift */,
 				344CEB311F0739EA006FCFCE /* ratesClass.swift */,
 				344CEB321F0739EA006FCFCE /* reporting.swift */,
 				344CEB1D1F073992006FCFCE /* IAPClass.swift */,
 				344CEB221F0739B5006FCFCE /* IOSCalendar.swift */,
+				34FE98D51F088A35000A7E72 /* meetingAgendaItemClass.swift */,
+				34FE98D71F088A35000A7E72 /* meetingAttendeeClass.swift */,
+				34FE98DA1F088A35000A7E72 /* meetingSupportingDocsClass.swift */,
 				344CEB271F0739EA006FCFCE /* notificationDefinitions.swift */,
 				344CEB2C1F0739EA006FCFCE /* personClass.swift */,
 				344CEB4C1F073A63006FCFCE /* projectClass.swift */,
+				34FE98CC1F0889D5000A7E72 /* shiftsClass.swift */,
+				34FE98EC1F088A6B000A7E72 /* TaskAttachmentClass.swift */,
+				34FE98ED1F088A6B000A7E72 /* taskClass.swift */,
+				34FE98EF1F088A6B000A7E72 /* taskContextsClass.swift */,
+				34FE98F31F088A6B000A7E72 /* taskPredecessorClass.swift */,
+				34FE98F71F088A6B000A7E72 /* taskUpdatesClass.swift */,
 				34D0FE291F073537009E5973 /* teamClass.swift */,
 				344CEAFA1F07391F006FCFCE /* userRolesClass.swift */,
-				344CEAFB1F07391F006FCFCE /* UserRoleTypesClass.swift */,
 				344CEAFC1F07391F006FCFCE /* UsersClass.swift */,
 				344CEAFD1F07391F006FCFCE /* userTeamsClass.swift */,
 			);
@@ -322,16 +383,25 @@
 				344CEB0E1F073973006FCFCE /* dropDownMenus.storyboard */,
 				344CEB231F0739B5006FCFCE /* LoginRoles.storyboard */,
 				34D0FDD21F073427009E5973 /* Main.storyboard */,
+				34444FF91F09EB36007B9284 /* meetings.storyboard */,
 				344CEB291F0739EA006FCFCE /* person.storyboard */,
 				344CEB2F1F0739EA006FCFCE /* Projects.storyboard */,
 				344CEB411F073A02006FCFCE /* reports.storyboard */,
+				34FE98CB1F0889D5000A7E72 /* Shifts.storyboard */,
+				34FE98F41F088A6B000A7E72 /* tasks.storyboard */,
 				34D0FDCE1F073427009E5973 /* AppDelegate.swift */,
+				34D0FDD01F073427009E5973 /* ViewController.swift */,
+				341DBCE81F088876003163D3 /* addPerInfoMaintenanceViewController.swift */,
+				341DBCEA1F088876003163D3 /* addressesViewController.swift */,
+				34FE98D01F088A0B000A7E72 /* AgendaItemViewController.swift */,
 				344CEB041F073973006FCFCE /* clientMaintenanceViewController.swift */,
 				344CEB081F073973006FCFCE /* contactsViewController.swift */,
 				344CEB091F073973006FCFCE /* contractMaintenanceViewController.swift */,
 				344CEB0C1F073973006FCFCE /* dateTimePickerViewController.swift */,
 				344CEB0D1F073973006FCFCE /* dropdownMaintenanceViewController.swift */,
 				344CEB1E1F073992006FCFCE /* IAPViewController.swift */,
+				34FE98D61F088A35000A7E72 /* meetingAgendaViewController.swift */,
+				34FE98DB1F088A35000A7E72 /* meetingsViewController.swift */,
 				344CEB261F0739EA006FCFCE /* newUserViewController.swift */,
 				344CEB281F0739EA006FCFCE /* orgEditViewController.swift */,
 				344CEB2A1F0739EA006FCFCE /* personAddInfoEntryClass.swift */,
@@ -341,11 +411,14 @@
 				344CEB301F0739EA006FCFCE /* rateMaintenanceViewController.swift */,
 				344CEB401F073A02006FCFCE /* reportMaintenanceViewController.swift */,
 				344CEB441F073A21006FCFCE /* setPasswordViewController.swift */,
-				344CEB451F073A21006FCFCE /* settingViewController.swift */,
+				34FE98CA1F0889D5000A7E72 /* shiftMaintenanceViewController.swift */,
+				34FE98F01F088A6B000A7E72 /* taskListViewController.swift */,
+				34FE98F81F088A6B000A7E72 /* taskUpdatesViewController.swift */,
+				34FE98F91F088A6B000A7E72 /* taskViewController.swift */,
+				34916CAB1F0A02820019E682 /* toolBoxViewController.swift */,
 				344CEB481F073A33006FCFCE /* timeSelectViewController.swift */,
 				344CEB491F073A33006FCFCE /* userFormViewController.swift */,
 				344CEAFE1F07391F006FCFCE /* validatePasswordViewController.swift */,
-				34D0FDD01F073427009E5973 /* ViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -474,11 +547,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34FE99041F088A6B000A7E72 /* tasks.storyboard in Resources */,
 				34D0FDDC1F073427009E5973 /* LaunchScreen.storyboard in Resources */,
+				34444FFB1F09EB36007B9284 /* meetings.storyboard in Resources */,
 				34D0FDD91F073427009E5973 /* Assets.xcassets in Resources */,
 				34D0FDD41F073427009E5973 /* Main.storyboard in Resources */,
 				344CEB111F073973006FCFCE /* Clients.storyboard in Resources */,
 				344CEB3C1F0739EA006FCFCE /* Projects.storyboard in Resources */,
+				34FE98CE1F0889D5000A7E72 /* Shifts.storyboard in Resources */,
 				344CEB431F073A02006FCFCE /* reports.storyboard in Resources */,
 				344CEB251F0739B5006FCFCE /* LoginRoles.storyboard in Resources */,
 				344CEB361F0739EA006FCFCE /* person.storyboard in Resources */,
@@ -508,12 +584,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				34D0FE2A1F073537009E5973 /* teamClass.swift in Sources */,
+				34FE99001F088A6B000A7E72 /* taskListViewController.swift in Sources */,
+				34FE99071F088A6B000A7E72 /* taskUpdatesClass.swift in Sources */,
+				34FE98D11F088A0B000A7E72 /* AgendaItemViewController.swift in Sources */,
 				344CEB3A1F0739EA006FCFCE /* personViewController.swift in Sources */,
 				344CEB381F0739EA006FCFCE /* personAdditionalInfoClass.swift in Sources */,
 				344CEB191F073973006FCFCE /* dropdownMaintenanceViewController.swift in Sources */,
+				34FE98FD1F088A6B000A7E72 /* taskClass.swift in Sources */,
 				344CEB371F0739EA006FCFCE /* personAddInfoEntryClass.swift in Sources */,
 				344CEB021F07391F006FCFCE /* userTeamsClass.swift in Sources */,
 				344CEB241F0739B5006FCFCE /* IOSCalendar.swift in Sources */,
+				34FE99091F088A6B000A7E72 /* taskViewController.swift in Sources */,
 				344CEB341F0739EA006FCFCE /* notificationDefinitions.swift in Sources */,
 				344CEB131F073973006FCFCE /* Contacts.swift in Sources */,
 				34D0FE301F073578009E5973 /* ContactDetails.swift in Sources */,
@@ -523,30 +604,44 @@
 				34D0FE321F07358D009E5973 /* CalendarDetails.swift in Sources */,
 				344CEB461F073A21006FCFCE /* setPasswordViewController.swift in Sources */,
 				344CEB4A1F073A33006FCFCE /* timeSelectViewController.swift in Sources */,
+				34FE98E71F088A35000A7E72 /* meetingsViewController.swift in Sources */,
 				34D0FE2C1F073547009E5973 /* DBSync.swift in Sources */,
+				34FE98E11F088A35000A7E72 /* meetingAgendaItemClass.swift in Sources */,
 				344CEB3D1F0739EA006FCFCE /* rateMaintenanceViewController.swift in Sources */,
 				344CEB421F073A02006FCFCE /* reportMaintenanceViewController.swift in Sources */,
+				34FE98FF1F088A6B000A7E72 /* taskContextsClass.swift in Sources */,
 				34D0FE2E1F073561009E5973 /* decodesClass.swift in Sources */,
 				344CEAFF1F07391F006FCFCE /* userRolesClass.swift in Sources */,
 				344CEB031F07391F006FCFCE /* validatePasswordViewController.swift in Sources */,
+				341DBCEF1F088876003163D3 /* alertsClass.swift in Sources */,
+				34FE98E61F088A35000A7E72 /* meetingSupportingDocsClass.swift in Sources */,
+				34FE98FC1F088A6B000A7E72 /* TaskAttachmentClass.swift in Sources */,
+				34FE98E31F088A35000A7E72 /* meetingAttendeeClass.swift in Sources */,
 				344CEB1F1F073992006FCFCE /* extensions.swift in Sources */,
 				344CEB4B1F073A33006FCFCE /* userFormViewController.swift in Sources */,
 				344CEB1B1F073973006FCFCE /* dropdownsClass.swift in Sources */,
+				34FE98CF1F0889D5000A7E72 /* shiftsClass.swift in Sources */,
 				34D0FE041F07349F009E5973 /* CloudKitInteraction.swift in Sources */,
 				34D0FE361F0735D6009E5973 /* UserInfo.swift in Sources */,
+				34FE98E21F088A35000A7E72 /* meetingAgendaViewController.swift in Sources */,
 				344CEB3F1F0739EA006FCFCE /* reporting.swift in Sources */,
+				34FE99081F088A6B000A7E72 /* taskUpdatesViewController.swift in Sources */,
 				344CEB391F0739EA006FCFCE /* personClass.swift in Sources */,
 				344CEB151F073973006FCFCE /* contractMaintenanceViewController.swift in Sources */,
+				34FE98CD1F0889D5000A7E72 /* shiftMaintenanceViewController.swift in Sources */,
 				344CEB181F073973006FCFCE /* dateTimePickerViewController.swift in Sources */,
 				344CEB101F073973006FCFCE /* clientMaintenanceViewController.swift in Sources */,
+				3435640C1F09DA6300AAF53E /* contextClass.swift in Sources */,
 				34D0FDD11F073427009E5973 /* ViewController.swift in Sources */,
-				344CEB471F073A21006FCFCE /* settingViewController.swift in Sources */,
+				341DBCEC1F088876003163D3 /* addPerInfoMaintenanceViewController.swift in Sources */,
 				344CEB201F073992006FCFCE /* IAPClass.swift in Sources */,
+				34916CAC1F0A02820019E682 /* toolBoxViewController.swift in Sources */,
 				344CEB3B1F0739EA006FCFCE /* pickerViewController.swift in Sources */,
-				344CEB001F07391F006FCFCE /* UserRoleTypesClass.swift in Sources */,
 				34D0FE051F07349F009E5973 /* EvesCRMSharedFiles.swift in Sources */,
 				344CEB011F07391F006FCFCE /* UsersClass.swift in Sources */,
 				344CEB211F073992006FCFCE /* IAPViewController.swift in Sources */,
+				34FE99031F088A6B000A7E72 /* taskPredecessorClass.swift in Sources */,
+				341DBCED1F088876003163D3 /* addressClass.swift in Sources */,
 				344CEB141F073973006FCFCE /* contactsViewController.swift in Sources */,
 				34D0FDCF1F073427009E5973 /* AppDelegate.swift in Sources */,
 				344CEB3E1F0739EA006FCFCE /* ratesClass.swift in Sources */,
@@ -554,6 +649,8 @@
 				344CEB331F0739EA006FCFCE /* newUserViewController.swift in Sources */,
 				344CEB4D1F073A63006FCFCE /* projectClass.swift in Sources */,
 				344CEB351F0739EA006FCFCE /* orgEditViewController.swift in Sources */,
+				34916CAA1F09F4010019E682 /* EvesToolbox.swift in Sources */,
+				341DBCEE1F088876003163D3 /* addressesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,6 +686,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		34444FF91F09EB36007B9284 /* meetings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34444FFA1F09EB36007B9284 /* Base */,
+			);
+			name = meetings.storyboard;
+			sourceTree = "<group>";
+		};
 		34D0FDD21F073427009E5973 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -836,6 +941,7 @@
 		34D0FE061F0734B5009E5973 /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				34FE990A1F0892F0000A7E72 /* EvesCRM 32.xcdatamodel */,
 				34D0FE071F0734B5009E5973 /* EvesCRM 10.xcdatamodel */,
 				34D0FE081F0734B5009E5973 /* EvesCRM 11.xcdatamodel */,
 				34D0FE091F0734B5009E5973 /* EvesCRM 12.xcdatamodel */,

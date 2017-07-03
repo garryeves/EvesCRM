@@ -259,7 +259,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         popover!.sourceView = sender
         popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
         
-        let newTask = task(teamID: myCurrentTeam.teamID)
+        let newTask = task(teamID: currentUser.currentTeam!.teamID)
         popoverContent.passedTask = newTask
         
         popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
@@ -303,7 +303,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
     
     @IBAction func txtTimeAllocation(_ sender: UITextField)
     {
-        agendaItem.timeAllocation = Int16(txtTimeAllocation.text!)!
+        agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
     }
     
     func textViewDidEndEditing(_ textView: UITextView)

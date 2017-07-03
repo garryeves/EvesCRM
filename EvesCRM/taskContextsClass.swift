@@ -85,7 +85,7 @@ extension coreDatabase
         return myTaskArray
     }
 
-    func saveTaskContext(_ contextID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTaskContext(_ contextID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myContext: TaskContext!
         
@@ -97,6 +97,7 @@ extension coreDatabase
             myContext.contextID = Int64(contextID)
             myContext.taskID = Int64(taskID)
             myContext.teamID = Int64(teamID)
+            myContext.contextType = contextType
             
             if updateType == "CODE"
             {
@@ -112,6 +113,7 @@ extension coreDatabase
         else
         {
             myContext = myContexts[0]
+            myContext.contextType = contextType
             if updateType == "CODE"
             {
                 myContext.updateTime =  NSDate()
@@ -129,28 +131,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveTaskContextRecordToCloudKit(myContext, teamID: currentUser.currentTeam!.teamID)
-    }
-    
-    func replaceTaskContext(_ contextID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        
-        let myContext = TaskContext(context: objectContext)
-        myContext.contextID = Int64(contextID)
-        myContext.taskID = Int64(taskID)
-        myContext.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myContext.updateTime =  NSDate()
-            myContext.updateType = "Add"
-        }
-        else
-        {
-            myContext.updateTime = updateTime as NSDate
-            myContext.updateType = updateType
-        }
-        saveContext()
+        myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
     
     func deleteTaskContext(_ contextID: Int, taskID: Int)
@@ -368,101 +349,48 @@ extension CloudKitInteraction
 {
     func saveTaskContextToCloudKit()
     {
-        for myItem in myDatabaseConnection.getTaskContextsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskContext"))
+        for myItem in myDatabaseConnection.getTaskContextsForSync(getSyncDateForTable(tableName: "TaskContext"))
         {
-            saveTaskContextRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveTaskContextRecordToCloudKit(myItem)
         }
     }
 
-    func updateTaskContextInCoreData(teamID: Int)
+    func updateTaskContextInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskContext") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "TaskContext") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
                 self.updateTaskContextRecord(record)
-            self.recordCount -= 1
-
-                usleep(useconds_t(self.sleepTime))
             }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "TaskContext", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteTaskContext(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
+//    func deleteTaskContext(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
-    func replaceTaskContextInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int
-            let contextID = record.object(forKey: "contextID") as! Int
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceTaskContext(contextID, taskID: taskID, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-
-    func saveTaskContextRecordToCloudKit(_ sourceRecord: TaskContext, teamID: Int)
+    func saveTaskContextRecordToCloudKit(_ sourceRecord: TaskContext)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (contextID == \(sourceRecord.contextID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (contextID == \(sourceRecord.contextID)) AND (contextType == \"\(sourceRecord.contextType!)\") AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskContext", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -502,7 +430,7 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "TaskContext")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
                     record.setValue(sourceRecord.contextID, forKey: "contextID")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -535,6 +463,7 @@ extension CloudKitInteraction
     {
         let taskID = sourceRecord.object(forKey: "taskID") as! Int
         let contextID = sourceRecord.object(forKey: "contextID") as! Int
+        let contextType = sourceRecord.object(forKey: "contextType") as! String
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -554,6 +483,16 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
-        myDatabaseConnection.saveTaskContext(contextID, taskID: taskID, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
+        myDatabaseConnection.saveTaskContext(contextID, taskID: taskID, teamID: teamID, contextType: contextType, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

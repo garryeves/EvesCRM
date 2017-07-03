@@ -11,49 +11,6 @@ import UIKit
 import EventKit
 //import TextExpander
 
-class MeetingModel: NSObject
-{
-    fileprivate var myDelegate: MyMeetingsDelegate!
-    fileprivate var myEvent: calendarItem!
-    fileprivate var myActionType: String = ""
-    
-    var delegate: MyMeetingsDelegate
-    {
-        get
-        {
-            return myDelegate
-        }
-        set
-        {
-            myDelegate = newValue
-        }
-    }
-    
-    var actionType: String
-    {
-        get
-        {
-            return myActionType
-        }
-        set
-        {
-            myActionType = newValue
-        }
-    }
-    
-    var event: calendarItem
-    {
-        get
-        {
-            return myEvent
-        }
-        set
-        {
-            myEvent = newValue
-        }
-    }
-}
-
 protocol MyMeetingsDelegate
 {
     func myMeetingsDidFinish(_ controller:meetingsViewController)
@@ -69,9 +26,10 @@ protocol meetingCommunicationDelegate
 
 class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillDelegate
 {
-    fileprivate var passedMeetingModel: MeetingModel!
     var passedMeeting: calendarItem!
     var meetingCommunication: meetingCommunicationDelegate!
+    var meetingsDelegate: MyMeetingsDelegate!
+    var actionType: String!
     
     @IBOutlet weak var lblMeetingHead: UILabel!
     @IBOutlet weak var lblLocationHead: UILabel!
@@ -124,38 +82,27 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     {
         super.viewDidLoad()
         
-        if passedMeeting == nil
-        {
-            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
-            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
-        }
-        
-        if passedMeetingModel != nil
-        {
-            lblMeetingHead.text = passedMeetingModel.actionType
-        }
-        
         toolbar.isTranslucent = false
         
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-            target: self, action: nil)
-        
-        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
-        
-        if passedMeetingModel != nil
-        {
-            let pageHead = UIBarButtonItem(title: passedMeetingModel.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
-            pageHead.tintColor = UIColor.black
-            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                          target: self, action: nil)
-            self.toolbar.items=[spacer,pageHead, spacer2, share]
-        }
-        else
-        {
-            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                target: self, action: nil)
-            self.toolbar.items=[spacer, spacer2, share]
-        }
+//        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+//            target: self, action: nil)
+//
+//        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
+//
+//        if passedMeetingModel != nil
+//        {
+//            let pageHead = UIBarButtonItem(title: passedMeetingModel.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
+//            pageHead.tintColor = UIColor.black
+//            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+//                                          target: self, action: nil)
+//            self.toolbar.items=[spacer,pageHead, spacer2, share]
+//        }
+//        else
+//        {
+//            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+//                target: self, action: nil)
+//            self.toolbar.items=[spacer, spacer2, share]
+//        }
         lblLocation.text = passedMeeting.location
         lblStartTime.text = passedMeeting.displayScheduledDate
         lblMeetingName.text = passedMeeting.title
@@ -178,7 +125,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         {
             // Get the previous meetings details
 
-            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
            
             for myItem in myItems
             {
@@ -196,7 +143,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
             
             for myItem in myItems
             {
@@ -275,9 +222,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         }
         else
         {
-            if passedMeetingModel != nil
+            if meetingsDelegate != nil
             {
-                passedMeetingModel.delegate.myMeetingsDidFinish(self)
+                meetingsDelegate.myMeetingsDidFinish(self)
             }
         }
     }
@@ -318,9 +265,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseAttendeeIdentifier, for: indexPath as IndexPath) as! myAttendeeDisplayItem
         cell.lblName.text = passedMeeting.attendees[indexPath.row].name
         cell.lblStatus.text = passedMeeting.attendees[indexPath.row].status
-        if passedMeetingModel != nil
+        if actionType != nil
         {
-            if passedMeetingModel.actionType == "Agenda"
+            if actionType == "Agenda"
             {
                 cell.btnAction.setTitle("Remove", for: .normal)
             }
@@ -448,7 +395,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             {
                 // Check to see if an existing meeting already has this previos ID
             
-                let myItems = myDatabaseConnection.loadPreviousAgenda(pickerEventArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                let myItems = myDatabaseConnection.loadPreviousAgenda(pickerEventArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
             
                 if myItems.count > 0
                 { // Existing meeting found
@@ -463,7 +410,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                         
-                            myDatabaseConnection.updatePreviousAgendaID("", meetingID: myItem.meetingID!, teamID: myCurrentTeam.teamID)
+                            myDatabaseConnection.updatePreviousAgendaID("", meetingID: myItem.meetingID!, teamID: currentUser.currentTeam!.teamID)
                         
                             self.passedMeeting.previousMinutes = self.pickerEventArray[self.mySelectedRow]
                         
@@ -471,7 +418,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                             {
                                 // Get the previous meetings details
                             
-                                let myDisplayItems = myDatabaseConnection.loadAgenda(self.passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
+                                let myDisplayItems = myDatabaseConnection.loadAgenda(self.passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
                             
                                 for myDisplayItem in myDisplayItems
                                 {
@@ -508,7 +455,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                     {
                         // Get the previous meetings details
                     
-                        let myDisplayItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
+                        let myDisplayItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
                     
                         for myDisplayItem in myDisplayItems
                         {
@@ -531,7 +478,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                 var nextCalItem: calendarItem!
                 // Check to see if an existing meeting already has this previos ID
             
-                let myItems = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                let myItems = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
             
                 if myItems.count > 0
                 {
@@ -550,21 +497,21 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                             
                                 let myOriginalNextMeeting = self.passedMeeting.nextMeeting
                             
-                                myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
+                                myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: currentUser.currentTeam!.teamID)
                             
                                 if self.pickerEventArray[self.mySelectedRow] != ""
                                 {
                                     // Is there a database entry for the next meeting
                                     
-                                    let myMeetingCheck = myDatabaseConnection.loadAgenda(self.pickerEventArray[self.mySelectedRow], teamID: myCurrentTeam.teamID)
+                                    let myMeetingCheck = myDatabaseConnection.loadAgenda(self.pickerEventArray[self.mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                                     
                                     if myMeetingCheck.count == 0
                                     { // No meeting found, so need to create
-                                        let nextEvent = iOSCalendar()
+                                        let nextEvent = topCalendar()
                                         
-                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], startDate: self.pickerStartDateArray[self.mySelectedRow], teamID: myCurrentTeam.teamID)
+                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], startDate: self.pickerStartDateArray[self.mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                                         
-                                        nextCalItem = nextEvent.calendarItems[0]
+                                        nextCalItem = nextEvent.appointments[0].databaseItem
                                     }
                                     else
                                     { // meeting found use it
@@ -575,7 +522,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                     
                                     self.passedMeeting.setNextMeeting(nextCalItem)
 
-                                    let myItems = myDatabaseConnection.loadAgenda(self.passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
+                                    let myItems = myDatabaseConnection.loadAgenda(self.passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
                                     
                                     for myItem in myItems
                                     {
@@ -613,21 +560,21 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         {
                             let myOriginalNextMeeting = passedMeeting.nextMeeting
                         
-                            myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
+                            myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: currentUser.currentTeam!.teamID)
 
                             if pickerEventArray[mySelectedRow] != ""
                             {
                                 // Is there a database entry for the next meeting
                                 
-                                let myMeetingCheck = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                                let myMeetingCheck = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                                 
                                 if myMeetingCheck.count == 0
                                 { // No meeting found, so need to create
-                                    let nextEvent = iOSCalendar()
+                                    let nextEvent = topCalendar()
                                     
-                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                                     
-                                    nextCalItem = nextEvent.calendarItems[0]
+                                    nextCalItem = nextEvent.appointments[0].databaseItem
                                 }
                                 else
                                 { // meeting found use it
@@ -638,7 +585,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                 
                                 passedMeeting.setNextMeeting(nextCalItem)
                             
-                                let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
+                                let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
                             
                                 for myItem in myItems
                                 {
@@ -665,19 +612,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                     {
                         let myOriginalNextMeeting = self.passedMeeting.nextMeeting
                 
-                        myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
+                        myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: currentUser.currentTeam!.teamID)
 
                         // Is there a database entry for the next meeting
          
-                        let myMeetingCheck = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                        let myMeetingCheck = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                         
                         if myMeetingCheck.count == 0
                         { // No meeting found, so need to create
-                            let nextEvent = iOSCalendar()
+                            let nextEvent = topCalendar()
                         
-                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: myCurrentTeam.teamID)
+                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
                         
-                            nextCalItem = nextEvent.calendarItems[0]
+                            nextCalItem = nextEvent.appointments[0].databaseItem
                         }
                         else
                         { // meeting found use it
@@ -688,7 +635,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         
                         passedMeeting.setNextMeeting(nextCalItem)
                         
-                        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
+                        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
                     
                         for myItem in myItems
                         {
@@ -729,75 +676,75 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     
     @IBAction func btnDisplayPreviousMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
+//        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
 print("gaza check this btnDisplayPreviousMeeting")
-        let targetPassedMeeting = MeetingModel()
-        if passedMeetingModel != nil
-        {
-            targetPassedMeeting.actionType = passedMeetingModel.actionType
-        }
-        
-        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
-        
-        if myItems.count == 0
-        {
-            let alert = UIAlertController(title: "Meeting", message:
-                "Can not retrieve details for previous meeting", preferredStyle: UIAlertControllerStyle.alert)
-            
-            self.present(alert, animated: false, completion: nil)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-        }
-        else
-        {
-            for _ in myItems
-            {
-                let tempMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
-                tempMeeting.loadAgenda()
-                targetPassedMeeting.event = tempMeeting
-            }
-        }
-        targetPassedMeeting.delegate = self
-        
-        meetingViewControl.myPassedMeeting = targetPassedMeeting
-        
-        self.present(meetingViewControl, animated: true, completion: nil)
+//        let targetPassedMeeting = MeetingModel()
+//        if passedMeetingModel != nil
+//        {
+//            targetPassedMeeting.actionType = passedMeetingModel.actionType
+//        }
+//
+//        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
+//
+//        if myItems.count == 0
+//        {
+//            let alert = UIAlertController(title: "Meeting", message:
+//                "Can not retrieve details for previous meeting", preferredStyle: UIAlertControllerStyle.alert)
+//
+//            self.present(alert, animated: false, completion: nil)
+//
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+//        }
+//        else
+//        {
+//            for _ in myItems
+//            {
+//                let tempMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
+//                tempMeeting.loadAgenda()
+//                targetPassedMeeting.event = tempMeeting
+//            }
+//        }
+//        targetPassedMeeting.delegate = self
+//
+//        meetingViewControl.myPassedMeeting = targetPassedMeeting
+//
+//        self.present(meetingViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnDisplayNextMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
+//        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
 print("gaza check this btnDisplayNextMeeting")
-        let targetPassedMeeting = MeetingModel()
-        if passedMeetingModel != nil
-        {
-            targetPassedMeeting.actionType = passedMeetingModel.actionType
-        }
-        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
-        
-        if myItems.count == 0
-        {
-            let alert = UIAlertController(title: "Meeting", message:
-                "Can not retrieve details for next meeting", preferredStyle: UIAlertControllerStyle.alert)
-            
-            self.present(alert, animated: false, completion: nil)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-        }
-        else
-        {
-            for _ in myItems
-            {
-                let tempMeeting = calendarItem(meetingID: passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
-                tempMeeting.loadAgenda()
-                targetPassedMeeting.event = tempMeeting
-            }
-        }
-        targetPassedMeeting.delegate = self
-        
-        meetingViewControl.myPassedMeeting = targetPassedMeeting
-        
-        self.present(meetingViewControl, animated: true, completion: nil)
+//        let targetPassedMeeting = MeetingModel()
+//        if passedMeetingModel != nil
+//        {
+//            targetPassedMeeting.actionType = passedMeetingModel.actionType
+//        }
+//        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
+//        
+//        if myItems.count == 0
+//        {
+//            let alert = UIAlertController(title: "Meeting", message:
+//                "Can not retrieve details for next meeting", preferredStyle: UIAlertControllerStyle.alert)
+//            
+//            self.present(alert, animated: false, completion: nil)
+//            
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+//        }
+//        else
+//        {
+//            for _ in myItems
+//            {
+//                let tempMeeting = calendarItem(meetingID: passedMeeting.nextMeeting, teamID: currentUser.currentTeam!.teamID)
+//                tempMeeting.loadAgenda()
+//                targetPassedMeeting.event = tempMeeting
+//            }
+//        }
+//        targetPassedMeeting.delegate = self
+//        
+//        meetingViewControl.myPassedMeeting = targetPassedMeeting
+//        
+//        self.present(meetingViewControl, animated: true, completion: nil)
     }
     
     func hideFields()
@@ -926,7 +873,7 @@ print("gaza put an if here once we are storeing and retrieveing this")
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
 
             if myItems.count > 0
             { // There is an previous meeting
@@ -947,7 +894,7 @@ print("gaza put an if here once we are storeing and retrieveing this")
             
             // display remaining items, newest first
 
-            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
             
             if myNonItems.count > 0
             { // There is an previous meeting
@@ -974,7 +921,7 @@ print("gaza put an if here once we are storeing and retrieveing this")
             
             // list items prior to meeting date
             
-            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
             
             if myItems.count > 0
             { // There is an previous meeting
@@ -1013,16 +960,11 @@ print("gaza put an if here once we are storeing and retrieveing this")
 
         var calItems: [EKEvent] = []
         
-        let baseDate = Date()
-        
         let startDate = passedMeeting.startDate
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
-        // This is string value so need to convert to integer
+        let endDateModifier = readDefaultInt("CalAfter") as Int
         
-        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
-        
-        let endDate = baseDate.addingTimeInterval(myEndDateValue)
+        let endDate = Date().add(.day, amount: (endDateModifier * 7))
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
         let searchPredicate = globalEventStore.predicateForEvents(
@@ -1067,11 +1009,11 @@ print("gaza put an if here once we are storeing and retrieveing this")
             if tempMeetingID.range(of: "/") != nil
             {
                 let myStringArr = tempMeetingID.components(separatedBy: "/")
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
             }
             else
             {
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
             }
             
             if myItems.count > 1
@@ -1499,6 +1441,8 @@ class myAttendeeHeader: UICollectionReusableView
     @IBOutlet weak var lblAction: UILabel!
     
 }
+
+let NotificationAttendeeRemoved = Notification.Name("NotificationAttendeeRemoved")
 
 class myAttendeeDisplayItem: UICollectionViewCell
 {

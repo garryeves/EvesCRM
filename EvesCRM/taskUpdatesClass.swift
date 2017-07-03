@@ -326,7 +326,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateTaskUpdatesInCoreData(teamID: Int)
+    func updateTaskUpdatesInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "TaskUpdates") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)

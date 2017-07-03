@@ -10,11 +10,11 @@ import Foundation
 import UIKit
 //import TextExpander
 
-class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, KDRearrangeableCollectionViewDelegate, UIGestureRecognizerDelegate //,  SMTEFillDelegate
+class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, UIGestureRecognizerDelegate //,  SMTEFillDelegate
 {
-    fileprivate var passedMeetingModel: MeetingModel!
     var passedMeeting: calendarItem!
     var meetingCommunication: meetingCommunicationDelegate!
+    var actionType: String!
     
     @IBOutlet weak var lblAgendaItems: UILabel!
     @IBOutlet weak var colAgenda: UICollectionView!
@@ -59,12 +59,12 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     {
         super.viewDidLoad()
         
-        if passedMeeting == nil
-        {
-            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
-            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
-        }
-        
+//        if passedMeeting == nil
+//        {
+//            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
+//            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
+//        }
+//
         toolbar.isTranslucent = false
         
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
@@ -72,9 +72,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         
         let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
         
-        if passedMeetingModel != nil
+        if actionType != nil
         {
-            let pageHead = UIBarButtonItem(title: passedMeetingModel.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
+            let pageHead = UIBarButtonItem(title: actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
             pageHead.tintColor = UIColor.black
         
             let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
@@ -86,9 +86,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             self.toolbar.items=[spacer, spacer2, share]
         }
         
-        if passedMeetingModel != nil
+        if actionType != nil
         {
-            if passedMeetingModel.actionType != "Agenda"
+            if actionType != "Agenda"
             {
                 btnAddAgendaItem.isHidden = true
             }
@@ -221,7 +221,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
             agendaViewControl.delegate = self
             agendaViewControl.event = passedMeeting
-            agendaViewControl.actionType = passedMeetingModel.actionType
+            agendaViewControl.actionType = actionType
             
             let agendaItem = myAgendaList[itemToUpdate]
             agendaViewControl.agendaItem = agendaItem
@@ -250,7 +250,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     
     func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
     {
-        if passedMeetingModel.actionType != "Agenda"
+        if actionType != "Agenda"
         {
             let alert = UIAlertController(title: "Move item", message:
                 "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.alert)
@@ -286,7 +286,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                 
                 while loopCount < toIndexPath.item
                 {
-                    myAgendaList[loopCount].meetingOrder = Int32(loopCount + 2)
+                    myAgendaList[loopCount].meetingOrder = Int(loopCount + 2)
                     loopCount += 1
                 }
             }
@@ -300,7 +300,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                 
                 while loopCount <= fromIndexPath.item
                 {
-                    myAgendaList[loopCount].meetingOrder = Int32(loopCount)
+                    myAgendaList[loopCount].meetingOrder = Int(loopCount)
                     loopCount += 1
                 }
             }
@@ -355,7 +355,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             }
             else
             {
-                agendaItem.timeAllocation = Int16(txtTimeAllocation.text!)!
+                agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
             }
             if btnOwner.currentTitle != "Select Owner"
             {

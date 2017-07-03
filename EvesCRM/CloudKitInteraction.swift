@@ -349,4 +349,38 @@ class CloudKitInteraction
             return retString
         }
     }
+    
+    func buildTeamListForMeetingAgenda(_ userID: Int) -> String
+    {
+        let teamList = myDatabaseConnection.getTeamsForUser(userID: userID)
+        
+        if teamList.count == 0
+        {
+            return ""
+        }
+        else if teamList.count == 1
+        {
+            return "(actualTeamID == \(teamList[0].teamID))"
+        }
+        else
+        {
+            var retString = "(actualTeamID IN {"
+            var firstPass: Bool = true
+            
+            for myItem in teamList
+            {
+                if !firstPass
+                {
+                    retString += " , "
+                }
+                retString += "\(myItem.teamID)"
+                
+                firstPass = false
+            }
+            
+            retString += "})"
+            
+            return retString
+        }
+    }
 }

@@ -268,7 +268,7 @@ class context: NSObject
     {
         super.init()
         
-        myContextID = myDatabaseConnection.getNextID("Context")
+        myContextID = myDatabaseConnection.getNextID("Context", teamID: teamID)
         myTeamID = teamID
         
         save()
@@ -358,7 +358,7 @@ class context: NSObject
     {
         let myContext = myDatabaseConnection.getContextDetails(myContextID)[0]
         
-        myCloudDB.saveContextRecordToCloudKit(myContext, teamID: currentUser.currentTeam!.teamID)
+        myCloudDB.saveContextRecordToCloudKit(myContext)
         
         saveCalled = false
     }
@@ -439,34 +439,6 @@ extension coreDatabase
                 myContext.updateTime = updateTime as NSDate
                 myContext.updateType = updateType
             }
-        }
-        
-        saveContext()
-    }
-    
-    func replaceContext(_ contextID: Int, name: String, email: String, autoEmail: String, parentContext: Int, status: String, personID: Int,  predecessor: Int, contextType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myContext = Context(context: objectContext)
-        myContext.contextID = Int64(contextID)
-        myContext.name = name
-        myContext.email = email
-        myContext.autoEmail = autoEmail
-        myContext.parentContext = Int64(parentContext)
-        myContext.status = status
-        myContext.personID = Int64(personID)
-        myContext.teamID = Int64(teamID)
-        myContext.predecessor = Int64(predecessor)
-        myContext.contextType = contextType
-        
-        if updateType == "CODE"
-        {
-            myContext.updateTime =  NSDate()
-            myContext.updateType = "Add"
-        }
-        else
-        {
-            myContext.updateTime = updateTime as NSDate
-            myContext.updateType = updateType
         }
         
         saveContext()
@@ -726,7 +698,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Context", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
+            updateDecodeValue("Context", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: teamID)
         }
         catch
         {
@@ -792,125 +764,51 @@ extension CloudKitInteraction
 {
     func saveContextToCloudKit()
     {
-        for myItem in myDatabaseConnection.getContextsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context"))
+        for myItem in myDatabaseConnection.getContextsForSync(getSyncDateForTable(tableName: "Context"))
         {
-            saveContextRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveContextRecordToCloudKit(myItem)
         }
     }
 
-    func updateContextInCoreData(teamID: Int)
+    func updateContextInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Context") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "Context") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
             self.updateContextRecord(record)
-            self.recordCount -= 1
-
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "Context", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteContext(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        
-        sem.wait()
-        
-        var myRecordList2: [CKRecordID] = Array()
-        let predicate2: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query2: CKQuery = CKQuery(recordType: "Context1_1", predicate: predicate2)
-        publicDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList2.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList2)
-            sem.signal()
-        })
-        sem.wait()
-    }
-
-    func replaceContextInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        var predecessor: Int = 0
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let contextID = record.object(forKey: "contextID") as! Int
-            let autoEmail = record.object(forKey: "autoEmail") as! String
-            let email = record.object(forKey: "email") as! String
-            let name = record.object(forKey: "name") as! String
-            let parentContext = record.object(forKey: "parentContext") as! Int
-            let personID = record.object(forKey: "personID") as! Int
-            let status = record.object(forKey: "status") as! String
-            let teamID = record.object(forKey: "teamID") as! Int
-            let contextType = record.object(forKey: "contextType") as! String
-            
-            if record.object(forKey: "predecessor") != nil
-            {
-                predecessor = record.object(forKey: "predecessor") as! Int
-            }
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            myDatabaseConnection.replaceContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, predecessor: predecessor, contextType: contextType, teamID: teamID, updateTime: updateTime, updateType: updateType)
-
-            usleep(useconds_t(self.sleepTime))
-        }
-            
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
+//    func deleteContext(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//
+//        sem.wait()
+//    }
     
-    func saveContextRecordToCloudKit(_ sourceRecord: Context, teamID: Int)
+    func saveContextRecordToCloudKit(_ sourceRecord: Context)
     {
         let sem = DispatchSemaphore(value: 0)
 
-        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -937,7 +835,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.contextType, forKey: "contextType")
-                    record!.setValue(teamID, forKey: "teamID")
+                    record!.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -1025,6 +923,17 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, predecessor: predecessor, contextType: contextType, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        
+        self.recordCount -= 1
     }
 }

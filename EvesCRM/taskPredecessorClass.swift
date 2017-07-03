@@ -118,29 +118,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
-    }
-    
-    func replacePredecessorTask(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myTask = TaskPredecessor(context: objectContext)
-        myTask.taskID = Int64(taskID)
-        myTask.predecessorID = Int64(predecessorID)
-        myTask.predecessorType = predecessorType
-        myTask.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myTask.updateTime =  NSDate()
-            myTask.updateType = "Add"
-        }
-        else
-        {
-            myTask.updateTime = updateTime as NSDate
-            myTask.updateType = updateType
-        }
-        
-        saveContext()
+        myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
     func updatePredecessorTaskType(_ taskID: Int, predecessorID: Int, predecessorType: String)
@@ -165,7 +143,7 @@ extension coreDatabase
                     myStage.updateType = "Update"
                 }
                 
-                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
+                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
         }
         catch
@@ -194,7 +172,7 @@ extension coreDatabase
                 myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
-                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
+                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
         }
         catch
@@ -298,102 +276,48 @@ extension CloudKitInteraction
 {
     func saveTaskPredecessorToCloudKit()
     {
-        for myItem in myDatabaseConnection.getTaskPredecessorsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskPredecessor"))
+        for myItem in myDatabaseConnection.getTaskPredecessorsForSync(getSyncDateForTable(tableName: "TaskPredecessor"))
         {
-            saveTaskPredecessorRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveTaskPredecessorRecordToCloudKit(myItem)
         }
     }
 
-    func updateTaskPredecessorInCoreData(teamID: Int)
+    func updateTaskPredecessorInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskPredecessor") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", getSyncDateForTable(tableName: "TaskPredecessor") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
 
+        operation.recordFetchedBlock = { (record) in
             self.updateTaskPredecessorRecord(record)
-            self.recordCount -= 1
-
-            usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+        executePublicQueryOperation(targetTable: "TaskPredecessor", queryOperation: operation, onOperationQueue: operationQueue)
     }
 
-    func deleteTaskPredecessor(teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0);
-        
-        var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList)
-            sem.signal()
-        })
-        sem.wait()
-    }
+//    func deleteTaskPredecessor(teamID: Int)
+//    {
+//        let sem = DispatchSemaphore(value: 0);
+//        
+//        var myRecordList: [CKRecordID] = Array()
+//        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+//        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
+//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+//            for record in results!
+//            {
+//                myRecordList.append(record.recordID)
+//            }
+//            self.performPublicDelete(myRecordList)
+//            sem.signal()
+//        })
+//        sem.wait()
+//    }
 
-    func replaceTaskPredecessorInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int
-            let predecessorID = record.object(forKey: "predecessorID") as! Int
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let predecessorType = record.object(forKey: "predecessorType") as! String
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replacePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-
-    func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor, teamID: Int)
+    func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (predecessorID == \(sourceRecord.predecessorID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (predecessorID == \(sourceRecord.predecessorID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -440,7 +364,7 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
-                    record.setValue(teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -486,6 +410,16 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.savePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
