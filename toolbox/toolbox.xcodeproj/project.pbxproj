@@ -160,6 +160,7 @@
 		344CEB4C1F073A63006FCFCE /* projectClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectClass.swift; path = ../../EvesCRM/projectClass.swift; sourceTree = "<group>"; };
 		34916CA91F09F4010019E682 /* EvesToolbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesToolbox.swift; sourceTree = "<group>"; };
 		34916CAB1F0A02820019E682 /* toolBoxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toolBoxViewController.swift; sourceTree = "<group>"; };
+		34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 33.xcdatamodel"; sourceTree = "<group>"; };
 		34D0FDCB1F073427009E5973 /* toolbox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = toolbox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D0FDCE1F073427009E5973 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34D0FDD01F073427009E5973 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -941,6 +942,7 @@
 		34D0FE061F0734B5009E5973 /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */,
 				34FE990A1F0892F0000A7E72 /* EvesCRM 32.xcdatamodel */,
 				34D0FE071F0734B5009E5973 /* EvesCRM 10.xcdatamodel */,
 				34D0FE081F0734B5009E5973 /* EvesCRM 11.xcdatamodel */,
@@ -974,7 +976,7 @@
 				34D0FE241F0734B5009E5973 /* EvesCRM 9.xcdatamodel */,
 				34D0FE251F0734B5009E5973 /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34D0FE1E1F0734B5009E5973 /* EvesCRM 31.xcdatamodel */;
+			currentVersion = 34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */;
 			name = EvesCRM.xcdatamodeld;
 			path = ../../EvesCRM/EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";

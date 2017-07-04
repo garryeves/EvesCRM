@@ -72,6 +72,13 @@ extension String
         }
         return selectedType
     }
+    
+    var formatStringToDateTime: Date
+    {
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateFormat = "E dd MMM yy hh:mm"
+        return myDateFormatter.date(from: self)!
+    }
 }
 
 extension Double
@@ -138,6 +145,20 @@ extension Date
     {
         let myDateFormatter = DateFormatter()
         myDateFormatter.dateFormat = "E dd MMM yy"
+        return myDateFormatter.string(from: self)
+    }
+    
+    var formatTimeString: String
+    {
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateFormat = "h:mm"
+        return myDateFormatter.string(from: self)
+    }
+    
+    var formatDateAndTimeString: String
+    {
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateFormat = "E dd MMM yy h:mm"
         return myDateFormatter.string(from: self)
     }
     

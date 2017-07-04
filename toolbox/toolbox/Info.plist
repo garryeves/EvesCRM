@@ -39,5 +39,7 @@
 	</array>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Use the Calendar to allow the app to show availability and book appointments with Clients</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This is to allow the app to access Contacts in order to schedule, or edit, calendar events</string>
 </dict>
 </plist>

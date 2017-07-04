@@ -20,6 +20,11 @@ struct mergedCalendarItem
     var iCalItem: EKEvent?
 }
 
+func generateMeetingID(_ passedEvent: EKEvent) -> String
+{
+    return "\(passedEvent.calendarItemExternalIdentifier) Date: \(passedEvent.occurrenceDate)"
+    
+}
 class topCalendar: NSObject
 {
     fileprivate var mergedList: [mergedCalendarItem] = Array()
@@ -86,7 +91,7 @@ class topCalendar: NSObject
             
             for calItem in calItems
             {
-                if "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)" == meetingID
+                if generateMeetingID(calItem) == meetingID
                 {
                     let calendarEntry = calendarItem(event: calItem, attendee: nil, teamID: teamID)
                     
@@ -345,6 +350,8 @@ class calendarItem
     fileprivate var myMinutesType: String = ""
     fileprivate var myAgendaItems: [meetingAgendaItem] = Array()
     fileprivate var myTeamID: Int = 0
+    fileprivate var myClientID: Int = 0
+    fileprivate var myProjectID: Int = 0
 
     // Seup Date format for display
     fileprivate var startDateFormatter = DateFormatter()
@@ -370,7 +377,7 @@ class calendarItem
         myTeamID = teamID
         // Check to see if there is an existing entry for the meeting
         
-        let mySavedValues = myDatabaseConnection.loadAgenda("\(event.calendarItemExternalIdentifier) Date: \(event.startDate)", teamID: myTeamID)
+        let mySavedValues = myDatabaseConnection.loadAgenda(generateMeetingID(event), teamID: myTeamID)
         
         if mySavedValues.count > 0
         {
@@ -385,6 +392,8 @@ class calendarItem
             myMinutes = mySavedValues[0].minutes!
             myLocation = mySavedValues[0].location!
             myMinutesType = mySavedValues[0].minutesType!
+            myClientID = Int(mySavedValues[0].clientID)
+            myProjectID = Int(mySavedValues[0].projectID)
             mySavedData = true
         }
         else
@@ -426,6 +435,65 @@ class calendarItem
         loadAgendaItems()
     }
     
+    init(event: EKEvent, teamID: Int)
+    {
+        startDateFormatter.dateStyle = dateFormat
+        startDateFormatter.timeStyle = timeFormat
+        endDateFormatter.timeStyle = timeFormat
+        
+        myTeamID = teamID
+        // Check to see if there is an existing entry for the meeting
+        
+        let mySavedValues = myDatabaseConnection.loadAgenda(generateMeetingID(event), teamID: myTeamID)
+        
+        if mySavedValues.count > 0
+        {
+            myEvent = event
+            myTitle = mySavedValues[0].name!
+            myStartDate = mySavedValues[0].startTime! as Date
+            myEndDate = mySavedValues[0].endTime! as Date
+            myLocation = mySavedValues[0].location!
+            myPreviousMinutes = mySavedValues[0].previousMeetingID!
+            myMeetingID = mySavedValues[0].meetingID!
+            myChair = mySavedValues[0].chair!
+            myMinutes = mySavedValues[0].minutes!
+            myLocation = mySavedValues[0].location!
+            myMinutesType = mySavedValues[0].minutesType!
+            myClientID = Int(mySavedValues[0].clientID)
+            myProjectID = Int(mySavedValues[0].projectID)
+            mySavedData = true
+        }
+        else
+        {
+            myEvent = event
+            myTitle = event.title
+            myStartDate = event.startDate
+            myEndDate = event.endDate
+            if event.location == nil
+            {
+                myLocation = ""
+            }
+            else
+            {
+                myLocation = event.location!
+            }
+            
+            if event.recurrenceRules != nil
+            {
+                // This is a recurring event
+                let myWorkingRecur: NSArray = event.recurrenceRules! as NSArray
+                
+                for myItem in myWorkingRecur
+                {
+                    myRecurrenceFrequency = (myItem as AnyObject).interval
+                    let testFrequency: EKRecurrenceFrequency = (myItem as AnyObject).frequency
+                    myRecurrence = testFrequency.rawValue
+                }
+            }
+        }
+    }
+    
+    
     init(meetingAgenda: MeetingAgenda)
     {
         startDateFormatter.dateStyle = dateFormat
@@ -443,6 +511,8 @@ class calendarItem
         myLocation = meetingAgenda.location!
         myMinutesType = meetingAgenda.minutesType!
         myTeamID = Int(meetingAgenda.teamID)
+        myClientID = Int(meetingAgenda.clientID)
+        myProjectID = Int(meetingAgenda.projectID)
         
         loadAttendees()
         loadAgendaItems()
@@ -465,6 +535,8 @@ class calendarItem
             myMinutes = mySavedValues[0].minutes!
             myLocation = mySavedValues[0].location!
             myMinutesType = mySavedValues[0].minutesType!
+            myClientID = Int(mySavedValues[0].clientID)
+            myProjectID = Int(mySavedValues[0].projectID)
             mySavedData = true
         }
 
@@ -473,35 +545,35 @@ class calendarItem
         endDateFormatter.timeStyle = timeFormat
         
         // We neeed to go and the the event details from the calendar, if they exist
-        
-        let nextEvent = topCalendar()
-        
-        nextEvent.loadCalendarForEvent(myMeetingID, startDate: myStartDate, teamID: myTeamID)
-        
-        if nextEvent.appointments.count == 0
-        {
-            // No event found, so do nothing else
-        }
-        else if nextEvent.appointments.count == 1
-        {
-            // only 1 found so set it
-            myEvent = nextEvent.appointments[0].iCalItem
-        }
-        else
-        {
-            // Multiple found, so find the one with the matching start date
-            
-            for myItem in nextEvent.appointments
-            {
-                if myItem.startDate == myStartDate
-                {
-                    myEvent = myItem.iCalItem
-                }
-            }
-        }
-        
-        loadAttendees()
-        loadAgendaItems()
+//        
+//        let nextEvent = topCalendar()
+//        
+//        nextEvent.loadCalendarForEvent(myMeetingID, startDate: myStartDate, teamID: myTeamID)
+//        
+//        if nextEvent.appointments.count == 0
+//        {
+//            // No event found, so do nothing else
+//        }
+//        else if nextEvent.appointments.count == 1
+//        {
+//            // only 1 found so set it
+//            myEvent = nextEvent.appointments[0].iCalItem
+//        }
+//        else
+//        {
+//            // Multiple found, so find the one with the matching start date
+//            
+//            for myItem in nextEvent.appointments
+//            {
+//                if myItem.startDate == myStartDate
+//                {
+//                    myEvent = myItem.iCalItem
+//                }
+//            }
+//        }
+//        
+//        loadAttendees()
+//        loadAgendaItems()
     }
 
     var event: EKEvent?
@@ -513,7 +585,7 @@ class calendarItem
         set
         {
             myEvent = newValue
-            myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+            myMeetingID = generateMeetingID(myEvent!)
             save()
         }
     }
@@ -785,8 +857,15 @@ class calendarItem
             }
             else
             {
-                myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
-                return "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+                if myEvent == nil
+                {
+                    return ""
+                }
+                else
+                {
+                    myMeetingID = generateMeetingID(myEvent!)
+                    return myMeetingID
+                }
             }
         }
     }
@@ -875,6 +954,31 @@ class calendarItem
         }
     }
     
+    var clientID: Int
+    {
+        get
+        {
+            return myClientID
+        }
+        set
+        {
+            myClientID = newValue
+            save()
+        }
+    }
+    
+    var projectID: Int
+    {
+        get
+        {
+            return myProjectID
+        }
+        set
+        {
+            myProjectID = newValue
+            save()
+        }
+    }
     func addAttendee(_ name: String, emailAddress: String, type: String, status: String)
     {
         // make sure we have saved the Agenda
@@ -937,7 +1041,7 @@ class calendarItem
     {
         if myEvent != nil
         {
-            myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+            myMeetingID = generateMeetingID(myEvent!)
         }
         
         //  Here we save the Agenda details
@@ -945,7 +1049,7 @@ class calendarItem
         // Save Agenda details
   //      if mySavedData
  //       {
-            myDatabaseConnection.saveAgenda(myMeetingID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID)
+        myDatabaseConnection.saveAgenda(myMeetingID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID, clientID: myClientID, projectID: myProjectID)
 //        }
 //        else
 //        {
@@ -979,7 +1083,7 @@ class calendarItem
         var mySavedValues: [MeetingAgenda]!
         if myMeetingID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgenda("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)", teamID: myTeamID)
+            mySavedValues = myDatabaseConnection.loadAgenda(generateMeetingID(myEvent!), teamID: myTeamID)
         }
         else
         {
@@ -992,6 +1096,8 @@ class calendarItem
             myChair = mySavedValues[0].chair!
             myMinutes = mySavedValues[0].minutes!
             myMinutesType = mySavedValues[0].minutesType!
+            myProjectID  = Int(mySavedValues[0].projectID)
+            myClientID  = Int(mySavedValues[0].clientID)
             mySavedData = true
         }
         
@@ -1017,7 +1123,7 @@ class calendarItem
         
         if myMeetingID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
+            mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!))
         }
         else
         {
@@ -1113,7 +1219,7 @@ class calendarItem
             
                     if myMeetingID == ""
                     {
-                        mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
+                        mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!))
                     }
                     else
                     {
@@ -1190,7 +1296,7 @@ class calendarItem
         
         if myMeetingID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgendaItem("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
+            mySavedValues = myDatabaseConnection.loadAgendaItem(generateMeetingID(myEvent!))
         }
         else
         {
@@ -2492,7 +2598,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgenda(_ meetingID: String, previousMeetingID: String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAgenda(_ meetingID: String, previousMeetingID: String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, clientID: Int, projectID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -2511,6 +2617,8 @@ extension coreDatabase
             myAgenda.endTime = endTime as NSDate
             myAgenda.minutesType = minutesType
             myAgenda.teamID = Int64(teamID)
+            myAgenda.clientID = Int64(clientID)
+            myAgenda.projectID = Int64(projectID)
             if updateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -2534,6 +2642,8 @@ extension coreDatabase
             myAgenda.endTime = endTime as NSDate
             myAgenda.minutesType = minutesType
             myAgenda.teamID = Int64(teamID)
+            myAgenda.clientID = Int64(clientID)
+            myAgenda.projectID = Int64(projectID)
             if updateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -2941,7 +3051,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.name, forKey: "name")
                     record!.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
                     record!.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
-                    
+                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record!.setValue(sourceRecord.projectID, forKey: "projectID")
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -2976,6 +3087,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                     record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
                     record.setValue("\(sourceRecord.teamID)", forKey: "teamID")
+                    record.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record.setValue(sourceRecord.projectID, forKey: "projectID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -3021,6 +3134,8 @@ extension CloudKitInteraction
         let previousMeetingID = sourceRecord.object(forKey: "previousMeetingID") as! String
         let startTime = sourceRecord.object(forKey: "meetingStartTime") as! Date
         let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
+        let clientID = sourceRecord.object(forKey: "clientID") as! Int
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int
         
         myDatabaseConnection.recordsToChange += 1
         while self.recordCount > 0
@@ -3030,7 +3145,7 @@ extension CloudKitInteraction
         
         self.recordCount += 1
         
-        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID: previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID: previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, clientID: clientID, projectID: projectID, updateTime: updateTime, updateType: updateType)
         self.recordCount -= 1
     }
 }

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13154.30" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Addresses" representedClassName="Addresses" syncable="YES" codeGenerationType="class">
+        <attribute name="addressID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="postcode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Clients" representedClassName="Clients" syncable="YES" codeGenerationType="class">
+        <attribute name="clientContact" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="clientName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Contacts" representedClassName="Contacts" syncable="YES" codeGenerationType="class">
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactValue" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Context" representedClassName="Context" syncable="YES" codeGenerationType="class">
+        <attribute name="autoEmail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contextID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="contextType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="parentContext" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="predecessor" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Decodes" representedClassName="Decodes" syncable="YES" codeGenerationType="class">
+        <attribute name="decode_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="decode_privacy" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="decode_value" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="decodeType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Dropdowns" representedClassName="Dropdowns" syncable="YES" codeGenerationType="class">
+        <attribute name="dropDownType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dropDownValue" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="EventTemplate" representedClassName="EventTemplate" syncable="YES" codeGenerationType="class">
+        <attribute name="dateModifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="eventID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="eventName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="numRequired" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="EventTemplateHead" representedClassName="EventTemplateHead" syncable="YES" codeGenerationType="class">
+        <attribute name="eventID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="eventName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MeetingAgenda" representedClassName="MeetingAgenda" syncable="YES" codeGenerationType="class">
+        <attribute name="calendarID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="chair" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="minutes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="minutesType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="previousMeetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MeetingAgendaItem" representedClassName="MeetingAgendaItem" syncable="YES" codeGenerationType="class">
+        <attribute name="actualEndTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="actualStartTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="agendaID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="decisionMade" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="discussionNotes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingOrder" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="owner" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeAllocation" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MeetingAttendees" representedClassName="MeetingAttendees" syncable="YES" codeGenerationType="class">
+        <attribute name="attendenceStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MeetingSupportingDocs" representedClassName="MeetingSupportingDocs" syncable="YES" codeGenerationType="class">
+        <attribute name="agendaID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="attachmentPath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MeetingTasks" representedClassName="MeetingTasks" syncable="YES" codeGenerationType="class">
+        <attribute name="agendaID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Panes" representedClassName="Panes" syncable="YES" codeGenerationType="class">
+        <attribute name="pane_available" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pane_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pane_order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="pane_visible" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Person" representedClassName="Person" syncable="YES" codeGenerationType="class">
+        <attribute name="canRoster" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="dob" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PersonAddInfoEntry" representedClassName="PersonAddInfoEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="addInfoName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateValue" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="stringValue" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PersonAdditionalInfo" representedClassName="PersonAdditionalInfo" syncable="YES" codeGenerationType="class">
+        <attribute name="addInfoID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="addInfoName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addInfoType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Projects" representedClassName="Projects" syncable="YES" codeGenerationType="class">
+        <attribute name="areaID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="clientDept" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="daysToPay" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="invoicingDay" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="invoicingFrequency" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastReviewDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="predecessor" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="projectStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="projectStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="repeatBase" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="repeatInterval" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="repeatType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reviewFrequency" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="reviewPeriod" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="ProjectTeamMembers" representedClassName="ProjectTeamMembers" syncable="YES" codeGenerationType="class">
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectMemberNotes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roleID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Rates" representedClassName="Rates" syncable="YES" codeGenerationType="class">
+        <attribute name="chargeAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rateAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rateID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rateName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="ReportingMonth" representedClassName="ReportingMonth" syncable="YES" codeGenerationType="class">
+        <attribute name="monthName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="monthStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="yearName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Reports" representedClassName="Reports" syncable="YES" codeGenerationType="class">
+        <attribute name="columnSource1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource9" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource10" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource11" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource12" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource13" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnSource14" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle9" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle10" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle11" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle12" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle13" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnTitle14" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="columnWidth1" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth2" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth3" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth4" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth5" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth6" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth7" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth8" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth9" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth10" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth11" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth12" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth13" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="columnWidth14" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="orientation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reportDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reportID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="reportTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reportType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selectionCriteria1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selectionCriteria2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selectionCriteria3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selectionCriteria4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortOrder1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortOrder2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortOrder3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortOrder4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="systemReport" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Shifts" representedClassName="Shifts" syncable="YES" codeGenerationType="class">
+        <attribute name="clientInvoiceNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="personInvoiceNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rateID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="shiftDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shiftID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="shiftLineID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weekEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="workDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+    </entity>
+    <entity name="Task" representedClassName="Task" syncable="YES" codeGenerationType="class">
+        <attribute name="completionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="details" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="energyLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="estimatedTime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="estimatedTimeType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="flagged" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="priority" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="repeatBase" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="repeatInterval" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="repeatType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="urgency" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TaskAttachment" representedClassName="TaskAttachment" syncable="YES" codeGenerationType="class">
+        <attribute name="attachment" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TaskContext" representedClassName="TaskContext" syncable="YES" codeGenerationType="class">
+        <attribute name="contextID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="contextType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TaskPredecessor" representedClassName="TaskPredecessor" syncable="YES" codeGenerationType="class">
+        <attribute name="predecessorID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="predecessorType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TaskUpdates" representedClassName="TaskUpdates" syncable="YES" codeGenerationType="class">
+        <attribute name="details" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="source" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="taskID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Team" representedClassName="Team" syncable="YES" codeGenerationType="class">
+        <attribute name="companyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="companyRegNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="externalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="logo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nextInvoiceNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="predecessor" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subscriptionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="subscriptionLevel" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="taxNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teamOwner" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="UserRoles" representedClassName="UserRoles" syncable="YES" codeGenerationType="class">
+        <attribute name="accessLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roleID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="roleType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <entity name="Users" representedClassName="Users" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="UserTeams" representedClassName="UserTeams" syncable="YES" codeGenerationType="class">
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Addresses" positionX="-243" positionY="171" width="128" height="255"/>
+        <element name="Clients" positionX="-279" positionY="135" width="128" height="150"/>
+        <element name="Contacts" positionX="-252" positionY="162" width="128" height="165"/>
+        <element name="Context" positionX="-162" positionY="144" width="128" height="225"/>
+        <element name="Decodes" positionX="-279" positionY="18" width="128" height="150"/>
+        <element name="Dropdowns" positionX="-270" positionY="144" width="128" height="120"/>
+        <element name="EventTemplate" positionX="-279" positionY="135" width="128" height="195"/>
+        <element name="EventTemplateHead" positionX="-270" positionY="144" width="128" height="120"/>
+        <element name="MeetingAgenda" positionX="-171" positionY="135" width="128" height="270"/>
+        <element name="MeetingAgendaItem" positionX="-162" positionY="144" width="128" height="255"/>
+        <element name="MeetingAttendees" positionX="-153" positionY="153" width="128" height="180"/>
+        <element name="MeetingSupportingDocs" positionX="-144" positionY="162" width="128" height="150"/>
+        <element name="MeetingTasks" positionX="-135" positionY="171" width="128" height="135"/>
+        <element name="Panes" positionX="-270" positionY="27" width="128" height="150"/>
+        <element name="Person" positionX="-261" positionY="153" width="128" height="210"/>
+        <element name="PersonAddInfoEntry" positionX="-225" positionY="189" width="128" height="150"/>
+        <element name="PersonAdditionalInfo" positionX="-234" positionY="180" width="128" height="135"/>
+        <element name="Projects" positionX="-63" positionY="-18" width="128" height="390"/>
+        <element name="ProjectTeamMembers" positionX="-126" positionY="180" width="128" height="150"/>
+        <element name="Rates" positionX="-279" positionY="135" width="128" height="180"/>
+        <element name="ReportingMonth" positionX="-270" positionY="144" width="128" height="135"/>
+        <element name="Reports" positionX="-171" positionY="135" width="128" height="930"/>
+        <element name="Shifts" positionX="-243" positionY="171" width="128" height="300"/>
+        <element name="Task" positionX="-279" positionY="99" width="128" height="345"/>
+        <element name="TaskAttachment" positionX="-117" positionY="189" width="128" height="135"/>
+        <element name="TaskContext" positionX="-171" positionY="135" width="128" height="135"/>
+        <element name="TaskPredecessor" positionX="-171" positionY="135" width="128" height="135"/>
+        <element name="TaskUpdates" positionX="-279" positionY="99" width="128" height="150"/>
+        <element name="Team" positionX="-270" positionY="144" width="128" height="300"/>
+        <element name="UserRoles" positionX="-225" positionY="189" width="128" height="150"/>
+        <element name="Users" positionX="-234" positionY="180" width="128" height="135"/>
+        <element name="UserTeams" positionX="-279" positionY="135" width="128" height="105"/>
+    </elements>
+</model>

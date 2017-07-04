@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import EventKit
+import EventKitUI
 
-class toolboxViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate
+class toolboxViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate, EKEventEditViewDelegate
 {
     @IBOutlet weak var tblCalendar: UITableView!
     @IBOutlet weak var tblAlerts: UITableView!
@@ -16,10 +18,39 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBOutlet weak var btnClients: UIButton!
     @IBOutlet weak var btnSettings: UIBarButtonItem!
     @IBOutlet weak var navBarTitle: UINavigationItem!
+    @IBOutlet weak var btnCalendarView: UIButton!
+    @IBOutlet weak var btnDate: UIButton!
+    @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var lblDate: UILabel!
+    @IBOutlet weak var lblLocation: UILabel!
+    @IBOutlet weak var btnEvent: UIButton!
+    @IBOutlet weak var btnAgenda: UIButton!
+    @IBOutlet weak var lblClient: UILabel!
+    @IBOutlet weak var lblProject: UILabel!
+    @IBOutlet weak var btnClient: UIButton!
+    @IBOutlet weak var btnProject: UIButton!
+    
+    fileprivate let listView = "List View"
+    fileprivate let dayView = "Day View"
+    fileprivate let timeSplit = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
+                                 "03:00", "03:30", "04:00", "04:30", "05:00", "05:30",
+                                 "06:00", "06:30", "07:00", "07:30", "08:00", "08:30",
+                                 "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+                                 "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+                                 "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+                                 "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+                                 "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+                                 ]
     
     fileprivate var firstRun = true
     fileprivate var alertList: alerts!
     fileprivate var appointmentList: iOSCalendar!
+    fileprivate var workingDate: Date!
+    fileprivate var selectedEvent: EKEvent!
+    fileprivate var workingMeeting: calendarItem!
+    fileprivate var displayList: [String] = Array()
+    fileprivate var clientSource: [client] = Array()
+    fileprivate var projectSource: [project] = Array()
     
     var communicationDelegate: myCommunicationDelegate?
 
@@ -50,6 +81,12 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         }
         
         btnSettings.title = NSString(string: "\u{2699}") as String
+        
+        btnCalendarView.setTitle(listView, for: .normal)
+        workingDate = Date()
+        
+        btnDate.isHidden = true
+        hideFields()
         
         refreshScreen()
     }
@@ -104,123 +141,92 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
         switch tableView
         {
-        case tblCalendar:
-            let cell = tableView.dequeueReusableCell(withIdentifier:"cellCalendar", for: indexPath) as! calendarTableItem
+            case tblCalendar:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellCalendar", for: indexPath) as! calendarTableItem
+                
+                cell.lblName.text = appointmentList.events[indexPath.row].title
+                
+                if appointmentList.events[indexPath.row].isAllDay
+                {
+                    cell.lblDate.text = appointmentList.events[indexPath.row].startDate.formatDateToString
+                }
+                else
+                {
+                    cell.lblDate.text = "\(appointmentList.events[indexPath.row].startDate.formatDateAndTimeString) - \(appointmentList.events[indexPath.row].endDate.formatTimeString)"
+                }
+                return cell
             
-            cell.lblName.text = appointmentList.events[indexPath.row].title
-            cell.lblDate.text = ""
-            cell.lblWhere.text = appointmentList.events[indexPath.row].structuredLocation?.title
+            case tblAlerts:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellAlert", for: indexPath) as! alertListItem
+                
+                cell.lblAlert.text = alertList.alertList[indexPath.row].displayText
+                cell.lblName.text = alertList.alertList[indexPath.row].name
+                
+                return cell
             
-            return cell
-            
-        case tblAlerts:
-            let cell = tableView.dequeueReusableCell(withIdentifier:"cellAlert", for: indexPath) as! alertListItem
-            
-            cell.lblAlert.text = alertList.alertList[indexPath.row].displayText
-            cell.lblName.text = alertList.alertList[indexPath.row].name
-            
-            return cell
-            
-        default:
-            return UITableViewCell()
+            default:
+                return UITableViewCell()
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-//        switch tableView
-//        {
-//        case tblData1:
-//            for reportEntry in reportList.reports
-//            {
-//                if reportEntry.reportName == btnReport.currentTitle!
-//                {
-//                    switch reportEntry.reportName
-//                    {
-//                    case reportContractForMonth:  // Contract for month
-//                        let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-//                        contractEditViewControl.communicationDelegate = self
-//
-//                        let tempObject = reportEntry.lines[indexPath.row].sourceObject as! project
-//                        contractEditViewControl.workingContract = tempObject
-//
-//                        self.present(contractEditViewControl, animated: true, completion: nil)
-//
-//                    case reportWagesForMonth:  // Wage per person for month
-//                        let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
-//                        rosterViewControl.communicationDelegate = self
-//
-//                        let tempObject = reportEntry.lines[indexPath.row].sourceObject as! person
-//                        rosterViewControl.selectedPerson = tempObject
-//
-//                        rosterViewControl.month = btnDropdown.currentTitle!
-//                        rosterViewControl.year = btnYear.currentTitle!
-//                        self.present(rosterViewControl, animated: true, completion: nil)
-//
-//                    case reportContractForYear:
-//                        let _ = 1
-//
-//                    case reportContractDates:
-//                        let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-//                        contractEditViewControl.communicationDelegate = self
-//
-//                        let tempObject = reportEntry.lines[indexPath.row].sourceObject as! project
-//                        contractEditViewControl.workingContract = tempObject
-//
-//                        self.present(contractEditViewControl, animated: true, completion: nil)
-//
-//                    default:
-//                        print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
-//                    }
-//
-//
-//                    break
-//                }
-//            }
-//
-//        case tblAlerts:
-//            switch alertList.alertList[indexPath.row].source
-//            {
-//            case "Project":
-//                let workingProject = alertList.alertList[indexPath.row].object as! project
-//                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-//                contractEditViewControl.communicationDelegate = self
-//                contractEditViewControl.workingContract = workingProject
-//                self.present(contractEditViewControl, animated: true, completion: nil)
-//
-//            case "Client":
-//                let clientMaintenanceViewControl = clientsStoryboard.instantiateViewController(withIdentifier: "clientMaintenance") as! clientMaintenanceViewController
-//                clientMaintenanceViewControl.communicationDelegate = self
-//                clientMaintenanceViewControl.selectedClient = alertList.alertList[indexPath.row].object as! client
-//                self.present(clientMaintenanceViewControl, animated: true, completion: nil)
-//
-//            case "Shift":
-//                let workingShift = alertList.alertList[indexPath.row].object as! shift
-//
-//                if workingShift.type == eventShiftType
-//                {
-//                    let workingProject = project(projectID: workingShift.projectID)
-//                    let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
-//                    eventsViewControl.communicationDelegate = self
-//                    eventsViewControl.currentEvent = workingProject
-//                    self.present(eventsViewControl, animated: true, completion: nil)
-//
-//                }
-//                else
-//                {
-//                    let rosterMaintenanceViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "rosterForm") as! shiftMaintenanceViewController
-//                    rosterMaintenanceViewControl.communicationDelegate = self
-//                    rosterMaintenanceViewControl.currentWeekEndingDate = workingShift.weekEndDate
-//                    self.present(rosterMaintenanceViewControl, animated: true, completion: nil)
-//                }
-//
-//            default:
-//                let _ = 1
-//            }
-//
-//        default:
-//            let _ = 1
-//        }
+        switch tableView
+        {
+            case tblCalendar:
+                selectedEvent = appointmentList.events[indexPath.row]
+                workingMeeting = nil
+                displayEvent()
+            
+            case tblAlerts:
+                let _ = 1
+    //            switch alertList.alertList[indexPath.row].source
+    //            {
+    //            case "Project":
+    //                let workingProject = alertList.alertList[indexPath.row].object as! project
+    //                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+    //                contractEditViewControl.communicationDelegate = self
+    //                contractEditViewControl.workingContract = workingProject
+    //                self.present(contractEditViewControl, animated: true, completion: nil)
+    //
+    //            case "Client":
+    //                let clientMaintenanceViewControl = clientsStoryboard.instantiateViewController(withIdentifier: "clientMaintenance") as! clientMaintenanceViewController
+    //                clientMaintenanceViewControl.communicationDelegate = self
+    //                clientMaintenanceViewControl.selectedClient = alertList.alertList[indexPath.row].object as! client
+    //                self.present(clientMaintenanceViewControl, animated: true, completion: nil)
+    //
+    //            case "Shift":
+    //                let workingShift = alertList.alertList[indexPath.row].object as! shift
+    //
+    //                if workingShift.type == eventShiftType
+    //                {
+    //                    let workingProject = project(projectID: workingShift.projectID)
+    //                    let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
+    //                    eventsViewControl.communicationDelegate = self
+    //                    eventsViewControl.currentEvent = workingProject
+    //                    self.present(eventsViewControl, animated: true, completion: nil)
+    //
+    //                }
+    //                else
+    //                {
+    //                    let rosterMaintenanceViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "rosterForm") as! shiftMaintenanceViewController
+    //                    rosterMaintenanceViewControl.communicationDelegate = self
+    //                    rosterMaintenanceViewControl.currentWeekEndingDate = workingShift.weekEndDate
+    //                    self.present(rosterMaintenanceViewControl, animated: true, completion: nil)
+    //                }
+    //
+    //            default:
+    //                let _ = 1
+    //            }
+            
+            default:
+                let _ = 1
+            }
+    }
+    
+    func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction)
+    {
+        controller.dismiss(animated: true)
     }
     
     @IBAction func btnPeople(_ sender: UIButton)
@@ -243,9 +249,275 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
 //        self.present(userEditViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func btnCalendarView(_ sender: UIButton)
+    {
+        if sender.currentTitle == listView
+        {
+            btnCalendarView.setTitle(dayView, for: .normal)
+            btnDate.isHidden = false
+        }
+        else
+        {
+            btnCalendarView.setTitle(listView, for: .normal)
+            btnDate.isHidden = true
+        }
+        
+        refreshScreen()
+    }
+    
+    @IBAction func btnEvent(_ sender: UIButton)
+    {
+        let controller = EKEventEditViewController()
+        controller.event = selectedEvent
+        controller.eventStore = globalEventStore
+        controller.editViewDelegate = self
+        present(controller, animated: true)
+    }
+    
+    @IBAction func btnAgenda(_ sender: UIButton)
+    {
+        createMeetingAgenda()
+    }
+    
+    @IBAction func btnClient(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        clientSource = clients(teamID: currentUser.currentTeam!.teamID).clients
+        for myItem in clientSource
+        {
+            displayList.append(myItem.name)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "clients"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnClient.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func btnProject(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        projectSource = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true).projects
+        for myItem in projectSource
+        {
+            displayList.append(myItem.projectName)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "projects"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnProject.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func btnDate(_ sender: UIButton)
+    {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "calendarDate"
+        pickerView.delegate = self
+        pickerView.currentDate = workingDate
+        
+        pickerView.showTimes = false
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "clients"
+        {
+            createMeetingAgenda()
+            
+            workingMeeting.clientID = clientSource[selectedItem].clientID
+            displayClientAndProjectFields()
+        }
+        else if source == "projects"
+        {
+            workingMeeting.projectID = projectSource[selectedItem].projectID
+            displayClientAndProjectFields()
+        }
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        workingDate = selectedDate
+        btnDate.setTitle("\(workingDate.formatDateToString)", for: .normal)
+        
+        appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
+        
+        tblCalendar.reloadData()
+        
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
+    }
+    
+    func createMeetingAgenda()
+    {
+        if workingMeeting == nil
+        {
+            workingMeeting = calendarItem(event: selectedEvent, teamID: currentUser.currentTeam!.teamID)
+        }
+    }
+    
+    func buildArrayForDay()
+    {
+        // Break day into half hour slots and then use this to show whether to display appointment details or not
+        
+        appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
+        
+        if appointmentList.events.count == 0
+        {
+            // No appointments for day
+        }
+        else
+        {
+            for myTime in timeSplit
+            {
+                let dateString = "\(workingDate.formatDateToString) \(myTime)"
+                print("\(dateString)")
+                
+                let tempDate = dateString.formatStringToDateTime
+                
+                print("\(tempDate)")
+            }
+        }
+    }
+    
+    func displayEvent()
+    {
+        showFields()
+        
+        lblTitle.text = selectedEvent.title
+        
+        if selectedEvent.isAllDay
+        {
+            lblDate.text = selectedEvent.startDate.formatDateToString
+        }
+        else
+        {
+            lblDate.text = "\(selectedEvent.startDate.formatDateAndTimeString) - \(selectedEvent.endDate.formatTimeString)"
+        }
+        
+        lblLocation.text = selectedEvent.structuredLocation?.title
+        
+        // Is there a meeting entry for this
+        
+        workingMeeting = calendarItem(meetingID: generateMeetingID(selectedEvent), teamID: currentUser.currentTeam!.teamID)
+        
+        if workingMeeting.meetingID == ""
+        {
+            // No meeting was found
+            btnClient.setTitle("Select", for: .normal)
+            btnProject.setTitle("Select", for: .normal)
+            btnClient.isEnabled = true
+            btnProject.isEnabled = false
+        }
+        else
+        {
+            // Meeting was found
+            
+            displayClientAndProjectFields()
+        }
+    }
+    
+    func displayClientAndProjectFields()
+    {
+        if workingMeeting.clientID == 0
+        {
+            btnClient.setTitle("Select", for: .normal)
+            btnProject.setTitle("Select", for: .normal)
+            btnClient.isEnabled = true
+            btnProject.isEnabled = false
+        }
+        else
+        {
+            let tempClient = client(clientID: workingMeeting.clientID)
+            btnClient.setTitle(tempClient.name, for: .normal)
+            btnClient.isEnabled = true
+            btnProject.isEnabled = true
+            
+            if workingMeeting.projectID == 0
+            {
+                btnProject.setTitle("Select", for: .normal)
+            }
+            else
+            {
+                let tempProject = project(projectID: workingMeeting.projectID)
+                btnProject.setTitle(tempProject.projectName, for: .normal)
+            }
+        }
+    }
+    
+    func hideFields()
+    {
+        lblTitle.isHidden = true
+        lblDate.isHidden = true
+        lblLocation.isHidden = true
+        btnEvent.isHidden = true
+        btnAgenda.isHidden = true
+        lblClient.isHidden = true
+        lblProject.isHidden = true
+        btnClient.isHidden = true
+        btnProject.isHidden = true
+    }
+    
+    func showFields()
+    {
+        lblTitle.isHidden = false
+        lblDate.isHidden = false
+        lblLocation.isHidden = false
+        btnEvent.isHidden = false
+        btnAgenda.isHidden = false
+        lblClient.isHidden = false
+        lblProject.isHidden = false
+        btnClient.isHidden = false
+        btnProject.isHidden = false
+    }
+    
     func refreshScreen()
     {
         navBarTitle.title = currentUser.currentTeam!.name
+        
+        btnDate.setTitle("\(workingDate.formatDateToString)", for: .normal)
         
         buildAlerts()
         
@@ -320,11 +592,41 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             }
         }
         
-        // Load calendar items
-        
-        appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID)
+        if btnCalendarView.currentTitle == listView
+        {
+            // Load calendar items
+            
+            appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID)
+        }
+        else
+        {
+            // Just want appointments for the day
+            buildArrayForDay()
+        }
         
         tblCalendar.reloadData()
+        
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
+    }
+    
+    func scrollCalendar()
+    {
+        var recordCount: Int = 0
+        
+        for myItem in appointmentList.events
+        {
+            if myItem.startDate > Date()
+            {
+                break
+            }
+            recordCount += 1
+        }
+        
+        if recordCount > 0
+        {
+            let startPosition = IndexPath(row: recordCount, section: 0)
+            tblCalendar.scrollToRow(at: startPosition, at: .top, animated: true)
+        }
     }
     
     func notSubscribedMessage()
@@ -360,15 +662,4 @@ class calendarTableItem: UITableViewCell
 {
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblDate: UILabel!
-    @IBOutlet weak var lblWhere: UILabel!
-    @IBOutlet weak var btnClient: UIButton!
-    @IBOutlet weak var btnProject: UIButton!
-    
-    @IBAction func btnClient(_ sender: UIButton)
-    {
-    }
-    
-    @IBAction func btnProject(_ sender: UIButton)
-    {
-    }
 }
