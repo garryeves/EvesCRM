@@ -180,8 +180,8 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         
         if (indexPath.row % 2 == 0)
         {
-            cell.backgroundColor = myRowColour
-            cell.txtContext.backgroundColor = myRowColour
+            cell.backgroundColor = greenColour
+            cell.txtContext.backgroundColor = greenColour
         }
         else
         {

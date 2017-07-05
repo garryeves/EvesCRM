@@ -54,7 +54,12 @@ class topCalendar: NSObject
         
         for myEmail in emailAddresses
         {
-            for myEvent in iOSCalendar(email: myEmail, teamID: teamID).events
+            let startAdjust = readDefaultInt("CalBefore") as Int
+            let endAdjust = readDefaultInt("CalAfter") as Int
+            let startDate = Date().add(.day, amount: -(7 * startAdjust))
+            let endDate = Date().add(.day, amount: (7 * endAdjust))
+            
+            for myEvent in iOSCalendar(email: myEmail, teamID: teamID, startDate: startDate, endDate: endDate).events
             {
                 let newItem = mergedCalendarItem(startDate: myEvent.startDate, databaseItem: nil, iCalItem: myEvent)
                 mergedList.append(newItem)

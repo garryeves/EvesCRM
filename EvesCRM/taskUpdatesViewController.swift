@@ -94,8 +94,8 @@ class taskUpdatesViewController: UIViewController//, SMTEFillDelegate
         
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = myRowColour
-            cell.txtUpdate.backgroundColor = myRowColour
+            cell.backgroundColor = greenColour
+            cell.txtUpdate.backgroundColor = greenColour
         }
         else
         {

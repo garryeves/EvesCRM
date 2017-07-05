@@ -183,7 +183,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = myRowColour
+            cell.backgroundColor = greenColour
         }
         else
         {

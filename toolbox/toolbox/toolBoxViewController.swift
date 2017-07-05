@@ -10,6 +10,15 @@ import UIKit
 import EventKit
 import EventKitUI
 
+struct dayViewList
+{
+    var timeSlice: String
+    var title: String = ""
+    var dateString: String = ""
+    var colour: UIColor
+    var event: EKEvent!
+}
+
 class toolboxViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate, EKEventEditViewDelegate
 {
     @IBOutlet weak var tblCalendar: UITableView!
@@ -29,6 +38,12 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBOutlet weak var lblProject: UILabel!
     @IBOutlet weak var btnClient: UIButton!
     @IBOutlet weak var btnProject: UIButton!
+    @IBOutlet weak var btnFilterClient: UIButton!
+    @IBOutlet weak var btnFilterProject: UIButton!
+    @IBOutlet weak var btnStartDate: UIButton!
+    @IBOutlet weak var btnEndDate: UIButton!
+    @IBOutlet weak var lblFilyerDate: UILabel!
+    @IBOutlet weak var lblFilterDash: UILabel!
     
     fileprivate let listView = "List View"
     fileprivate let dayView = "Day View"
@@ -51,6 +66,9 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     fileprivate var displayList: [String] = Array()
     fileprivate var clientSource: [client] = Array()
     fileprivate var projectSource: [project] = Array()
+    fileprivate var dayList: [dayViewList] = Array()
+    fileprivate var startDate: Date!
+    fileprivate var endDate: Date!
     
     var communicationDelegate: myCommunicationDelegate?
 
@@ -65,6 +83,11 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         {
             writeDefaultInt("CalAfter", value: 4)
         }
+        
+        let startAdjust = readDefaultInt("CalBefore") as Int
+        let endAdjust = readDefaultInt("CalAfter") as Int
+        startDate = Date().add(.day, amount: -(7 * startAdjust))
+        endDate = Date().add(.day, amount: (7 * endAdjust))
         
         connectEventStore()
         
@@ -113,13 +136,20 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         switch tableView
         {
             case tblCalendar:
-                if appointmentList != nil
+                if btnCalendarView.currentTitle == listView
                 {
-                    return appointmentList.events.count
+                    if appointmentList != nil
+                    {
+                        return appointmentList.events.count
+                    }
+                    else
+                    {
+                        return 0
+                    }
                 }
                 else
                 {
-                    return 0
+                    return dayList.count
                 }
             
             case tblAlerts:
@@ -144,16 +174,27 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             case tblCalendar:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellCalendar", for: indexPath) as! calendarTableItem
                 
-                cell.lblName.text = appointmentList.events[indexPath.row].title
-                
-                if appointmentList.events[indexPath.row].isAllDay
+                if btnCalendarView.currentTitle == listView
                 {
-                    cell.lblDate.text = appointmentList.events[indexPath.row].startDate.formatDateToString
+                    cell.lblName.text = appointmentList.events[indexPath.row].title
+                    
+                    if appointmentList.events[indexPath.row].isAllDay
+                    {
+                        cell.lblDate.text = appointmentList.events[indexPath.row].startDate.formatDateToString
+                    }
+                    else
+                    {
+                        cell.lblDate.text = "\(appointmentList.events[indexPath.row].startDate.formatDateAndTimeString) - \(appointmentList.events[indexPath.row].endDate.formatTimeString)"
+                    }
                 }
                 else
                 {
-                    cell.lblDate.text = "\(appointmentList.events[indexPath.row].startDate.formatDateAndTimeString) - \(appointmentList.events[indexPath.row].endDate.formatTimeString)"
+                    cell.lblName.text = dayList[indexPath.row].title
+                    cell.lblDate.text = dayList[indexPath.row].dateString
+                    
+                    cell.backgroundColor = dayList[indexPath.row].colour
                 }
+                
                 return cell
             
             case tblAlerts:
@@ -174,9 +215,23 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         switch tableView
         {
             case tblCalendar:
-                selectedEvent = appointmentList.events[indexPath.row]
-                workingMeeting = nil
-                displayEvent()
+                if btnCalendarView.currentTitle == listView
+                {
+                    selectedEvent = appointmentList.events[indexPath.row]
+                }
+                else
+                {
+                     selectedEvent = dayList[indexPath.row].event
+                }
+                if selectedEvent == nil
+                {
+                    hideFields()
+                }
+                else
+                {
+                    workingMeeting = nil
+                    displayEvent()
+                }
             
             case tblAlerts:
                 let _ = 1
@@ -255,11 +310,19 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         {
             btnCalendarView.setTitle(dayView, for: .normal)
             btnDate.isHidden = false
+            lblFilyerDate.isHidden = true
+            lblFilterDash.isHidden = true
+            btnStartDate.isHidden = true
+            btnEndDate.isHidden = true
         }
         else
         {
             btnCalendarView.setTitle(listView, for: .normal)
             btnDate.isHidden = true
+            lblFilyerDate.isHidden = false
+            lblFilterDash.isHidden = false
+            btnStartDate.isHidden = false
+            btnEndDate.isHidden = false
         }
         
         refreshScreen()
@@ -362,6 +425,22 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         self.present(pickerView, animated: true, completion: nil)
     }
     
+    @IBAction func btnFilterClient(_ sender: UIButton)
+    {
+    }
+    
+    @IBAction func btnFilterProject(_ sender: UIButton)
+    {
+    }
+    
+    @IBAction func btnStartDate(_ sender: UIButton)
+    {
+    }
+    
+    @IBAction func btnEndDate(_ sender: UIButton)
+    {
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "clients"
@@ -380,14 +459,23 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     
     func myPickerDidFinish(_ source: String, selectedDate:Date)
     {
-        workingDate = selectedDate
-        btnDate.setTitle("\(workingDate.formatDateToString)", for: .normal)
-        
-        appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
-        
-        tblCalendar.reloadData()
-        
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
+        switch source
+        {
+            case "calendarDate":
+                workingDate = selectedDate
+                btnDate.setTitle("\(workingDate.formatDateToString)", for: .normal)
+                
+                buildArrayForDay()
+            
+            case "startDate":
+                let _ = 1
+            
+            case "endDate":
+                let _ = 1
+            
+            default:
+                print("myPickerDidFinish Date got unknown source - \(source)")
+        }
     }
     
     func createMeetingAgenda()
@@ -402,8 +490,12 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
         // Break day into half hour slots and then use this to show whether to display appointment details or not
         
+        var currentColour: UIColor = greenColour
+        var currentTitle: String = ""
+        
         appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
         
+        dayList.removeAll()
         if appointmentList.events.count == 0
         {
             // No appointments for day
@@ -412,13 +504,91 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         {
             for myTime in timeSplit
             {
+                var newEntry: dayViewList!
+                
                 let dateString = "\(workingDate.formatDateToString) \(myTime)"
-                print("\(dateString)")
                 
-                let tempDate = dateString.formatStringToDateTime
+                let tempStartDate = dateString.formatStringToDateTime
+                let tempEndDate = tempStartDate.add(.minute, amount: 30)
                 
-                print("\(tempDate)")
+                for eventEntry in appointmentList.events
+                {
+                    if eventEntry.isAllDay
+                    {
+                        if myTime == "00:00"
+                        {
+                            newEntry = dayViewList(timeSlice: "All Day", title: eventEntry.title, dateString: eventEntry.startDate.formatDateToString, colour: currentColour, event: eventEntry)
+                            currentColour = switchColour(currentColour)
+                        }
+                        break
+                    }
+                    
+                    if eventEntry.startDate >= tempStartDate && eventEntry.endDate <= tempEndDate
+                    {
+                        // Entire meeting fits into this slot
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.title, dateString: "\(eventEntry.startDate.formatTimeString) - \(eventEntry.endDate.formatTimeString)", colour: currentColour, event: eventEntry)
+                        
+                        currentColour = switchColour(currentColour)
+                        currentTitle = ""
+                    }
+                    else if eventEntry.startDate < tempStartDate && eventEntry.endDate >= tempEndDate
+                    {
+                        // Meeting already in progress and runs over entire slot
+                        newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: currentColour, event: eventEntry)
+                    }
+                    else if eventEntry.startDate >= tempEndDate
+                    {
+                        // Do nothing
+                    }
+                    else if eventEntry.startDate >= tempStartDate && eventEntry.endDate > tempEndDate
+                    {
+                        // Meeting straddles slots
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.title, dateString: "\(eventEntry.startDate.formatTimeString) - \(eventEntry.endDate.formatTimeString)", colour: currentColour, event: eventEntry)
+                        currentTitle = eventEntry.title
+                    }
+                    else if eventEntry.endDate < tempEndDate && currentTitle != ""
+                    {
+                        currentColour = switchColour(currentColour)
+                        currentTitle = ""
+                    }
+                    
+                    if eventEntry.endDate > tempEndDate
+                    {
+                        break
+                    }
+                }
+                
+                if newEntry == nil
+                {
+                    newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: UIColor.white, event: nil)
+                }
+                dayList.append(newEntry)
             }
+        }
+        tblCalendar.reloadData()
+    }
+    
+    func switchColour(_ source: UIColor) -> UIColor
+    {
+        switch source
+        {
+            case greenColour:
+                return cyanColour
+            
+            case cyanColour:
+                return redColour
+            
+            case redColour:
+                return greyColour
+            
+            case greyColour:
+                return yellowColour
+            
+            case yellowColour:
+                return brownColour
+            
+            default:
+                return greenColour
         }
     }
     
@@ -592,21 +762,22 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             }
         }
         
+        btnStartDate.setTitle(startDate.formatDateToString, for: .normal)
+        btnEndDate.setTitle(endDate.formatDateToString, for: .normal)
+        
         if btnCalendarView.currentTitle == listView
         {
             // Load calendar items
             
-            appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID)
+            appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+            tblCalendar.reloadData()
+            Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
         }
         else
         {
             // Just want appointments for the day
             buildArrayForDay()
         }
-        
-        tblCalendar.reloadData()
-        
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
     }
     
     func scrollCalendar()

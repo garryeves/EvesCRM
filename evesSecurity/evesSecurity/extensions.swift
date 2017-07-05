@@ -76,7 +76,7 @@ extension String
     var formatStringToDateTime: Date
     {
         let myDateFormatter = DateFormatter()
-        myDateFormatter.dateFormat = "E dd MMM yy hh:mm"
+        myDateFormatter.dateFormat = "E dd MMM yy HH:mm"
         return myDateFormatter.date(from: self)!
     }
 }

@@ -21,9 +21,9 @@ class iOSCalendar
         }
     }
     
-    init(email: String, teamID: Int)
+    init(email: String, teamID: Int, startDate: Date, endDate: Date)
     {
-        let events = getEventsForDateRange()
+        let events = getEventsForDateRange(startDate: startDate, endDate: endDate)
         
         if events.count >  0
         {
@@ -56,9 +56,9 @@ class iOSCalendar
         }
     }
     
-    init(projectName: String, teamID: Int)
+    init(projectName: String, teamID: Int, startDate: Date, endDate: Date)
     {
-        let events = getEventsForDateRange()
+        let events = getEventsForDateRange(startDate: startDate, endDate: endDate)
         
         if events.count >  0
         {
@@ -75,9 +75,9 @@ class iOSCalendar
         }
     }
     
-    init(teamID: Int)
+    init(teamID: Int, startDate: Date, endDate: Date)
     {
-        let events = getEventsForDateRange()
+        let events = getEventsForDateRange(startDate: startDate, endDate: endDate)
         
         if events.count >  0
         {
@@ -103,19 +103,8 @@ class iOSCalendar
         }
     }
     
-    fileprivate func getEventsForDateRange() -> [EKEvent]
+    fileprivate func getEventsForDateRange(startDate: Date, endDate: Date) -> [EKEvent]
     {
-        let startDateModifier = readDefaultInt("CalBefore") as Int
-
-        let startDate = Date().add(.day, amount: -(startDateModifier * 7))
-        
-        /* The end date */
-        //Calculate - Days * hours * mins * secs
-        
-        let endDateModifier = readDefaultInt("CalAfter") as Int
-        
-        let endDate = Date().add(.day, amount: (endDateModifier * 7))
-        
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
         let searchPredicate = globalEventStore.predicateForEvents(
             withStart: startDate,

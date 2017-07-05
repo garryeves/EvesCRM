@@ -61,12 +61,12 @@ var currentUser: userItem!
 
 var myCurrentViewController: AnyObject!
 
-#if os(iOS)
-    let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-#elseif os(OSX)
-//    let myRowColour = NSColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25) as! CGColor
-    let myRowColour = CGColorCreateGenericRGB(0.75, 1.0, 0.92, 0.25)
-#endif
+let greenColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+let cyanColour = UIColor(red: 51/255, green: 255/255, blue: 255/255, alpha: 0.25)
+let redColour = UIColor(red: 190/255, green: 102/255, blue: 102/255, alpha: 0.25)
+let greyColour = UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 0.25)
+let yellowColour = UIColor(red: 255/255, green: 255/255, blue: 0/255, alpha: 0.25)
+let brownColour = UIColor(red: 255/255, green: 178/255, blue: 102/255, alpha: 0.25)
 
 func getDeviceType() -> UIUserInterfaceIdiom
 {

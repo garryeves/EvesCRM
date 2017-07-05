@@ -279,7 +279,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
          
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = myRowColour
+            cell.backgroundColor = greenColour
         }
         else
         {

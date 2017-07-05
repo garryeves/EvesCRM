@@ -45,40 +45,40 @@ class tasks: NSObject
         }
     }
     
-//    init(contextID: Int)
-//    {
-//        super.init()
-//        
-//        loadActiveTasksForContext(contextID)
-//    }
+    init(contextID: Int)
+    {
+        super.init()
+        
+        loadActiveTasksForContext(contextID)
+    }
     
-//    func loadActiveTasksForContext(_ contextID: Int)
-//    {
-//        myActiveTasks.removeAll()
-//        
-//        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID)
-//        
-//        for myTaskContext in myTaskContextList
-//        {
-//            // Get the context details
-//            let myTaskList = myDatabaseConnection.getActiveTask(Int(myTaskContext.taskID))
-//            
-//            for myTask in myTaskList
-//            {  //append project details to work array
-//                // check the project to see if it is on hold
-//                
-//                let myProject = project(projectID: Int(myTask.projectID))
-//                
-//                if myProject.projectStatus != "On Hold"
-//                {
-//                    let tempTask = task(taskID: Int(myTask.taskID))
-//                    myActiveTasks.append(tempTask)
-//                }
-//            }
-//        }
-//        
-//        myActiveTasks.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
-//    }
+    func loadActiveTasksForContext(_ contextID: Int)
+    {
+        myActiveTasks.removeAll()
+        
+        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID)
+        
+        for myTaskContext in myTaskContextList
+        {
+            // Get the context details
+            let myTaskList = myDatabaseConnection.getActiveTask(Int(myTaskContext.taskID))
+            
+            for myTask in myTaskList
+            {  //append project details to work array
+                // check the project to see if it is on hold
+                
+                let myProject = project(projectID: Int(myTask.projectID))
+                
+                if myProject.projectStatus != "On Hold"
+                {
+                    let tempTask = task(taskID: Int(myTask.taskID))
+                    myActiveTasks.append(tempTask)
+                }
+            }
+        }
+        
+        myActiveTasks.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+    }
     
     func loadActiveTasksForProject(_ projectID: Int)
     {
@@ -134,7 +134,7 @@ class task: NSObject
     fileprivate var myFlagged: Bool = false
     fileprivate var myUrgency: String = ""
     fileprivate var myTeamID: Int = 0
-    fileprivate var myPredecessors: [Int] = Array()
+    fileprivate var myPredecessors: [taskPredecessor] = Array()
     fileprivate var saveCalled: Bool = false
     
     var taskID: Int
@@ -263,7 +263,6 @@ class task: NSObject
             myContexts = newValue
         }
     }
-    
     
     var priority: String
     {
@@ -450,7 +449,7 @@ class task: NSObject
         }
     }
     
-    var predecessors: [Int]
+    var predecessors: [taskPredecessor]
     {
         get
         {
@@ -502,24 +501,24 @@ class task: NSObject
             
             // get contexts
             
-//            let myContextList = myDatabaseConnection.getContextsForTask(taskID)
-//            myContexts.removeAll()
-//            
-//            for myContextItem in myContextList
-//            {
-//                let myNewContext = context(contextID: Int(myContextItem.contextID))
-//                myContexts.append(myNewContext)
-//            }
-//            
-//            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID)
-//            
-//            myPredecessors.removeAll()
-//            
-//            for myPredecessorItem in myPredecessorList
-//            {
-//                let myNewPredecessor = taskPredecessor(predecessorID: Int(myPredecessorItem.predecessorID), predecessorType: myPredecessorItem.predecessorType!)
-//                myPredecessors.append(myNewPredecessor)
-//            }
+            let myContextList = myDatabaseConnection.getContextsForTask(taskID)
+            myContexts.removeAll()
+            
+            for myContextItem in myContextList
+            {
+                let myNewContext = context(contextID: Int(myContextItem.contextID))
+                myContexts.append(myNewContext)
+            }
+            
+            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID)
+            
+            myPredecessors.removeAll()
+            
+            for myPredecessorItem in myPredecessorList
+            {
+                let myNewPredecessor = taskPredecessor(predecessorID: Int(myPredecessorItem.predecessorID), predecessorType: myPredecessorItem.predecessorType!)
+                myPredecessors.append(myNewPredecessor)
+            }
         }
     }
     
@@ -550,19 +549,19 @@ class task: NSObject
         
         // get contexts
         
-//        myContexts.removeAll()
-//        
-//        for myContextItem in oldTask.contexts
-//        {
-//            myDatabaseConnection.saveTaskContext(myContextItem.contextID, taskID: myTaskID)
-//        }
-//        
-//        myPredecessors.removeAll()
-//        
-//        for myPredecessorItem in oldTask.predecessors
-//        {
-//            myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType)
-//        }
+        myContexts.removeAll()
+        
+        for myContextItem in oldTask.contexts
+        {
+            myDatabaseConnection.saveTaskContext(myContextItem.contextID, taskID: myTaskID, contextType: myContextItem.contextType)
+        }
+        
+        myPredecessors.removeAll()
+        
+        for myPredecessorItem in oldTask.predecessors
+        {
+            myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType)
+        }
     }
     
     func save()
@@ -674,21 +673,20 @@ class task: NSObject
         myItem.save()
     }
     
+    func addPredecessor(_ predecessorID: Int, predecessorType: String)
+    {
+        myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
+    }
     
-//    func addPredecessor(_ predecessorID: Int, predecessorType: String)
-//    {
-//        myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
-//    }
-//    
-//    func removePredecessor(_ predecessorID: Int, predecessorType: String)
-//    {
-//        myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID)
-//    }
-//    
-//    func changePredecessor(_ predecessorID: Int, predecessorType: String)
-//    {
-//        myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
-//    }
+    func removePredecessor(_ predecessorID: Int, predecessorType: String)
+    {
+        myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID)
+    }
+    
+    func changePredecessor(_ predecessorID: Int, predecessorType: String)
+    {
+        myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
+    }
     
     func markComplete()
     {
@@ -766,20 +764,20 @@ class task: NSObject
         
         myExportString = writeLine(myExportString, lineString: "")
         
-//        if myContexts.count > 0
-//        {
-//            myLine = "Contexts"
-//            myExportString = writeLine(myExportString, lineString: myLine)
-//            
-//            for myContext in myContexts
-//            {
-//                myLine = "\(myContext.name)"
-//                myExportString = writeLine(myExportString, lineString: myLine)
-//            }
-//            
-//            myExportString = writeLine(myExportString, lineString: "")
-//            myExportString = writeLine(myExportString, lineString: "")
-//        }
+        if myContexts.count > 0
+        {
+            myLine = "Contexts"
+            myExportString = writeLine(myExportString, lineString: myLine)
+            
+            for myContext in myContexts
+            {
+                myLine = "\(myContext.name)"
+                myExportString = writeLine(myExportString, lineString: myLine)
+            }
+            
+            myExportString = writeLine(myExportString, lineString: "")
+            myExportString = writeLine(myExportString, lineString: "")
+        }
         
         myLine = ""
         
@@ -882,23 +880,23 @@ class task: NSObject
         
         myExportString = writeHTMLLine(myExportString, lineString: "")
         
-//        if myContexts.count > 0
-//        {
-//            myLine = "<h4>Contexts</h4>"
-//            myExportString = writeHTMLLine(myExportString, lineString: myLine)
-//            
-//            myContextTable = "<table>"
-//            
-//            for myContext in myContexts
-//            {
-//                myContextTable += "<tr><td>\(myContext.name)</td></tr>"
-//            }
-//            
-//            myContextTable += "</table>"
-//            myExportString = writeHTMLLine(myExportString, lineString: myContextTable)
-//            myExportString = writeHTMLLine(myExportString, lineString: "")
-//            myExportString = writeHTMLLine(myExportString, lineString: "")
-//        }
+        if myContexts.count > 0
+        {
+            myLine = "<h4>Contexts</h4>"
+            myExportString = writeHTMLLine(myExportString, lineString: myLine)
+            
+            myContextTable = "<table>"
+            
+            for myContext in myContexts
+            {
+                myContextTable += "<tr><td>\(myContext.name)</td></tr>"
+            }
+            
+            myContextTable += "</table>"
+            myExportString = writeHTMLLine(myExportString, lineString: myContextTable)
+            myExportString = writeHTMLLine(myExportString, lineString: "")
+            myExportString = writeHTMLLine(myExportString, lineString: "")
+        }
         
         myLine = ""
         

@@ -281,7 +281,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = myRowColour
+            cell.backgroundColor = greenColour
         }
         else
         {
