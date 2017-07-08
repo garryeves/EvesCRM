@@ -9,6 +9,87 @@
 import Foundation
 import EventKit
 
+class iOSCalendarList
+{
+    fileprivate var myList: [iOSCalendarListItem] = Array()
+    
+    var list: [iOSCalendarListItem]
+    {
+        return myList
+    }
+    
+    init()
+    {
+        myList.removeAll()
+        
+        for myItem in globalEventStore.calendars(for: .event)
+        {
+            let name = "\(myItem.source.title) - \(myItem.title)"
+            var state: Bool = false
+            if readDefaultString(name) == "True"
+            {
+                state = true
+            }
+            
+            let newItem = iOSCalendarListItem(name: name, state: state, calendar: myItem)
+            myList.append(newItem)
+        }
+        
+        if myList.count > 0
+        {
+            myList.sort
+            {
+                return $0.name < $1.name
+            }
+        }
+    }
+}
+
+class iOSCalendarListItem
+{
+    fileprivate var myName: String = ""
+    fileprivate var myState: Bool = false
+    fileprivate var myCalendar: EKCalendar!
+    
+    var name: String
+    {
+        return myName
+    }
+    
+    var state: Bool
+    {
+        get
+        {
+            return myState
+        }
+        set
+        {
+            if newValue
+            {
+                writeDefaultString(myName, value: "True")
+            }
+            else
+            {
+                writeDefaultString(myName, value: "False")
+            }
+            
+            myState = newValue
+        }
+    }
+    
+    var calendar: EKCalendar
+    {
+        return myCalendar
+    }
+    
+    init(name: String, state: Bool, calendar: EKCalendar)
+    {
+        myName = name
+        myState = state
+        myCalendar = calendar
+    }
+}
+
 class iOSCalendar
 {
     fileprivate var eventRecords: [EKEvent] = Array()
@@ -106,10 +187,35 @@ class iOSCalendar
     fileprivate func getEventsForDateRange(startDate: Date, endDate: Date) -> [EKEvent]
     {
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEvents(
-            withStart: startDate,
-            end: endDate,
-            calendars: nil)
+        
+        // Build the list of calendars to search
+        
+        var selectedCalendar: [EKCalendar] = Array()
+        
+        for myItem in iOSCalendarList().list
+        {
+            if myItem.state
+            {
+                selectedCalendar.append(myItem.calendar)
+            }
+        }
+        
+        var searchPredicate: NSPredicate!
+        
+        if selectedCalendar.count > 0
+        {
+            searchPredicate = globalEventStore.predicateForEvents(
+                withStart: startDate,
+                end: endDate,
+                calendars: selectedCalendar)
+        }
+        else
+        {
+            searchPredicate = globalEventStore.predicateForEvents(
+                withStart: startDate,
+                end: endDate,
+                calendars: nil)
+        }
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
@@ -131,11 +237,32 @@ class iOSCalendar
         
         let endDate = workingDate.add(.day, amount: 1).startOfDay
         
-        /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEvents(
-            withStart: startDate,
-            end: endDate,
-            calendars: nil)
+        var selectedCalendar: [EKCalendar] = Array()
+        
+        for myItem in iOSCalendarList().list
+        {
+            if myItem.state
+            {
+                selectedCalendar.append(myItem.calendar)
+            }
+        }
+        
+        var searchPredicate: NSPredicate!
+        
+        if selectedCalendar.count > 0
+        {
+            searchPredicate = globalEventStore.predicateForEvents(
+                withStart: startDate,
+                end: endDate,
+                calendars: selectedCalendar)
+        }
+        else
+        {
+            searchPredicate = globalEventStore.predicateForEvents(
+                withStart: startDate,
+                end: endDate,
+                calendars: nil)
+        }
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
@@ -193,42 +320,42 @@ class iOSCalendar
 //        return tableContents
 //    }
     
-    func getCalendarRecords() -> [TableData]
-    {
-        var outputArray: [TableData] = Array()
-        
-        let endDate = Calendar.current.date(byAdding: .month, value: 3, to: Date())
-        
-        /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEvents(
-            withStart: Date(),
-            end: endDate!,
-            calendars: nil)
-        
-        /* Fetch all the events that fall between the starting and the ending dates */
-        
-        if globalEventStore.sources.count > 0
-        {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            
-            for calItem in globalEventStore.events(matching: searchPredicate)
-            {
-                var tempEntry = TableData(displayText: calItem.title)
-                tempEntry.notes = dateFormatter.string(from: calItem.startDate)
-                tempEntry.event = calItem
-                
-                outputArray.append(tempEntry)
-            }
-            
-            return outputArray
-        }
-        else
-        {
-            return []
-        }
-    }
+//    func getCalendarRecords() -> [TableData]
+//    {
+//        var outputArray: [TableData] = Array()
+//        
+//        let endDate = Calendar.current.date(byAdding: .month, value: 3, to: Date())
+//        
+//        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+//        let searchPredicate = globalEventStore.predicateForEvents(
+//            withStart: Date(),
+//            end: endDate!,
+//            calendars: nil)
+//        
+//        /* Fetch all the events that fall between the starting and the ending dates */
+//        
+//        if globalEventStore.sources.count > 0
+//        {
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateStyle = .medium
+//            dateFormatter.timeStyle = .short
+//            
+//            for calItem in globalEventStore.events(matching: searchPredicate)
+//            {
+//                var tempEntry = TableData(displayText: calItem.title)
+//                tempEntry.notes = dateFormatter.string(from: calItem.startDate)
+//                tempEntry.event = calItem
+//                
+//                outputArray.append(tempEntry)
+//            }
+//            
+//            return outputArray
+//        }
+//        else
+//        {
+//            return []
+//        }
+//    }
 }
 
 class iOSReminder

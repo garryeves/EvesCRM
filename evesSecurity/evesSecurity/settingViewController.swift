@@ -8,8 +8,16 @@
 
 import UIKit
 
-class settingsViewController: UIViewController, UIPopoverPresentationControllerDelegate, MyPickerDelegate
+struct decodeItem
 {
+    var name: String = ""
+    var value: String = ""
+    var source: String = ""
+}
+class settingsViewController: UIViewController, UIPopoverPresentationControllerDelegate, MyPickerDelegate, UITableViewDataSource, UITableViewDelegate
+{
+    @IBOutlet weak var tblCalendar: UITableView!
+    @IBOutlet weak var tblSettings: UITableView!
     @IBOutlet weak var btnTeam: UIButton!
     @IBOutlet weak var btnPassword: UIButton!
     @IBOutlet weak var btnPerAddInfo: UIButton!
@@ -20,6 +28,9 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnNewTeam: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
+    
+    fileprivate var calendarList: iOSCalendarList!
+    fileprivate var decodeList: [decodeItem] = Array()
     
     private var displayList: [String] = Array()
     private var teamList: userTeams!
@@ -35,6 +46,80 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        switch tableView
+        {
+        case tblCalendar:
+            if calendarList != nil
+            {
+                return calendarList.list.count
+            }
+            else
+            {
+                return 0
+            }
+            
+        case tblSettings:
+            return decodeList.count
+            
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        switch tableView
+        {
+            case tblCalendar:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellCalendar", for: indexPath) as! oneLabelTable
+                
+                cell.lbl1.text = calendarList.list[indexPath.row].name
+                
+                if calendarList.list[indexPath.row].state
+                {
+                    cell.backgroundColor = cyanColour
+                }
+                else
+                {
+                    cell.backgroundColor = UIColor.white
+                }
+                
+                return cell
+            
+            case tblSettings:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellSettings", for: indexPath) as! settingEntryItem
+                
+                cell.lblName.text = decodeList[indexPath.row].name
+                cell.txtValue.text = decodeList[indexPath.row].value
+                cell.source = decodeList[indexPath.row].source
+                
+                return cell
+            
+            default:
+                return UITableViewCell()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        switch tableView
+        {
+            case tblCalendar:
+               calendarList.list[indexPath.row].state = !calendarList.list[indexPath.row].state
+                
+                tblCalendar.reloadData()
+                
+            case tblSettings:
+                let _ = 1
+                
+                
+            default:
+                let _ = 1
+        }
     }
     
     @IBAction func btnTeam(_ sender: UIButton)
@@ -73,7 +158,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnRestore(_ sender: UIButton)
     {
-        let deletedItemsViewControl = self.storyboard?.instantiateViewController(withIdentifier: "securityDeletedItems") as! securityDeletedItemsViewController
+        let deletedItemsViewControl = settingsStoryboard.instantiateViewController(withIdentifier: "securityDeletedItems") as! securityDeletedItemsViewController
         self.present(deletedItemsViewControl, animated: true, completion: nil)
     }
     
@@ -201,6 +286,57 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         {
             btnTeam.isEnabled = true
         }
+        
+        calendarList = iOSCalendarList()
+        tblCalendar.reloadData()
+        
+        buildDecodeArray()
+    }
+    
+    func buildDecodeArray()
+    {
+        decodeList.removeAll()
+        
+        var calBefore = readDefaultInt("CalBefore") as Int
+        
+        if calBefore == -1
+        {
+            writeDefaultInt("CalBefore", value: 2)
+            calBefore = 2
+        }
+        
+        let newItemBefore = decodeItem(name: "Number of weeks before today", value: "\(calBefore)", source: "CalBefore")
+        decodeList.append(newItemBefore)
+        
+        var calAfter = readDefaultInt("CalAfter") as Int
+        
+        if calAfter == -1
+        {
+            writeDefaultInt("CalAfter", value: 4)
+            calAfter = 4
+        }
+        let newItemAfter = decodeItem(name: "Number of weeks after today", value: "\(calAfter)", source: "CalAfter")
+        decodeList.append(newItemAfter)
+        
+        tblSettings.reloadData()
     }
 }
 
+class settingEntryItem: UITableViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var txtValue: UITextField!
+    
+    var source: String!
+    
+    @IBAction func txtValue(_ sender: UITextField)
+    {
+        if source == "CalBefore" || source == "CalAfter"
+        {
+            if sender.text!.isNumber
+            {
+                writeDefaultInt(source, value: Int(sender.text!)!)
+            }
+        }
+    }
+}

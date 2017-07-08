@@ -36,6 +36,7 @@ let reportsStoryboard = UIStoryboard(name: "reports", bundle: nil)
 let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
 let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
 let meetingStoryboard = UIStoryboard(name: "meetings", bundle: nil)
+let settingsStoryboard = UIStoryboard(name: "Settings", bundle: nil)
 
 #if os(OSX)
     import AppKit

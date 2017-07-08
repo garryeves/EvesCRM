@@ -396,7 +396,7 @@ print("product = \(currentSubscription!.productId) purchase date = \(currentSubs
         ]
         let bodyData = try! JSONSerialization.data(withJSONObject: body, options: [])
         
-        let url = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")!   // chnage sandbox to buy when ready for prod
+        let url = URL(string: "https://buy.itunes.apple.com/verifyReceipt")!   // chnage sandbox to buy when ready for prod
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = bodyData

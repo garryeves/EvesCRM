@@ -18,6 +18,8 @@
 		3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238E1EC42F1F00BBDE1E /* ratesClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
+		341D39941F0DC5C40040F4D6 /* taskContextsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341D39931F0DC5C40040F4D6 /* taskContextsClass.swift */; };
+		341D39981F0DC5F60040F4D6 /* taskPredecessorClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341D39971F0DC5F60040F4D6 /* taskPredecessorClass.swift */; };
 		3423CC1D1F00CE9E0093B915 /* IAPClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423CC1C1F00CE9E0093B915 /* IAPClass.swift */; };
 		3434C2181F00E3D10030DD18 /* IAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3434C2171F00E3D10030DD18 /* IAPViewController.swift */; };
 		343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */; };
@@ -27,9 +29,12 @@
 		344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF8281EC94D4B0066CD35 /* securityViewController.swift */; };
 		344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82B1EC954C70066CD35 /* settingViewController.swift */; };
 		344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */; };
+		34568A1B1F0DC3FD008D941B /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 345689F91F0DC3FD008D941B /* EvesCRM.xcdatamodeld */; };
+		345886381F0DC51800823571 /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345886371F0DC51800823571 /* contextClass.swift */; };
 		3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */; };
 		3463FA9C1ED141ED00486195 /* Shifts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3463FA9B1ED141ED00486195 /* Shifts.storyboard */; };
 		3463FA9E1ED15B3F00486195 /* shiftMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */; };
+		3465675B1F106FDB00631C4B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 346567591F106FDB00631C4B /* Settings.storyboard */; };
 		34729B171EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34729B161EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift */; };
 		347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */; };
 		347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEBF1EC55D88006B95BA /* newUserViewController.swift */; };
@@ -58,7 +63,6 @@
 		34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */; };
 		34BB33901EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BB338F1EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift */; };
 		34C462781EC81D810037D79E /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C462771EC81D810037D79E /* userFormViewController.swift */; };
-		34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */; };
 		34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */; };
 		34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96C1EC2BE4000F85A11 /* DBSync.swift */; };
 		34CEE9701EC2BE4E00F85A11 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96F1EC2BE4E00F85A11 /* CloudKitInteraction.swift */; };
@@ -115,6 +119,8 @@
 		3413238E1EC42F1F00BBDE1E /* ratesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ratesClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
+		341D39931F0DC5C40040F4D6 /* taskContextsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskContextsClass.swift; path = ../../EvesCRM/taskContextsClass.swift; sourceTree = "<group>"; };
+		341D39971F0DC5F60040F4D6 /* taskPredecessorClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskPredecessorClass.swift; path = ../../EvesCRM/taskPredecessorClass.swift; sourceTree = "<group>"; };
 		3423CC1C1F00CE9E0093B915 /* IAPClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPClass.swift; sourceTree = "<group>"; };
 		3434C2171F00E3D10030DD18 /* IAPViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPViewController.swift; sourceTree = "<group>"; };
 		343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventPlanningViewController.swift; sourceTree = "<group>"; };
@@ -124,11 +130,45 @@
 		344BF8281EC94D4B0066CD35 /* securityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = securityViewController.swift; sourceTree = "<group>"; };
 		344BF82B1EC954C70066CD35 /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingViewController.swift; sourceTree = "<group>"; };
 		344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = setPasswordViewController.swift; sourceTree = "<group>"; };
+		345689FA1F0DC3FD008D941B /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
+		345689FB1F0DC3FD008D941B /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
+		345689FC1F0DC3FD008D941B /* EvesCRM 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 12.xcdatamodel"; sourceTree = "<group>"; };
+		345689FD1F0DC3FD008D941B /* EvesCRM 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 13.xcdatamodel"; sourceTree = "<group>"; };
+		345689FE1F0DC3FD008D941B /* EvesCRM 14.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 14.xcdatamodel"; sourceTree = "<group>"; };
+		345689FF1F0DC3FD008D941B /* EvesCRM 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 15.xcdatamodel"; sourceTree = "<group>"; };
+		34568A001F0DC3FD008D941B /* EvesCRM 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 16.xcdatamodel"; sourceTree = "<group>"; };
+		34568A011F0DC3FD008D941B /* EvesCRM 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 17.xcdatamodel"; sourceTree = "<group>"; };
+		34568A021F0DC3FD008D941B /* EvesCRM 18.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 18.xcdatamodel"; sourceTree = "<group>"; };
+		34568A031F0DC3FD008D941B /* EvesCRM 19.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 19.xcdatamodel"; sourceTree = "<group>"; };
+		34568A041F0DC3FD008D941B /* EvesCRM 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 2.xcdatamodel"; sourceTree = "<group>"; };
+		34568A051F0DC3FD008D941B /* EvesCRM 20.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 20.xcdatamodel"; sourceTree = "<group>"; };
+		34568A061F0DC3FD008D941B /* EvesCRM 21.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 21.xcdatamodel"; sourceTree = "<group>"; };
+		34568A071F0DC3FD008D941B /* EvesCRM 22.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 22.xcdatamodel"; sourceTree = "<group>"; };
+		34568A081F0DC3FD008D941B /* EvesCRM 23.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 23.xcdatamodel"; sourceTree = "<group>"; };
+		34568A091F0DC3FD008D941B /* EvesCRM 24.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 24.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0A1F0DC3FD008D941B /* EvesCRM 25.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 25.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0B1F0DC3FD008D941B /* EvesCRM 26.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 26.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0C1F0DC3FD008D941B /* EvesCRM 27.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 27.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0D1F0DC3FD008D941B /* EvesCRM 28.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 28.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0E1F0DC3FD008D941B /* EvesCRM 29.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 29.xcdatamodel"; sourceTree = "<group>"; };
+		34568A0F1F0DC3FD008D941B /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
+		34568A101F0DC3FD008D941B /* EvesCRM 30.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 30.xcdatamodel"; sourceTree = "<group>"; };
+		34568A111F0DC3FD008D941B /* EvesCRM 31.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 31.xcdatamodel"; sourceTree = "<group>"; };
+		34568A121F0DC3FD008D941B /* EvesCRM 32.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 32.xcdatamodel"; sourceTree = "<group>"; };
+		34568A131F0DC3FD008D941B /* EvesCRM 33.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 33.xcdatamodel"; sourceTree = "<group>"; };
+		34568A141F0DC3FD008D941B /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
+		34568A151F0DC3FD008D941B /* EvesCRM 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 5.xcdatamodel"; sourceTree = "<group>"; };
+		34568A161F0DC3FD008D941B /* EvesCRM 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 6.xcdatamodel"; sourceTree = "<group>"; };
+		34568A171F0DC3FD008D941B /* EvesCRM 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 7.xcdatamodel"; sourceTree = "<group>"; };
+		34568A181F0DC3FD008D941B /* EvesCRM 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 8.xcdatamodel"; sourceTree = "<group>"; };
+		34568A191F0DC3FD008D941B /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
+		34568A1A1F0DC3FD008D941B /* EvesCRM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EvesCRM.xcdatamodel; sourceTree = "<group>"; };
+		345886371F0DC51800823571 /* contextClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = contextClass.swift; path = ../../EvesCRM/contextClass.swift; sourceTree = "<group>"; };
 		3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = rateMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3463FA9B1ED141ED00486195 /* Shifts.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Shifts.storyboard; sourceTree = "<group>"; };
 		3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftMaintenanceViewController.swift; sourceTree = "<group>"; };
+		3465675A1F106FDB00631C4B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		34729B161EF4B5C700A6DEC6 /* dropdownMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dropdownMaintenanceViewController.swift; sourceTree = "<group>"; };
-		3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 30.xcdatamodel"; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
 		347BCEC11EC563F0006B95BA /* orgEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = orgEditViewController.swift; sourceTree = "<group>"; };
@@ -155,7 +195,6 @@
 		34991C071EF2427A00D99B0D /* reports.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = reports.storyboard; sourceTree = "<group>"; };
 		34991C091EF25BDE00D99B0D /* reportMaintenanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reportMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = monthlyRosterViewController.swift; sourceTree = "<group>"; };
-		349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 31.xcdatamodel"; sourceTree = "<group>"; };
 		34B01DCA1EE3B89200B836C8 /* extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Clients.storyboard; sourceTree = "<group>"; };
 		34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = clientMaintenanceViewController.swift; sourceTree = "<group>"; };
@@ -164,34 +203,6 @@
 		34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactsViewController.swift; sourceTree = "<group>"; };
 		34BB338F1EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = securityDeletedItemsViewController.swift; sourceTree = "<group>"; };
 		34C462771EC81D810037D79E /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userFormViewController.swift; sourceTree = "<group>"; };
-		34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9501EC2BD8F00F85A11 /* EvesCRM 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 12.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9511EC2BD8F00F85A11 /* EvesCRM 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 13.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9521EC2BD8F00F85A11 /* EvesCRM 14.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 14.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9531EC2BD8F00F85A11 /* EvesCRM 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 15.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9541EC2BD8F00F85A11 /* EvesCRM 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 16.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9551EC2BD8F00F85A11 /* EvesCRM 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 17.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9561EC2BD8F00F85A11 /* EvesCRM 18.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 18.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9571EC2BD8F00F85A11 /* EvesCRM 19.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 19.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9581EC2BD8F00F85A11 /* EvesCRM 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 2.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9591EC2BD8F00F85A11 /* EvesCRM 20.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 20.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95A1EC2BD8F00F85A11 /* EvesCRM 21.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 21.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95B1EC2BD8F00F85A11 /* EvesCRM 22.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 22.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95C1EC2BD8F00F85A11 /* EvesCRM 23.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 23.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95D1EC2BD8F00F85A11 /* EvesCRM 24.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 24.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95E1EC2BD8F00F85A11 /* EvesCRM 25.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 25.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE95F1EC2BD8F00F85A11 /* EvesCRM 26.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 26.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9601EC2BD8F00F85A11 /* EvesCRM 27.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 27.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9611EC2BD8F00F85A11 /* EvesCRM 28.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 28.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9621EC2BD8F00F85A11 /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9631EC2BD8F00F85A11 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9641EC2BD8F00F85A11 /* EvesCRM 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 5.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9651EC2BD8F00F85A11 /* EvesCRM 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 6.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9661EC2BD8F00F85A11 /* EvesCRM 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 7.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9671EC2BD8F00F85A11 /* EvesCRM 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 8.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9681EC2BD8F00F85A11 /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
-		34CEE9691EC2BD8F00F85A11 /* EvesCRM.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EvesCRM.xcdatamodel; sourceTree = "<group>"; };
 		34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = coreDatabase.swift; path = ../../EvesCRM/coreDatabase.swift; sourceTree = "<group>"; };
 		34CEE96C1EC2BE4000F85A11 /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DBSync.swift; path = ../../EvesCRM/DBSync.swift; sourceTree = "<group>"; };
 		34CEE96F1EC2BE4E00F85A11 /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitInteraction.swift; path = ../../EvesCRM/CloudKitInteraction.swift; sourceTree = "<group>"; };
@@ -205,7 +216,6 @@
 		34CEE9DB1EC2C79600F85A11 /* taskUpdatesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskUpdatesClass.swift; path = ../../EvesCRM/taskUpdatesClass.swift; sourceTree = "<group>"; };
 		34CEE9E91EC2C81800F85A11 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EvesCRMSharedFiles.swift; path = ../../EvesCRM/EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		34CEE9F11EC2C99C00F85A11 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContactDetails.swift; path = ../../EvesCRM/ContactDetails.swift; sourceTree = "<group>"; };
-		34CEE9F31EC2CBE800F85A11 /* EvesCRM 29.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 29.xcdatamodel"; sourceTree = "<group>"; };
 		34CEEA381EC2EB5E00F85A11 /* addressClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = addressClass.swift; sourceTree = "<group>"; };
 		34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = clientsClass.swift; sourceTree = "<group>"; };
 		34CEEA421EC30B7700F85A11 /* Contacts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
@@ -216,7 +226,6 @@
 		34EEE5F11EECCDC50006B921 /* alertsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = alertsClass.swift; sourceTree = "<group>"; };
 		34EFB4181EE2454800772C8C /* reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reporting.swift; sourceTree = "<group>"; };
 		34FC32B11EC97C250053443D /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validatePasswordViewController.swift; sourceTree = "<group>"; };
-		3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_evesSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43D412E29278CCE92FCC1722 /* Pods-Shift Dashboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shift Dashboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard.release.xcconfig"; sourceTree = "<group>"; };
 		EA96443DD3D0E19717F153B4 /* Pods-Shift Dashboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shift Dashboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shift Dashboard/Pods-Shift Dashboard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -309,6 +318,7 @@
 				34CEEA381EC2EB5E00F85A11 /* addressClass.swift */,
 				34CEEA421EC30B7700F85A11 /* Contacts.swift */,
 				34CEE9F11EC2C99C00F85A11 /* ContactDetails.swift */,
+				345886371F0DC51800823571 /* contextClass.swift */,
 				34CEE97F1EC2C41600F85A11 /* decodesClass.swift */,
 				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
 				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
@@ -327,6 +337,8 @@
 				34EFB4181EE2454800772C8C /* reporting.swift */,
 				341323931EC43C3500BBDE1E /* shiftsClass.swift */,
 				34CEE9A91EC2C61500F85A11 /* taskClass.swift */,
+				341D39931F0DC5C40040F4D6 /* taskContextsClass.swift */,
+				341D39971F0DC5F60040F4D6 /* taskPredecessorClass.swift */,
 				34CEE9DB1EC2C79600F85A11 /* taskUpdatesClass.swift */,
 				34CEE9771EC2C1DF00F85A11 /* teamClass.swift */,
 				341323991EC4530300BBDE1E /* UsersClass.swift */,
@@ -345,7 +357,7 @@
 				34CEE9E91EC2C81800F85A11 /* EvesCRMSharedFiles.swift */,
 				34CEE9751EC2C1A900F85A11 /* reachability.swift */,
 				34CEE9731EC2BEC200F85A11 /* UserInfo.swift */,
-				34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */,
+				345689F91F0DC3FD008D941B /* EvesCRM.xcdatamodeld */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -358,6 +370,7 @@
 				34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */,
 				347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */,
 				349653021EC1E5B800210A46 /* Main.storyboard */,
+				346567591F106FDB00631C4B /* Settings.storyboard */,
 				34968CDD1ECAC68D0009798B /* person.storyboard */,
 				34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */,
 				34991C071EF2427A00D99B0D /* reports.storyboard */,
@@ -407,7 +420,6 @@
 			children = (
 				340A02AA1F00B97C00E425C9 /* StoreKit.framework */,
 				347BCEC51EC56DAC006B95BA /* CloudKit.framework */,
-				3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */,
 				1F5A26B60DBD10DF1719A504 /* Pods_Shift_Dashboard.framework */,
 			);
 			name = Frameworks;
@@ -542,6 +554,7 @@
 			files = (
 				3496530C1EC1E5B800210A46 /* LaunchScreen.storyboard in Resources */,
 				3463FA9C1ED141ED00486195 /* Shifts.storyboard in Resources */,
+				3465675B1F106FDB00631C4B /* Settings.storyboard in Resources */,
 				349653091EC1E5B800210A46 /* Assets.xcassets in Resources */,
 				347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */,
 				34991C081EF2427A00D99B0D /* reports.storyboard in Resources */,
@@ -637,6 +650,7 @@
 				34EEE5F21EECCDC50006B921 /* alertsClass.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,
+				341D39941F0DC5C40040F4D6 /* taskContextsClass.swift in Sources */,
 				341323831EC3EA9700BBDE1E /* personClass.swift in Sources */,
 				341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */,
 				34CEE9D41EC2C71C00F85A11 /* projectClass.swift in Sources */,
@@ -646,16 +660,17 @@
 				3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */,
 				34CEEA3F1EC303CC00F85A11 /* clientsClass.swift in Sources */,
 				3423CC1D1F00CE9E0093B915 /* IAPClass.swift in Sources */,
-				34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */,
 				3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */,
 				34CEE9761EC2C1A900F85A11 /* reachability.swift in Sources */,
 				34CEE9701EC2BE4E00F85A11 /* CloudKitInteraction.swift in Sources */,
 				344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */,
 				344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */,
 				34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */,
+				345886381F0DC51800823571 /* contextClass.swift in Sources */,
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
 				34991C0A1EF25BDE00D99B0D /* reportMaintenanceViewController.swift in Sources */,
 				34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */,
+				341D39981F0DC5F60040F4D6 /* taskPredecessorClass.swift in Sources */,
 				34BB33901EFF5D1E0032CF5F /* securityDeletedItemsViewController.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */,
@@ -673,6 +688,7 @@
 				34C462781EC81D810037D79E /* userFormViewController.swift in Sources */,
 				34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */,
 				34CEE9DC1EC2C79600F85A11 /* taskUpdatesClass.swift in Sources */,
+				34568A1B1F0DC3FD008D941B /* EvesCRM.xcdatamodeld in Sources */,
 				34D797951ED7BEB90045DFD9 /* IOSCalendar.swift in Sources */,
 				34050F6C1EC82C0F00CC7CBE /* dateTimePickerViewController.swift in Sources */,
 				3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */,
@@ -724,6 +740,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		346567591F106FDB00631C4B /* Settings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3465675A1F106FDB00631C4B /* Base */,
+			);
+			name = Settings.storyboard;
+			sourceTree = "<group>";
+		};
 		349653021EC1E5B800210A46 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -846,6 +870,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = evesSecurity/evesSecurity.entitlements;
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
+				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = evesSecurity/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.evesSecurity;
@@ -862,6 +887,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = evesSecurity/evesSecurity.entitlements;
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
+				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = evesSecurity/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.evesSecurity;
@@ -970,42 +996,44 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */ = {
+		345689F91F0DC3FD008D941B /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */,
-				3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */,
-				34CEE9F31EC2CBE800F85A11 /* EvesCRM 29.xcdatamodel */,
-				34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */,
-				34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */,
-				34CEE9501EC2BD8F00F85A11 /* EvesCRM 12.xcdatamodel */,
-				34CEE9511EC2BD8F00F85A11 /* EvesCRM 13.xcdatamodel */,
-				34CEE9521EC2BD8F00F85A11 /* EvesCRM 14.xcdatamodel */,
-				34CEE9531EC2BD8F00F85A11 /* EvesCRM 15.xcdatamodel */,
-				34CEE9541EC2BD8F00F85A11 /* EvesCRM 16.xcdatamodel */,
-				34CEE9551EC2BD8F00F85A11 /* EvesCRM 17.xcdatamodel */,
-				34CEE9561EC2BD8F00F85A11 /* EvesCRM 18.xcdatamodel */,
-				34CEE9571EC2BD8F00F85A11 /* EvesCRM 19.xcdatamodel */,
-				34CEE9581EC2BD8F00F85A11 /* EvesCRM 2.xcdatamodel */,
-				34CEE9591EC2BD8F00F85A11 /* EvesCRM 20.xcdatamodel */,
-				34CEE95A1EC2BD8F00F85A11 /* EvesCRM 21.xcdatamodel */,
-				34CEE95B1EC2BD8F00F85A11 /* EvesCRM 22.xcdatamodel */,
-				34CEE95C1EC2BD8F00F85A11 /* EvesCRM 23.xcdatamodel */,
-				34CEE95D1EC2BD8F00F85A11 /* EvesCRM 24.xcdatamodel */,
-				34CEE95E1EC2BD8F00F85A11 /* EvesCRM 25.xcdatamodel */,
-				34CEE95F1EC2BD8F00F85A11 /* EvesCRM 26.xcdatamodel */,
-				34CEE9601EC2BD8F00F85A11 /* EvesCRM 27.xcdatamodel */,
-				34CEE9611EC2BD8F00F85A11 /* EvesCRM 28.xcdatamodel */,
-				34CEE9621EC2BD8F00F85A11 /* EvesCRM 3.xcdatamodel */,
-				34CEE9631EC2BD8F00F85A11 /* EvesCRM 4.xcdatamodel */,
-				34CEE9641EC2BD8F00F85A11 /* EvesCRM 5.xcdatamodel */,
-				34CEE9651EC2BD8F00F85A11 /* EvesCRM 6.xcdatamodel */,
-				34CEE9661EC2BD8F00F85A11 /* EvesCRM 7.xcdatamodel */,
-				34CEE9671EC2BD8F00F85A11 /* EvesCRM 8.xcdatamodel */,
-				34CEE9681EC2BD8F00F85A11 /* EvesCRM 9.xcdatamodel */,
-				34CEE9691EC2BD8F00F85A11 /* EvesCRM.xcdatamodel */,
+				345689FA1F0DC3FD008D941B /* EvesCRM 10.xcdatamodel */,
+				345689FB1F0DC3FD008D941B /* EvesCRM 11.xcdatamodel */,
+				345689FC1F0DC3FD008D941B /* EvesCRM 12.xcdatamodel */,
+				345689FD1F0DC3FD008D941B /* EvesCRM 13.xcdatamodel */,
+				345689FE1F0DC3FD008D941B /* EvesCRM 14.xcdatamodel */,
+				345689FF1F0DC3FD008D941B /* EvesCRM 15.xcdatamodel */,
+				34568A001F0DC3FD008D941B /* EvesCRM 16.xcdatamodel */,
+				34568A011F0DC3FD008D941B /* EvesCRM 17.xcdatamodel */,
+				34568A021F0DC3FD008D941B /* EvesCRM 18.xcdatamodel */,
+				34568A031F0DC3FD008D941B /* EvesCRM 19.xcdatamodel */,
+				34568A041F0DC3FD008D941B /* EvesCRM 2.xcdatamodel */,
+				34568A051F0DC3FD008D941B /* EvesCRM 20.xcdatamodel */,
+				34568A061F0DC3FD008D941B /* EvesCRM 21.xcdatamodel */,
+				34568A071F0DC3FD008D941B /* EvesCRM 22.xcdatamodel */,
+				34568A081F0DC3FD008D941B /* EvesCRM 23.xcdatamodel */,
+				34568A091F0DC3FD008D941B /* EvesCRM 24.xcdatamodel */,
+				34568A0A1F0DC3FD008D941B /* EvesCRM 25.xcdatamodel */,
+				34568A0B1F0DC3FD008D941B /* EvesCRM 26.xcdatamodel */,
+				34568A0C1F0DC3FD008D941B /* EvesCRM 27.xcdatamodel */,
+				34568A0D1F0DC3FD008D941B /* EvesCRM 28.xcdatamodel */,
+				34568A0E1F0DC3FD008D941B /* EvesCRM 29.xcdatamodel */,
+				34568A0F1F0DC3FD008D941B /* EvesCRM 3.xcdatamodel */,
+				34568A101F0DC3FD008D941B /* EvesCRM 30.xcdatamodel */,
+				34568A111F0DC3FD008D941B /* EvesCRM 31.xcdatamodel */,
+				34568A121F0DC3FD008D941B /* EvesCRM 32.xcdatamodel */,
+				34568A131F0DC3FD008D941B /* EvesCRM 33.xcdatamodel */,
+				34568A141F0DC3FD008D941B /* EvesCRM 4.xcdatamodel */,
+				34568A151F0DC3FD008D941B /* EvesCRM 5.xcdatamodel */,
+				34568A161F0DC3FD008D941B /* EvesCRM 6.xcdatamodel */,
+				34568A171F0DC3FD008D941B /* EvesCRM 7.xcdatamodel */,
+				34568A181F0DC3FD008D941B /* EvesCRM 8.xcdatamodel */,
+				34568A191F0DC3FD008D941B /* EvesCRM 9.xcdatamodel */,
+				34568A1A1F0DC3FD008D941B /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 349FC32A1F021A6300E3EB0F /* EvesCRM 31.xcdatamodel */;
+			currentVersion = 34568A131F0DC3FD008D941B /* EvesCRM 33.xcdatamodel */;
 			name = EvesCRM.xcdatamodeld;
 			path = ../../EvesCRM/EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";

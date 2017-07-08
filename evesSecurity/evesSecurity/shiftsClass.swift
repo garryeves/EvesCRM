@@ -1236,6 +1236,16 @@ extension report
     {
         var lastClientID: Int = -1
         
+        var clientCost: Double = 0.0
+        var clientIncome: Double = 0.0
+        var totalCost: Double = 0.0
+        var totalIncome: Double = 0.0
+        var firstPass: Bool = true
+        var clientName: String = ""
+        
+        let drawLine = reportLine()
+        drawLine.drawLine = true
+        
         for myItem in contractList.projects
         {
             let profit = myItem.financials[0].income - myItem.financials[0].expense
@@ -1246,15 +1256,42 @@ extension report
             {
                 let newReportLine = reportLine()
                 
-                var clientName: String = ""
                 if myItem.clientID != lastClientID
                 {
+                    if !firstPass
+                    {
+                        myLines.append(drawLine)
+                        
+                        let clientProfit = clientIncome - clientCost
+                        var clientGP: Double = 0.0
+                        if clientIncome > 0.0
+                        {
+                            clientGP = (clientProfit/clientIncome)  * 100
+                        }
+                        
+                        let newClientTotalLine = reportLine()
+                        newClientTotalLine.column1 = clientName
+                        newClientTotalLine.column2 = "Total"
+                        newClientTotalLine.column3 = ""
+                        newClientTotalLine.column4 = clientCost.formatCurrency
+                        newClientTotalLine.column5 = clientIncome.formatCurrency
+                        newClientTotalLine.column6 = clientProfit.formatCurrency
+                        newClientTotalLine.column7 = clientGP.formatPercent
+                        
+                        myLines.append(newClientTotalLine)
+                        myLines.append(drawLine)
+                        
+                        clientIncome = 0.0
+                        clientCost = 0.0
+                    }
+                    firstPass = false
                     let tempClient = client(clientID: myItem.clientID)
                     clientName = tempClient.name
                     lastClientID = myItem.clientID
+                    newReportLine.column1 = clientName
                 }
                 
-                newReportLine.column1 = clientName
+                //newReportLine.column1 = clientName
                 newReportLine.column2 = myItem.projectName
                 newReportLine.column3 = myItem.financials[0].hours.formatHours
                 newReportLine.column4 = myItem.financials[0].expense.formatCurrency
@@ -1264,8 +1301,51 @@ extension report
                 newReportLine.sourceObject = myItem
                 
                 myLines.append(newReportLine)
+                
+                clientCost += myItem.financials[0].expense
+                clientIncome += myItem.financials[0].income
+                totalCost += myItem.financials[0].expense
+                totalIncome += myItem.financials[0].income
             }
         }
+        
+        myLines.append(drawLine)
+        
+        let clientProfit = clientIncome - clientCost
+        var clientGP: Double = 0.0
+        if clientIncome > 0.0
+        {
+            clientGP = (clientProfit/clientIncome)  * 100
+        }
+        
+        let newClientTotalLine = reportLine()
+        newClientTotalLine.column1 = clientName
+        newClientTotalLine.column2 = "Total"
+        newClientTotalLine.column3 = ""
+        newClientTotalLine.column4 = clientCost.formatCurrency
+        newClientTotalLine.column5 = clientIncome.formatCurrency
+        newClientTotalLine.column6 = clientProfit.formatCurrency
+        newClientTotalLine.column7 = clientGP.formatPercent
+        
+        myLines.append(newClientTotalLine)
+        myLines.append(drawLine)
+        
+        let totalProfit = totalIncome - totalCost
+        var totalGP: Double = 0.0
+        if clientIncome > 0.0
+        {
+            totalGP = (totalProfit/totalIncome)  * 100
+        }
+        let newTotalTotalLine = reportLine()
+        newTotalTotalLine.column1 = "Total"
+        newTotalTotalLine.column2 = ""
+        newTotalTotalLine.column3 = ""
+        newTotalTotalLine.column4 = totalCost.formatCurrency
+        newTotalTotalLine.column5 = totalIncome.formatCurrency
+        newTotalTotalLine.column6 = totalProfit.formatCurrency
+        newTotalTotalLine.column7 = totalGP.formatPercent
+        
+        myLines.append(newTotalTotalLine)
     }
     
     func reportWagesForMonth(month: String, year: String)

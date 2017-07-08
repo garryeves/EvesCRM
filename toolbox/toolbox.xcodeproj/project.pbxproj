@@ -53,6 +53,9 @@
 		344CEB4A1F073A33006FCFCE /* timeSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB481F073A33006FCFCE /* timeSelectViewController.swift */; };
 		344CEB4B1F073A33006FCFCE /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB491F073A33006FCFCE /* userFormViewController.swift */; };
 		344CEB4D1F073A63006FCFCE /* projectClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344CEB4C1F073A63006FCFCE /* projectClass.swift */; };
+		3465675D1F1070B900631C4B /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3465675C1F1070B900631C4B /* settingViewController.swift */; };
+		3465675F1F1070D600631C4B /* securityDeletedItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3465675E1F1070D600631C4B /* securityDeletedItemsViewController.swift */; };
+		346567621F10712200631C4B /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 346567601F10712200631C4B /* Settings.storyboard */; };
 		34916CAA1F09F4010019E682 /* EvesToolbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34916CA91F09F4010019E682 /* EvesToolbox.swift */; };
 		34916CAC1F0A02820019E682 /* toolBoxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34916CAB1F0A02820019E682 /* toolBoxViewController.swift */; };
 		34D0FDCF1F073427009E5973 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FDCE1F073427009E5973 /* AppDelegate.swift */; };
@@ -158,6 +161,9 @@
 		344CEB481F073A33006FCFCE /* timeSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = timeSelectViewController.swift; path = ../../evesSecurity/evesSecurity/timeSelectViewController.swift; sourceTree = "<group>"; };
 		344CEB491F073A33006FCFCE /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userFormViewController.swift; path = ../../evesSecurity/evesSecurity/userFormViewController.swift; sourceTree = "<group>"; };
 		344CEB4C1F073A63006FCFCE /* projectClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectClass.swift; path = ../../EvesCRM/projectClass.swift; sourceTree = "<group>"; };
+		3465675C1F1070B900631C4B /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = settingViewController.swift; path = ../../evesSecurity/evesSecurity/settingViewController.swift; sourceTree = "<group>"; };
+		3465675E1F1070D600631C4B /* securityDeletedItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = securityDeletedItemsViewController.swift; path = ../../evesSecurity/evesSecurity/securityDeletedItemsViewController.swift; sourceTree = "<group>"; };
+		346567611F10712200631C4B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = ../../evesSecurity/evesSecurity/Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		34916CA91F09F4010019E682 /* EvesToolbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesToolbox.swift; sourceTree = "<group>"; };
 		34916CAB1F0A02820019E682 /* toolBoxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toolBoxViewController.swift; sourceTree = "<group>"; };
 		34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 33.xcdatamodel"; sourceTree = "<group>"; };
@@ -388,6 +394,7 @@
 				344CEB291F0739EA006FCFCE /* person.storyboard */,
 				344CEB2F1F0739EA006FCFCE /* Projects.storyboard */,
 				344CEB411F073A02006FCFCE /* reports.storyboard */,
+				346567601F10712200631C4B /* Settings.storyboard */,
 				34FE98CB1F0889D5000A7E72 /* Shifts.storyboard */,
 				34FE98F41F088A6B000A7E72 /* tasks.storyboard */,
 				34D0FDCE1F073427009E5973 /* AppDelegate.swift */,
@@ -411,7 +418,9 @@
 				344CEB2E1F0739EA006FCFCE /* pickerViewController.swift */,
 				344CEB301F0739EA006FCFCE /* rateMaintenanceViewController.swift */,
 				344CEB401F073A02006FCFCE /* reportMaintenanceViewController.swift */,
+				3465675E1F1070D600631C4B /* securityDeletedItemsViewController.swift */,
 				344CEB441F073A21006FCFCE /* setPasswordViewController.swift */,
+				3465675C1F1070B900631C4B /* settingViewController.swift */,
 				34FE98CA1F0889D5000A7E72 /* shiftMaintenanceViewController.swift */,
 				34FE98F01F088A6B000A7E72 /* taskListViewController.swift */,
 				34FE98F81F088A6B000A7E72 /* taskUpdatesViewController.swift */,
@@ -559,6 +568,7 @@
 				344CEB431F073A02006FCFCE /* reports.storyboard in Resources */,
 				344CEB251F0739B5006FCFCE /* LoginRoles.storyboard in Resources */,
 				344CEB361F0739EA006FCFCE /* person.storyboard in Resources */,
+				346567621F10712200631C4B /* Settings.storyboard in Resources */,
 				344CEB1A1F073973006FCFCE /* dropDownMenus.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -634,6 +644,7 @@
 				344CEB101F073973006FCFCE /* clientMaintenanceViewController.swift in Sources */,
 				3435640C1F09DA6300AAF53E /* contextClass.swift in Sources */,
 				34D0FDD11F073427009E5973 /* ViewController.swift in Sources */,
+				3465675D1F1070B900631C4B /* settingViewController.swift in Sources */,
 				341DBCEC1F088876003163D3 /* addPerInfoMaintenanceViewController.swift in Sources */,
 				344CEB201F073992006FCFCE /* IAPClass.swift in Sources */,
 				34916CAC1F0A02820019E682 /* toolBoxViewController.swift in Sources */,
@@ -646,6 +657,7 @@
 				344CEB141F073973006FCFCE /* contactsViewController.swift in Sources */,
 				34D0FDCF1F073427009E5973 /* AppDelegate.swift in Sources */,
 				344CEB3E1F0739EA006FCFCE /* ratesClass.swift in Sources */,
+				3465675F1F1070D600631C4B /* securityDeletedItemsViewController.swift in Sources */,
 				34D0FE281F0734ED009E5973 /* coreDatabase.swift in Sources */,
 				344CEB331F0739EA006FCFCE /* newUserViewController.swift in Sources */,
 				344CEB4D1F073A63006FCFCE /* projectClass.swift in Sources */,
@@ -693,6 +705,14 @@
 				34444FFA1F09EB36007B9284 /* Base */,
 			);
 			name = meetings.storyboard;
+			sourceTree = "<group>";
+		};
+		346567601F10712200631C4B /* Settings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				346567611F10712200631C4B /* Base */,
+			);
+			name = Settings.storyboard;
 			sourceTree = "<group>";
 		};
 		34D0FDD21F073427009E5973 /* Main.storyboard */ = {

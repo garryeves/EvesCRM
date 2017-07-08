@@ -328,7 +328,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     @IBAction func btnSettings(_ sender: UIBarButtonItem)
     {
-        let userEditViewControl = self.storyboard?.instantiateViewController(withIdentifier: "settings") as! settingsViewController
+        let userEditViewControl = settingsStoryboard.instantiateViewController(withIdentifier: "settings") as! settingsViewController
         userEditViewControl.communicationDelegate = self
         self.present(userEditViewControl, animated: true, completion: nil)
     }
