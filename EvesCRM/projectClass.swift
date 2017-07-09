@@ -35,11 +35,11 @@ class projects: NSObject
     fileprivate var myProjects:[project] = Array()
     fileprivate var myWorkingItem: Any!
     
-    init(clientID: Int, type: String = "")
+    init(clientID: Int, teamID: Int, type: String = "")
     {
         super.init()
         
-        for myItem in myDatabaseConnection.getProjects(clientID: clientID, type: type)
+        for myItem in myDatabaseConnection.getProjects(clientID: clientID, type: type, teamID: teamID)
         {
             let myObject = project(projectID: Int(myItem.projectID),
                                     projectEndDate: myItem.projectEndDate! as Date,
@@ -708,7 +708,7 @@ class project: NSObject // 10k level
     {
         get
         {
-            return shifts(projectID: myProjectID)
+            return shifts(projectID: myProjectID, teamID: myTeamID)
         }
     }
     
@@ -742,12 +742,12 @@ class project: NSObject // 10k level
         save()
     }
     
-    init(projectID: Int)
+    init(projectID: Int, teamID: Int)
     {
         super.init()
         
         // GRE whatever calls projects should check to make sure it is not marked as archivedProjectStatus, as we are not deleting Projects, only marking them as archivedProjectStatus
-        let myProjects = myDatabaseConnection.getProjectDetails(projectID)
+        let myProjects = myDatabaseConnection.getProjectDetails(projectID, teamID: teamID)
         
         for myProject in myProjects
         {
@@ -850,11 +850,11 @@ class project: NSObject // 10k level
     {
         myTasks.removeAll()
         
-        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID)
+        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID, teamID: myTeamID)
         
         for myProjectTask in myProjectTasks
         {
-            let myNewTask = task(taskID: Int(myProjectTask.taskID))
+            let myNewTask = task(taskID: Int(myProjectTask.taskID), teamID: myTeamID)
             myTasks.append(myNewTask)
         }
     }
@@ -905,7 +905,7 @@ class project: NSObject // 10k level
     {
         // Save Project
         
-        let myProject = myDatabaseConnection.getProjectDetails(myProjectID)[0]
+        let myProject = myDatabaseConnection.getProjectDetails(myProjectID, teamID: myTeamID)[0]
         
         myCloudDB.saveProjectsRecordToCloudKit(myProject)
         
@@ -1032,11 +1032,11 @@ class project: NSObject // 10k level
             
             // Go and see if another item has set as its predecessor
             
-            let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
+            let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID, teamID: myTeamID)
             
             if fromCurrentPredecessor > 0
             {  // This item is a predecessor
-                let tempSuccessor = project(projectID: fromCurrentPredecessor)
+                let tempSuccessor = project(projectID: fromCurrentPredecessor, teamID: myTeamID)
                 tempSuccessor.predecessor = myPredecessor
             }
         }
@@ -1045,11 +1045,11 @@ class project: NSObject // 10k level
 
 extension alerts
 {
-    func projectAlerts()
+    func projectAlerts(_ teamID: Int)
     {
         // check for projects with no type defined
         
-        for myItem in projects(query: alertProjectNoType, teamID: currentUser.currentTeam!.teamID).projects
+        for myItem in projects(query: alertProjectNoType, teamID: teamID).projects
         {
             var projectName: String = "No name supplied"
             
@@ -1070,7 +1070,7 @@ extension alerts
         
         // check for projects with no start or end date
         
-        for myItem in projects(query: alertProjectNoStartOrEnd, teamID: currentUser.currentTeam!.teamID).projects
+        for myItem in projects(query: alertProjectNoStartOrEnd, teamID: teamID).projects
         {
             var projectName: String = "No name supplied"
             
@@ -1090,7 +1090,7 @@ extension alerts
         
         // check for projects with no start date
         
-        for myItem in projects(query: alertProjectNoStart, teamID: currentUser.currentTeam!.teamID).projects
+        for myItem in projects(query: alertProjectNoStart, teamID: teamID).projects
         {
             var projectName: String = "No name supplied"
             
@@ -1110,7 +1110,7 @@ extension alerts
         
         // check for projects with no end date
         
-        for myItem in projects(query: alertProjectNoEnd, teamID: currentUser.currentTeam!.teamID).projects
+        for myItem in projects(query: alertProjectNoEnd, teamID: teamID).projects
         {
             var projectName: String = "No name supplied"
             
@@ -1161,13 +1161,13 @@ extension coreDatabase
         }
     }
     
-    func getProjectDetails(_ projectID: Int)->[Projects]
+    func getProjectDetails(_ projectID: Int, teamID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1187,13 +1187,13 @@ extension coreDatabase
         }
     }
     
-    func getProjectSuccessor(_ projectID: Int)->Int
+    func getProjectSuccessor(_ projectID: Int, teamID: Int)->Int
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(predecessor == \(projectID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(predecessor == \(projectID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1244,10 +1244,14 @@ extension coreDatabase
         }
     }
     
-    func getProjectCount()->Int
+    func getProjectCount(_ teamID: Int)->Int
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
@@ -1389,7 +1393,7 @@ extension coreDatabase
     }
 
     
-    func getProjects(clientID: Int, type: String) -> [Projects]
+    func getProjects(clientID: Int, type: String, teamID: Int) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
@@ -1400,11 +1404,11 @@ extension coreDatabase
         
         if type == ""
         {
-            predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(projectStatus != \"\(archivedProjectStatus)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (clientID == \(clientID))")
         }
         else
         {
-            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"\(archivedProjectStatus)\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"\(archivedProjectStatus)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (clientID == \(clientID))")
         }
             // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1600,9 +1604,9 @@ extension coreDatabase
         }
     }
     
-    func restoreProject(_ projectID: Int)
+    func restoreProject(_ projectID: Int, teamID: Int)
     {
-        for myItem in getProjectDetails(projectID)
+        for myItem in getProjectDetails(projectID, teamID: teamID)
         {
             if myItem.projectStatus == archivedProjectStatus
             {
@@ -1619,7 +1623,7 @@ extension coreDatabase
     {
         var myProject: Projects!
         
-        let myProjects = getProjectDetails(projectID)
+        let myProjects = getProjectDetails(projectID, teamID: teamID)
         
         if myProjects.count == 0
         { // Add

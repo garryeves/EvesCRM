@@ -44,6 +44,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBOutlet weak var btnEndDate: UIButton!
     @IBOutlet weak var lblFilyerDate: UILabel!
     @IBOutlet weak var lblFilterDash: UILabel!
+    @IBOutlet weak var lblType: UILabel!
+    @IBOutlet weak var btnType: UIButton!
     
     fileprivate let listView = "List View"
     fileprivate let dayView = "Day View"
@@ -223,6 +225,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                 {
                      selectedEvent = dayList[indexPath.row].event
                 }
+                
                 if selectedEvent == nil
                 {
                     hideFields()
@@ -441,6 +444,35 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
     }
     
+    @IBAction func btnType(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append(meetingMeetingType)
+        displayList.append(oneOnOneMeetingType)
+        displayList.append(quoteMeetingType)
+        displayList.append(performMeetingType)
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "type"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnProject.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "clients"
@@ -453,6 +485,13 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         else if source == "projects"
         {
             workingMeeting.projectID = projectSource[selectedItem].projectID
+            displayClientAndProjectFields()
+        }
+        else if source == "type"
+        {
+            createMeetingAgenda()
+            
+            workingMeeting.minutesType = displayList[selectedItem]
             displayClientAndProjectFields()
         }
     }
@@ -618,14 +657,17 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             // No meeting was found
             btnClient.setTitle("Select", for: .normal)
             btnProject.setTitle("Select", for: .normal)
+            btnType.setTitle(meetingMeetingType, for: .normal)
             btnClient.isEnabled = true
             btnProject.isEnabled = false
+            btnAgenda.setTitle("Create Agenda", for: .normal)
         }
         else
         {
             // Meeting was found
             
             displayClientAndProjectFields()
+            btnAgenda.setTitle("Edit Agenda", for: .normal)
         }
     }
     
@@ -640,7 +682,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         }
         else
         {
-            let tempClient = client(clientID: workingMeeting.clientID)
+            let tempClient = client(clientID: workingMeeting.clientID, teamID: currentUser.currentTeam!.teamID)
             btnClient.setTitle(tempClient.name, for: .normal)
             btnClient.isEnabled = true
             btnProject.isEnabled = true
@@ -651,9 +693,35 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             }
             else
             {
-                let tempProject = project(projectID: workingMeeting.projectID)
+                let tempProject = project(projectID: workingMeeting.projectID, teamID: currentUser.currentTeam!.teamID)
                 btnProject.setTitle(tempProject.projectName, for: .normal)
             }
+        }
+        
+        switch workingMeeting.minutesType
+        {
+            case meetingMeetingType:
+                btnType.setTitle(workingMeeting.minutesType, for: .normal)
+                btnAgenda.isEnabled = true
+            
+            case quoteMeetingType:
+                btnType.setTitle(workingMeeting.minutesType, for: .normal)
+                btnAgenda.isEnabled = false
+            
+            case performMeetingType:
+                btnType.setTitle(workingMeeting.minutesType, for: .normal)
+                btnAgenda.isEnabled = false
+            
+            case oneOnOneMeetingType:
+                btnType.setTitle(workingMeeting.minutesType, for: .normal)
+                btnAgenda.isEnabled = true
+            
+            case "":
+                workingMeeting.minutesType = meetingMeetingType
+                btnType.setTitle(meetingMeetingType, for: .normal)
+            
+            default:
+                print("displayClientAndProjectFields hot default - \(workingMeeting.minutesType)")
         }
     }
     
@@ -668,6 +736,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         lblProject.isHidden = true
         btnClient.isHidden = true
         btnProject.isHidden = true
+        lblType.isHidden = true
+        btnType.isHidden = true
     }
     
     func showFields()
@@ -681,6 +751,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         lblProject.isHidden = false
         btnClient.isHidden = false
         btnProject.isHidden = false
+        lblType.isHidden = false
+        btnType.isHidden = false
     }
     
     func refreshScreen()
@@ -823,9 +895,9 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             alertList.clearAlerts()
         }
         
-        alertList.shiftAlerts()
-        alertList.clientAlerts()
-        alertList.projectAlerts()
+        alertList.shiftAlerts(currentUser.currentTeam!.teamID)
+        alertList.clientAlerts(currentUser.currentTeam!.teamID)
+        alertList.projectAlerts(currentUser.currentTeam!.teamID)
     }
 }
 

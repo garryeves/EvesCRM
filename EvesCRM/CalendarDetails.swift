@@ -12,6 +12,10 @@ import EventKit
 import CoreData
 import CloudKit
 
+let meetingMeetingType = "Meeting"
+let quoteMeetingType = "Assess for Quote"
+let performMeetingType = "Perform Work"
+let oneOnOneMeetingType = "One on One"
 
 struct mergedCalendarItem
 {
@@ -115,7 +119,7 @@ class topCalendar: NSObject
         
         for myMeeting in myMeetingArray
         {
-            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID!)
+            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID!, teamID: teamID)
             
             for myAttendee in myAttendeeList
             {
@@ -903,7 +907,7 @@ class calendarItem
             var agendaArray: [meetingAgendaItem] = Array()
             // Add in Welcome
             
-            let welcomeItem = meetingAgendaItem(rowType: "Welcome")
+            let welcomeItem = meetingAgendaItem(rowType: "Welcome", teamID: myTeamID)
             agendaArray.append(welcomeItem)
             
             // Check for outstanding actions
@@ -911,21 +915,21 @@ class calendarItem
             if myPreviousMinutes != ""
             { // Previous meeting exists
                 // Does the previous meeting have any tasks
-                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: myTeamID)
                 
                 if myData.count > 0
                 {  // There are tasks for the previous meeting
                     
-                    let previousItem = meetingAgendaItem(rowType: "PreviousMinutes")
+                    let previousItem = meetingAgendaItem(rowType: "PreviousMinutes", teamID: myTeamID)
                     agendaArray.append(previousItem)
                 }
                 else
                 {
-                    let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+                    let myOutstandingTasks = parsePastMeeting(myPreviousMinutes, teamID: myTeamID)
                     
                     if myOutstandingTasks.count > 0
                     {
-                        let previousItem = meetingAgendaItem(rowType: "PreviousMinutes")
+                        let previousItem = meetingAgendaItem(rowType: "PreviousMinutes", teamID: myTeamID)
                         agendaArray.append(previousItem)
                     }
                 }
@@ -939,7 +943,7 @@ class calendarItem
             }
             
             // Add in Close
-            let closeItem = meetingAgendaItem(rowType: "Close")
+            let closeItem = meetingAgendaItem(rowType: "Close", teamID: myTeamID)
             agendaArray.append(closeItem)
 
             return agendaArray
@@ -1128,11 +1132,11 @@ class calendarItem
         
         if myMeetingID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!))
+            mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!), teamID: teamID)
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID)
+            mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID, teamID: teamID)
         }
         
         myAttendees.removeAll(keepingCapacity: false)
@@ -1224,11 +1228,11 @@ class calendarItem
             
                     if myMeetingID == ""
                     {
-                        mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!))
+                        mySavedValues = myDatabaseConnection.loadAttendees(generateMeetingID(myEvent!), teamID: teamID)
                     }
                     else
                     {
-                        mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID)
+                        mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID, teamID: teamID)
                     }
             
                     if myEvent!.hasAttendees
@@ -1301,11 +1305,11 @@ class calendarItem
         
         if myMeetingID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgendaItem(generateMeetingID(myEvent!))
+            mySavedValues = myDatabaseConnection.loadAgendaItem(generateMeetingID(myEvent!), teamID: teamID)
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAgendaItem(myMeetingID)
+            mySavedValues = myDatabaseConnection.loadAgendaItem(myMeetingID, teamID: teamID)
         }
         
         myAgendaItems.removeAll(keepingCapacity: false)
@@ -1316,7 +1320,7 @@ class calendarItem
             
             for savedAgenda in mySavedValues
             {
-                let myAgendaItem =  meetingAgendaItem(meetingID: savedAgenda.meetingID!, agendaID: Int(savedAgenda.agendaID))
+                let myAgendaItem =  meetingAgendaItem(meetingID: savedAgenda.meetingID!, agendaID: Int(savedAgenda.agendaID), teamID: teamID)
                 if myAgendaItem.meetingOrder == 0
                 {
                     myAgendaItem.meetingOrder += runningMeetingOrder
@@ -1443,7 +1447,7 @@ class calendarItem
         if myPreviousMinutes != ""
         { // Previous meeting exists
             // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
             
             if myData.count > 0
             {  // There are tasks for the previous meeting
@@ -1456,11 +1460,11 @@ class calendarItem
                 
                 var myTaskList: [task] = Array()
                 
-                let myData2 = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                let myData2 = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: Int(myItem2.taskID))
+                    let newTask = task(taskID: Int(myItem2.taskID), teamID: teamID)
                     myTaskList.append(newTask)
                 }
                 
@@ -1481,7 +1485,7 @@ class calendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                     
                     if myData3.count == 0
                     {
@@ -1531,7 +1535,7 @@ class calendarItem
             
             // Outstanding previous meetings
             
-            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes, teamID: teamID)
             
             if myOutstandingTasks.count > 0
             {
@@ -1557,7 +1561,7 @@ class calendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                     
                     if myData3.count == 0
                     {
@@ -1664,7 +1668,7 @@ class calendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                         
                         if myData3.count == 0
                         {
@@ -1724,7 +1728,7 @@ class calendarItem
             if myPreviousMinutes != ""
             { // Previous meeting exists
                 // Does the previous meeting have any tasks
-                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
                 
                 if myData.count > 0
                 {  // There are tasks for the previous meeting
@@ -1881,7 +1885,7 @@ class calendarItem
         if myPreviousMinutes != ""
         { // Previous meeting exists
             // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
             
             if myData.count > 0
             {  // There are tasks for the previous meeting
@@ -1890,11 +1894,11 @@ class calendarItem
                 
                 var myTaskList: [task] = Array()
                 
-                let myData2 = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                let myData2 = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: Int(myItem2.taskID))
+                    let newTask = task(taskID: Int(myItem2.taskID), teamID: teamID)
                     myTaskList.append(newTask)
                 }
                 
@@ -1917,7 +1921,7 @@ class calendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                     
                     if myData3.count == 0
                     {
@@ -1969,7 +1973,7 @@ class calendarItem
             
             // Outstanding previous meetings
             
-            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes, teamID: teamID)
                 
             if myOutstandingTasks.count > 0
             {
@@ -1994,7 +1998,7 @@ class calendarItem
                         
                     // Get the project name to display
                         
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                         
                     if myData3.count == 0
                     {
@@ -2102,7 +2106,7 @@ class calendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, teamID: teamID)
                         
                         if myData3.count == 0
                         {
@@ -2166,7 +2170,7 @@ class calendarItem
             if myPreviousMinutes != ""
             { // Previous meeting exists
                 // Does the previous meeting have any tasks
-                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes, teamID: teamID)
                 
                 if myData.count > 0
                 {  // There are tasks for the previous meeting
@@ -2369,7 +2373,7 @@ class ReminderData
     
 }
 
-func parsePastMeeting(_ meetingID: String) -> [task]
+func parsePastMeeting(_ meetingID: String, teamID: Int) -> [task]
 {
     // Get the the details for the meeting, in order to determine the previous task ID
     var myReturnArray: [task] = Array()
@@ -2385,11 +2389,11 @@ func parsePastMeeting(_ meetingID: String) -> [task]
         for myItem in myData
         {
             var myArray: [task] = Array()
-            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID!)
+            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID!, teamID: teamID)
             
             for myItem2 in myData2
             {
-                let newTask = task(taskID: Int(myItem2.taskID))
+                let newTask = task(taskID: Int(myItem2.taskID), teamID: teamID)
                 if newTask.status != "Closed"
                 {
                     myArray.append(newTask)
@@ -2398,7 +2402,7 @@ func parsePastMeeting(_ meetingID: String) -> [task]
             
             if myItem.previousMeetingID != ""
             {
-                myReturnArray = parsePastMeeting(myItem.previousMeetingID!)
+                myReturnArray = parsePastMeeting(myItem.previousMeetingID!, teamID: teamID)
                 
                 for myWork in myArray
                 {

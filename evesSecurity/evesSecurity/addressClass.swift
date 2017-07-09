@@ -14,9 +14,9 @@ class personAddresses: NSObject
 {
     fileprivate var myAddresses:[address] = Array()
     
-    init(personID: Int)
+    init(personID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getAddressForPerson(personID: personID)
+        for myItem in myDatabaseConnection.getAddressForPerson(personID: personID, teamID: teamID)
         {
             let myContext = address(addressID: Int(myItem.addressID),
                                     addressLine1: myItem.addressLine1!,
@@ -34,9 +34,9 @@ class personAddresses: NSObject
         }
     }
     
-    init(clientID: Int)
+    init(clientID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getAddressForClient(clientID: clientID)
+        for myItem in myDatabaseConnection.getAddressForClient(clientID: clientID, teamID: teamID)
         {
             let myContext = address(addressID: Int(myItem.addressID),
                                     addressLine1: myItem.addressLine1!,
@@ -54,9 +54,9 @@ class personAddresses: NSObject
         }
     }
     
-    init(projectID: Int)
+    init(projectID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getAddressForProject(projectID: projectID)
+        for myItem in myDatabaseConnection.getAddressForProject(projectID: projectID, teamID: teamID)
         {
             let myContext = address(addressID: Int(myItem.addressID),
                                     addressLine1: myItem.addressLine1!,
@@ -236,10 +236,10 @@ class address: NSObject
         save()
     }
     
-    init(addressID: Int)
+    init(addressID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getAddressDetails(addressID)
+        let myReturn = myDatabaseConnection.getAddressDetails(addressID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -310,7 +310,7 @@ class address: NSObject
     {
         if currentUser.checkPermission(hrRoleType) == writePermission
         {
-            myDatabaseConnection.deleteAddress(myAddressID)
+            myDatabaseConnection.deleteAddress(myAddressID, teamID: myTeamID)
         }
     }
 }
@@ -333,7 +333,7 @@ extension coreDatabase
     {
         var myItem: Addresses!
         
-        let myReturn = getAddressDetails(addressID)
+        let myReturn = getAddressDetails(addressID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -397,9 +397,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteAddress(_ addressID: Int)
+    func deleteAddress(_ addressID: Int, teamID: Int)
     {
-        let myReturn = getAddressDetails(addressID)
+        let myReturn = getAddressDetails(addressID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -411,13 +411,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAddressForPerson(personID: Int)->[Addresses]
+    func getAddressForPerson(personID: Int, teamID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(personID == \(personID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -435,13 +435,13 @@ extension coreDatabase
         }
     }
     
-    func getAddressForClient(clientID: Int)->[Addresses]
+    func getAddressForClient(clientID: Int, teamID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -459,13 +459,13 @@ extension coreDatabase
         }
     }
     
-    func getAddressForProject(projectID: Int)->[Addresses]
+    func getAddressForProject(projectID: Int, teamID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -483,13 +483,13 @@ extension coreDatabase
         }
     }
 
-    func getAddressDetails(_ addressID: Int)->[Addresses]
+    func getAddressDetails(_ addressID: Int, teamID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(addressID == \(addressID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(addressID == \(addressID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

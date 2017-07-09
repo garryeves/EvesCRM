@@ -33,34 +33,34 @@ extension coreDatabase
         }
     }
     
-    func getSyncDecodeValue(_ codeKey: String) -> String
-    {
-        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-        //     let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
-        let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\")")
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of  objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            if fetchResults.count == 0
-            {
-                return ""
-            }
-            else
-            {
-                return fetchResults[0].decode_value!
-            }
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return ""
-        }
-    }
-    
+//    func getSyncDecodeValue(_ codeKey: String) -> String
+//    {
+//        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
+//        //     let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
+//        let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\")")
+//        // Set the predicate on the fetch request
+//        fetchRequest.predicate = predicate
+//        
+//        // Execute the fetch request, and cast the results to an array of  objects
+//        do
+//        {
+//            let fetchResults = try objectContext.fetch(fetchRequest)
+//            if fetchResults.count == 0
+//            {
+//                return ""
+//            }
+//            else
+//            {
+//                return fetchResults[0].decode_value!
+//            }
+//        }
+//        catch
+//        {
+//            print("Error occurred during execution: \(error)")
+//            return ""
+//        }
+//    }
+//    
     func getVisibleDecodes(teamID: Int) -> [Decodes]
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")

@@ -57,7 +57,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         let dateString = "\(shiftList.shifts[indexPath.row].workDateString) \(shiftList.shifts[indexPath.row].startTimeString) - \(shiftList.shifts[indexPath.row].endTimeString)"
         cell.lbl1.text = dateString
         
-        let tempPerson = person(personID: shiftList.shifts[indexPath.row].personID)
+        let tempPerson = person(personID: shiftList.shifts[indexPath.row].personID, teamID: currentUser.currentTeam!.teamID)
         cell.lbl2.text = tempPerson.name
         
         return cell
@@ -456,7 +456,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     {
         if workingContract != nil
         {
-            shiftList = shifts(projectID: workingContract.projectID)
+            shiftList = shifts(projectID: workingContract.projectID, teamID: currentUser.currentTeam!.teamID)
             txtName.text = workingContract.projectName
             txtNote.text = workingContract.note
             txtDept.text = workingContract.clientDept

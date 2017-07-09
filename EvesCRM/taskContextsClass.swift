@@ -85,11 +85,11 @@ extension coreDatabase
         return myTaskArray
     }
 
-    func saveTaskContext(_ contextID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTaskContext(_ contextID: Int, taskID: Int, teamID: Int, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myContext: TaskContext!
         
-        let myContexts = getTaskContext(contextID, taskID: taskID)
+        let myContexts = getTaskContext(contextID, taskID: taskID, teamID: teamID)
         
         if myContexts.count == 0
         { // Add
@@ -134,11 +134,11 @@ extension coreDatabase
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
     
-    func deleteTaskContext(_ contextID: Int, taskID: Int)
+    func deleteTaskContext(_ contextID: Int, taskID: Int, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
-        let predicate = NSPredicate(format: "(contextID == \(contextID)) AND (taskID = \(taskID))")
+        let predicate = NSPredicate(format: "(contextID == \(contextID)) AND (teamID == \(teamID)) AND (taskID = \(taskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -161,13 +161,13 @@ extension coreDatabase
         saveContext()
     }
     
-    private func getTaskContext(_ contextID: Int, taskID: Int)->[TaskContext]
+    private func getTaskContext(_ contextID: Int, taskID: Int, teamID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (contextID = \(contextID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (teamID == \(teamID)) AND (contextID = \(contextID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -185,13 +185,13 @@ extension coreDatabase
         }
     }
     
-    func getContextsForTask(_ taskID: Int)->[TaskContext]
+    func getContextsForTask(_ taskID: Int, teamID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \(taskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -209,13 +209,13 @@ extension coreDatabase
         }
     }
     
-    func getTasksForContext(_ contextID: Int)->[TaskContext]
+    func getTasksForContext(_ contextID: Int, teamID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(contextID = \(contextID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(contextID = \(contextID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -85,10 +85,10 @@ class personAdditionalInfo: NSObject
         save()
     }
     
-    init(addInfoID: Int)
+    init(addInfoID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getPersonAdditionalInfoDetails(addInfoID)
+        let myReturn = myDatabaseConnection.getPersonAdditionalInfoDetails(addInfoID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -129,7 +129,7 @@ class personAdditionalInfo: NSObject
     {
         if currentUser.checkPermission(adminRoleType) == writePermission
         {
-            myDatabaseConnection.deletePersonAdditionalInfo(myAddInfoID)
+            myDatabaseConnection.deletePersonAdditionalInfo(myAddInfoID, teamID: myTeamID)
         }
     }
 }
@@ -144,7 +144,7 @@ extension coreDatabase
     {
         var myItem: PersonAdditionalInfo!
         
-        let myReturn = getPersonAdditionalInfoDetails(addInfoID)
+        let myReturn = getPersonAdditionalInfoDetails(addInfoID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -192,9 +192,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deletePersonAdditionalInfo(_ addInfoID: Int)
+    func deletePersonAdditionalInfo(_ addInfoID: Int, teamID: Int)
     {
-        let myReturn = getPersonAdditionalInfoDetails(addInfoID)
+        let myReturn = getPersonAdditionalInfoDetails(addInfoID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -230,13 +230,13 @@ extension coreDatabase
         }
     }
     
-    func getPersonAdditionalInfoDetails(_ addInfoID: Int)->[PersonAdditionalInfo]
+    func getPersonAdditionalInfoDetails(_ addInfoID: Int, teamID: Int)->[PersonAdditionalInfo]
     {
         let fetchRequest = NSFetchRequest<PersonAdditionalInfo>(entityName: "PersonAdditionalInfo")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(addInfoID == \(addInfoID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(addInfoID == \(addInfoID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

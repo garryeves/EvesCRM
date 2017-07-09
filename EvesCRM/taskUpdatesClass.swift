@@ -17,6 +17,7 @@ class taskUpdates: NSObject
     fileprivate var myDetails: String = ""
     fileprivate var mySource: String = ""
     fileprivate var saveCalled: Bool = false
+    fileprivate var myTeamID: Int = 0
     
     var updateDate: Date
     {
@@ -81,10 +82,10 @@ class taskUpdates: NSObject
         }
     }
     
-    init(taskID: Int)
+    init(taskID: Int, teamID: Int)
     {
         myTaskID = taskID
-        
+        myTeamID = teamID
     }
     
     init(updateObject: TaskUpdates)
@@ -93,11 +94,12 @@ class taskUpdates: NSObject
         myUpdateDate = updateObject.updateDate as Date!
         myDetails = updateObject.details!
         mySource = updateObject.source!
+        myTeamID = Int(updateObject.teamID)
     }
     
     func save()
     {
-        myDatabaseConnection.saveTaskUpdate(myTaskID, details: myDetails, source: mySource)
+        myDatabaseConnection.saveTaskUpdate(myTaskID, details: myDetails, source: mySource, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -109,7 +111,7 @@ class taskUpdates: NSObject
     func performSave()
     {
         
-        let myUpdate = myDatabaseConnection.getTaskUpdates(myTaskID)[0]
+        let myUpdate = myDatabaseConnection.getTaskUpdates(myTaskID, teamID: myTeamID)[0]
         
         myCloudDB.saveTaskUpdatesRecordToCloudKit(myUpdate)
         saveCalled = false
@@ -118,11 +120,11 @@ class taskUpdates: NSObject
 
 extension coreDatabase
 {
-    func saveTaskUpdate(_ taskID: Int, details: String, source: String, teamID: Int = currentUser.currentTeam!.teamID, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTaskUpdate(_ taskID: Int, details: String, source: String, teamID: Int, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
         
-        if getTaskUpdate(taskID, updateDate: updateDate as NSDate).count == 0
+        if getTaskUpdate(taskID, updateDate: updateDate as NSDate, teamID: teamID).count == 0
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
             myTaskUpdate.taskID = Int64(taskID)
@@ -147,13 +149,13 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func getTaskUpdate(_ taskID: Int, updateDate: NSDate)->[TaskUpdates]
+    func getTaskUpdate(_ taskID: Int, updateDate: NSDate, teamID: Int)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (updateDate == %@)", updateDate as CVarArg)
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (updateDate == %@)", updateDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -175,13 +177,13 @@ extension coreDatabase
         }
     }
     
-    func getTaskUpdates(_ taskID: Int)->[TaskUpdates]
+    func getTaskUpdates(_ taskID: Int, teamID: Int)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

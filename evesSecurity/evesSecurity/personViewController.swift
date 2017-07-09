@@ -224,7 +224,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                 let dateString = "\(selectedPerson.shiftArray[indexPath.row].workDateString) \(selectedPerson.shiftArray[indexPath.row].startTimeString) - \(selectedPerson.shiftArray[indexPath.row].endTimeString)"
                 cell.lblType.text = dateString
                 
-                let tempProject = project(projectID: selectedPerson.shiftArray[indexPath.row].projectID)
+                let tempProject = project(projectID: selectedPerson.shiftArray[indexPath.row].projectID, teamID: currentUser.currentTeam!.teamID)
                 cell.lblDetail.text = tempProject.projectName
                 
             return cell
@@ -766,11 +766,11 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     {
         if clientID != nil
         {
-            myPeople = people(clientID: clientID)
+            myPeople = people(clientID: clientID, teamID: currentUser.currentTeam!.teamID)
         }
         else if projectID != nil
         {
-            myPeople = people(projectID: projectID)
+            myPeople = people(projectID: projectID, teamID: currentUser.currentTeam!.teamID)
         }
         else
         {

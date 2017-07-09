@@ -18,6 +18,7 @@ class meetingAttendee
     fileprivate var myType: String = ""
     fileprivate var myStatus: String = ""
     fileprivate var saveCalled: Bool = false
+    fileprivate var myTeamID: Int = 0
     
     var name: String
     {
@@ -79,9 +80,9 @@ class meetingAttendee
         }
     }
     
-    func load(_ meetingID: String, name: String)
+    func load(_ meetingID: String, name: String, teamID: Int)
     {
-        let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID)
+        let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID, teamID: teamID)
         
         if myAttendees.count > 0
         {
@@ -92,18 +93,19 @@ class meetingAttendee
                 myEmailAddress = myItem.email!
                 myType = myItem.type!
                 myStatus = myItem.attendenceStatus!
+                myTeamID = Int(myItem.teamID)
             }
         }
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteAttendee(myMeetingID, name: myName)
+        myDatabaseConnection.deleteAttendee(myMeetingID, name: myName, teamID: myTeamID)
     }
     
     func save()
     {
-        myDatabaseConnection.saveAttendee(myMeetingID, name: myName, email: myEmailAddress,  type: myType, status: myStatus)
+        myDatabaseConnection.saveAttendee(myMeetingID, name: myName, email: myEmailAddress,  type: myType, status: myStatus, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -114,7 +116,7 @@ class meetingAttendee
     
     @objc func performSave()
     {
-        let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID)[0]
+        let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID, teamID: myTeamID)[0]
         
         myCloudDB.saveMeetingAttendeesRecordToCloudKit(myMeeting)
         
@@ -124,7 +126,7 @@ class meetingAttendee
 
 extension coreDatabase
 {
-    func loadAttendees(_ meetingID: String)->[MeetingAttendees]
+    func loadAttendees(_ meetingID: String, teamID: Int)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -133,7 +135,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -151,7 +153,7 @@ extension coreDatabase
         }
     }
     
-    func loadMeetingsForAttendee(_ attendeeName: String)->[MeetingAttendees]
+    func loadMeetingsForAttendee(_ attendeeName: String, teamID: Int)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -160,7 +162,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -178,7 +180,7 @@ extension coreDatabase
         }
     }
     
-    func checkMeetingsForAttendee(_ attendeeName: String, meetingID: String)->[MeetingAttendees]
+    func checkMeetingsForAttendee(_ attendeeName: String, meetingID: String, teamID: Int)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -187,7 +189,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") && (updateType != \"Delete\") && (meetingID == \"\(meetingID)\")")
+        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (meetingID == \"\(meetingID)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -205,11 +207,11 @@ extension coreDatabase
         }
     }
     
-    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
         
-        let myMeeting = checkMeetingsForAttendee(name, meetingID: meetingID)
+        let myMeeting = checkMeetingsForAttendee(name, meetingID: meetingID, teamID: teamID)
         
         if myMeeting.count == 0
         {
@@ -256,12 +258,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAttendee(_ meetingID: String, name: String)
+    func deleteAttendee(_ meetingID: String, name: String, teamID: Int)
     {
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name == \"\(name)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name == \"\(name)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

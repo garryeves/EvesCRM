@@ -260,37 +260,54 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     {
         if userTeams(userID: currentUser.userID).UserTeams.count > 1
         {
-            btnSwitchUsers.isHidden = false
+            DispatchQueue.main.async
+            {
+                self.btnSwitchUsers.isHidden = false
+            }
         }
         else
         {
-            btnSwitchUsers.isHidden = true
+            DispatchQueue.main.async
+            {
+                self.btnSwitchUsers.isHidden = true
+            }
         }
         
         if currentUser.checkPermission(adminRoleType) != noPermission
         {
-            btnTeam.isEnabled = true
-            btnPerAddInfo.isEnabled = true
-            btnDropbown.isEnabled = true
-            btnRestore.isEnabled = true
+            DispatchQueue.main.async
+            {
+                self.btnTeam.isEnabled = true
+                self.btnPerAddInfo.isEnabled = true
+                self.btnDropbown.isEnabled = true
+                self.btnRestore.isEnabled = true
+            }
         }
         else
         {
-            btnTeam.isEnabled = false
-            btnPerAddInfo.isEnabled = false
-            btnDropbown.isEnabled = false
-            btnRestore.isEnabled = false
+            DispatchQueue.main.async
+            {
+                self.btnTeam.isEnabled = false
+                self.btnPerAddInfo.isEnabled = false
+                self.btnDropbown.isEnabled = false
+                self.btnRestore.isEnabled = false
+            }
         }
         
         if currentUser.currentTeam!.teamOwner == currentUser.userID
         {
-            btnTeam.isEnabled = true
+            DispatchQueue.main.async
+            {
+                self.btnTeam.isEnabled = true
+            }
         }
         
-        calendarList = iOSCalendarList()
-        tblCalendar.reloadData()
-        
-        buildDecodeArray()
+        DispatchQueue.main.async
+        {
+            self.calendarList = iOSCalendarList()
+            self.tblCalendar.reloadData()
+            self.buildDecodeArray()
+        }
     }
     
     func buildDecodeArray()

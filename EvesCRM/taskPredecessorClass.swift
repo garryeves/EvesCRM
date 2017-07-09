@@ -14,6 +14,7 @@ class taskPredecessor: NSObject
 {
     fileprivate var myPredecessorID: Int = 0
     fileprivate var myPredecessorType: String = ""
+    fileprivate var myTeamID: Int = 0
     
     var predecessorID: Int
     {
@@ -39,22 +40,23 @@ class taskPredecessor: NSObject
         }
     }
     
-    init(predecessorID: Int, predecessorType: String)
+    init(predecessorID: Int, predecessorType: String, teamID: Int)
     {
         myPredecessorID = predecessorID
         myPredecessorType = predecessorType
+        myTeamID = teamID
     }
 }
 
 extension coreDatabase
 {
-    func getTaskPredecessors(_ taskID: Int)->[TaskPredecessor]
+    func getTaskPredecessors(_ taskID: Int, teamID: Int)->[TaskPredecessor]
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -76,7 +78,7 @@ extension coreDatabase
     {
         var myTask: TaskPredecessor!
         
-        let myTasks = getTaskPredecessors(taskID)
+        let myTasks = getTaskPredecessors(taskID, teamID: teamID)
         
         if myTasks.count == 0
         { // Add
@@ -121,11 +123,11 @@ extension coreDatabase
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
-    func updatePredecessorTaskType(_ taskID: Int, predecessorID: Int, predecessorType: String)
+    func updatePredecessorTaskType(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (predecessorID == \(predecessorID))")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (predecessorID == \(predecessorID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -154,11 +156,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteTaskPredecessor(_ taskID: Int, predecessorID: Int)
+    func deleteTaskPredecessor(_ taskID: Int, predecessorID: Int, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (predecessorID == \(predecessorID))")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (predecessorID == \(predecessorID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -46,7 +46,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             if passedMeeting.previousMinutes != ""
             {
-                let myOutstandingTasks = parsePastMeeting(passedMeeting.previousMinutes)
+                let myOutstandingTasks = parsePastMeeting(passedMeeting.previousMinutes, teamID: currentUser.currentTeam!.teamID)
             
                 if myOutstandingTasks.count > 0
                 {
@@ -57,11 +57,11 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                 }
             }
             
-            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.meetingID)
+            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.meetingID, teamID: currentUser.currentTeam!.teamID)
                 
             for myItem in myData
             {
-                let newTask = task(taskID: Int(myItem.taskID))
+                let newTask = task(taskID: Int(myItem.taskID), teamID: currentUser.currentTeam!.teamID)
                 myTaskList.append(newTask)
             }
         }
@@ -144,7 +144,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             // Get the project name to display
             
-            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID)
+            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID, teamID: currentUser.currentTeam!.teamID)
             
             if myData.count == 0
             {

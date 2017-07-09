@@ -179,7 +179,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             if tableView == tblRates
             {
                 ratesList.rates[indexPath.row].delete()
-                ratesList = rates(clientID: selectedClient.clientID)
+                ratesList = rates(clientID: selectedClient.clientID, teamID: currentUser.currentTeam!.teamID)
                 tblRates.reloadData()
             }
             else if tableView == tblClients
@@ -190,7 +190,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             else if tableView == tblContracts
             {
                 contractsList.projects[indexPath.row].delete()
-                contractsList = projects(clientID: selectedClient.clientID)
+                contractsList = projects(clientID: selectedClient.clientID, teamID: currentUser.currentTeam!.teamID)
                 tblContracts.reloadData()
             }
         }
@@ -363,13 +363,13 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         }
         else
         {
-            contractsList = projects(clientID: selectedClient.clientID)
+            contractsList = projects(clientID: selectedClient.clientID, teamID: currentUser.currentTeam!.teamID)
             tblContracts.reloadData()
 
             txtName.text = selectedClient.name
             txtNotes.text = selectedClient.note
             
-            ratesList = rates(clientID: selectedClient.clientID)
+            ratesList = rates(clientID: selectedClient.clientID, teamID: currentUser.currentTeam!.teamID)
             
             showFields()
             

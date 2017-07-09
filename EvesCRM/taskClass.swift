@@ -14,6 +14,7 @@ class tasks: NSObject
 {
     var myActiveTasks: [task] = Array()
     var myTasks: [task] = Array()
+    var myTeamID: Int = 0
     
     var activeTasks: [task]
     {
@@ -31,24 +32,24 @@ class tasks: NSObject
         }
     }
     
-    init(projectID: Int)
+    init(projectID: Int, teamID: Int)
     {
         super.init()
         
         // check to see if the project is on hold
         
-        let myProject = project(projectID: projectID)
-        
+        let myProject = project(projectID: projectID, teamID: teamID)
+        myTeamID = teamID
         if myProject.projectStatus != "On Hold"
         {
             loadActiveTasksForProject(projectID)
         }
     }
     
-    init(contextID: Int)
+    init(contextID: Int, teamID: Int)
     {
         super.init()
-        
+        myTeamID = teamID
         loadActiveTasksForContext(contextID)
     }
     
@@ -56,22 +57,22 @@ class tasks: NSObject
     {
         myActiveTasks.removeAll()
         
-        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID)
+        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID, teamID: myTeamID)
         
         for myTaskContext in myTaskContextList
         {
             // Get the context details
-            let myTaskList = myDatabaseConnection.getActiveTask(Int(myTaskContext.taskID))
+            let myTaskList = myDatabaseConnection.getActiveTask(Int(myTaskContext.taskID), teamID: myTeamID)
             
             for myTask in myTaskList
             {  //append project details to work array
                 // check the project to see if it is on hold
                 
-                let myProject = project(projectID: Int(myTask.projectID))
+                let myProject = project(projectID: Int(myTask.projectID), teamID: myTeamID)
                 
                 if myProject.projectStatus != "On Hold"
                 {
-                    let tempTask = task(taskID: Int(myTask.taskID))
+                    let tempTask = task(taskID: Int(myTask.taskID), teamID: myTeamID)
                     myActiveTasks.append(tempTask)
                 }
             }
@@ -84,13 +85,13 @@ class tasks: NSObject
     {
         myActiveTasks.removeAll()
         
-        var taskList = myDatabaseConnection.getActiveTasksForProject(projectID)
+        var taskList = myDatabaseConnection.getActiveTasksForProject(projectID, teamID: myTeamID)
         
         taskList.sort(by: {$0.dueDate!.timeIntervalSinceNow < $1.dueDate!.timeIntervalSinceNow})
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: Int(myItem.taskID))
+            let tempTask = task(taskID: Int(myItem.taskID), teamID: myTeamID)
             
             myActiveTasks.append(tempTask)
         }
@@ -100,13 +101,13 @@ class tasks: NSObject
     {
         myTasks.removeAll()
         
-        var taskList = myDatabaseConnection.getTasksForProject(projectID)
+        var taskList = myDatabaseConnection.getTasksForProject(projectID, teamID: myTeamID)
         
         taskList.sort(by: {$0.dueDate!.timeIntervalSinceNow < $1.dueDate!.timeIntervalSinceNow})
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: Int(myItem.taskID))
+            let tempTask = task(taskID: Int(myItem.taskID), teamID: myTeamID)
             
             myTasks.append(tempTask)
         }
@@ -324,7 +325,7 @@ class task: NSObject
             
             // Check the team ID for the new project.  If it is different than the current teamID then change the tasks teamID
             
-            let tempProject = myDatabaseConnection.getProjectDetails(projectID)
+            let tempProject = myDatabaseConnection.getProjectDetails(projectID, teamID: myTeamID)
             
             if tempProject.count > 0
             {
@@ -337,7 +338,7 @@ class task: NSObject
     {
         var myHistory: [taskUpdates] = Array()
         
-        let myHistoryRows = myDatabaseConnection.getTaskUpdates(myTaskID)
+        let myHistoryRows = myDatabaseConnection.getTaskUpdates(myTaskID, teamID: myTeamID)
         
         for myHistoryRow in myHistoryRows
         {
@@ -474,9 +475,9 @@ class task: NSObject
         save()
     }
     
-    init(taskID: Int)
+    init(taskID: Int, teamID: Int)
     {
-        let myTaskData = myDatabaseConnection.getTask(taskID)
+        let myTaskData = myDatabaseConnection.getTask(taskID, teamID: teamID)
         
         for myTask in myTaskData
         {
@@ -501,22 +502,22 @@ class task: NSObject
             
             // get contexts
             
-            let myContextList = myDatabaseConnection.getContextsForTask(taskID)
+            let myContextList = myDatabaseConnection.getContextsForTask(taskID, teamID: teamID)
             myContexts.removeAll()
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: Int(myContextItem.contextID))
+                let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
                 myContexts.append(myNewContext)
             }
             
-            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID)
+            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID, teamID: teamID)
             
             myPredecessors.removeAll()
             
             for myPredecessorItem in myPredecessorList
             {
-                let myNewPredecessor = taskPredecessor(predecessorID: Int(myPredecessorItem.predecessorID), predecessorType: myPredecessorItem.predecessorType!)
+                let myNewPredecessor = taskPredecessor(predecessorID: Int(myPredecessorItem.predecessorID), predecessorType: myPredecessorItem.predecessorType!, teamID: teamID)
                 myPredecessors.append(myNewPredecessor)
             }
         }
@@ -553,14 +554,14 @@ class task: NSObject
         
         for myContextItem in oldTask.contexts
         {
-            myDatabaseConnection.saveTaskContext(myContextItem.contextID, taskID: myTaskID, contextType: myContextItem.contextType)
+            myDatabaseConnection.saveTaskContext(myContextItem.contextID, taskID: myTaskID, teamID: teamID, contextType: myContextItem.contextType)
         }
         
         myPredecessors.removeAll()
         
         for myPredecessorItem in oldTask.predecessors
         {
-            myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType)
+            myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType, teamID: teamID)
         }
     }
     
@@ -592,7 +593,7 @@ class task: NSObject
     
     func performSave()
     {
-        let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID)[0]
+        let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID, teamID: teamID)[0]
         
         myCloudDB.saveTaskRecordToCloudKit(myTask)
         
@@ -600,7 +601,7 @@ class task: NSObject
         
         for myContext in myContexts
         {
-            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID, contextType: myContext.contextType)
+            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID, teamID: teamID, contextType: myContext.contextType)
         }
         
         saveCalled = false
@@ -614,13 +615,13 @@ class task: NSObject
         
         // Get the context name
         
-        let myContext = context(contextID: contextID)
+        let myContext = context(contextID: contextID, teamID: teamID)
         
-        let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
+        let myCheck = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
         
         for myItem in myCheck
         {
-            let myRetrievedContext = context(contextID: Int(myItem.contextID))
+            let myRetrievedContext = context(contextID: Int(myItem.contextID), teamID: teamID)
             if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
             {
                 itemFound = true
@@ -630,14 +631,14 @@ class task: NSObject
         
         if !itemFound
         { // Not match found
-            myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID, contextType: contextType)
+            myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID, teamID: teamID, contextType: contextType)
             
-            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
+            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
             myContexts.removeAll()
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: Int(myContextItem.contextID))
+                let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
                 myContexts.append(myNewContext)
             }
         }
@@ -645,14 +646,14 @@ class task: NSObject
     
     func removeContext(_ contextID: Int)
     {
-        myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID)
+        myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID, teamID: teamID)
         
-        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
+        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
         myContexts.removeAll()
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(contextID: Int(myContextItem.contextID))
+            let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
             myContexts.append(myNewContext)
         }
     }
@@ -666,7 +667,7 @@ class task: NSObject
     
     func addHistoryRecord(_ historyDetails: String, historySource: String)
     {
-        let myItem = taskUpdates(taskID: myTaskID)
+        let myItem = taskUpdates(taskID: myTaskID, teamID: teamID)
         myItem.details = historyDetails
         myItem.source = historySource
         
@@ -675,17 +676,17 @@ class task: NSObject
     
     func addPredecessor(_ predecessorID: Int, predecessorType: String)
     {
-        myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
+        myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID)
     }
     
     func removePredecessor(_ predecessorID: Int, predecessorType: String)
     {
-        myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID)
+        myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID, teamID: teamID)
     }
     
     func changePredecessor(_ predecessorID: Int, predecessorType: String)
     {
-        myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
+        myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID)
     }
     
     func markComplete()
@@ -733,7 +734,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, teamID: teamID)
             
             if myData3.count != 0
             {
@@ -849,7 +850,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, teamID: myTeamID)
             
             if myData3.count != 0
             {
@@ -1016,7 +1017,7 @@ extension coreDatabase
     {
         var myTask: Task!
         
-        let myTasks = getTask(taskID)
+        let myTasks = getTask(taskID, teamID: teamID)
         
         if myTasks.count == 0
         { // Add
@@ -1093,11 +1094,11 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteTask(_ taskID: Int)
+    func deleteTask(_ taskID: Int, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
-        let predicate = NSPredicate(format: "taskID == \(taskID)")
+        let predicate = NSPredicate(format: "taskID == \(taskID) AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1172,10 +1173,13 @@ extension coreDatabase
         }
     }
     
-    func getAllTasks()->[Task]
+    func getAllTasks(_ teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
         
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
@@ -1189,13 +1193,13 @@ extension coreDatabase
         }
     }
     
-    func getTasksForProject(_ projectID: Int)->[Task]
+    func getTasksForProject(_ projectID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\")")
+        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") AND (teamID == \(teamID)) AND (status != \"Deleted\") && (status != \"Complete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1213,13 +1217,13 @@ extension coreDatabase
         }
     }
     
-    func getActiveTasksForProject(_ projectID: Int)->[Task]
+    func getActiveTasksForProject(_ projectID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg,  NSDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectID = \(projectID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg,  NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1261,14 +1265,14 @@ extension coreDatabase
         }
     }
     
-    func getTask(_ taskID: Int)->[Task]
+    func getTask(_ taskID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
 
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1286,13 +1290,13 @@ extension coreDatabase
         }
     }
     
-    func getTaskRegardlessOfStatus(_ taskID: Int)->[Task]
+    func getTaskRegardlessOfStatus(_ taskID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID))")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1310,13 +1314,13 @@ extension coreDatabase
         }
     }
     
-    func getActiveTask(_ taskID: Int)->[Task]
+    func getActiveTask(_ taskID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg, NSDate() as CVarArg)
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg, NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1334,9 +1338,14 @@ extension coreDatabase
         }
     }
     
-    func getTaskCount()->Int
+    func getTaskCount(_ teamID: Int)->Int
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
+        
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do

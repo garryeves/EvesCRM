@@ -14,9 +14,9 @@ class rates: NSObject
 {
     fileprivate var myRates:[rate] = Array()
     
-    init(clientID: Int)
+    init(clientID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getRates(clientID: clientID)
+        for myItem in myDatabaseConnection.getRates(clientID: clientID, teamID: teamID)
         {
             let myObject = rate(rateID: Int(myItem.rateID),
                                 clientID: Int(myItem.clientID),
@@ -148,7 +148,7 @@ class rate: NSObject
     {
         get
         {
-            if myDatabaseConnection.getShiftForRate(rateID: myRateID, type: shiftShiftType).count > 0
+            if myDatabaseConnection.getShiftForRate(rateID: myRateID, type: shiftShiftType, teamID: myTeamID).count > 0
             {
                 return true
             }
@@ -170,10 +170,10 @@ class rate: NSObject
         save()
     }
     
-    init(rateID: Int)
+    init(rateID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getRatesDetails(rateID)
+        let myReturn = myDatabaseConnection.getRatesDetails(rateID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -226,7 +226,7 @@ class rate: NSObject
     {
         if currentUser.checkPermission(financialsRoleType) == writePermission || currentUser.checkPermission(salesRoleType) == writePermission
         {
-            myDatabaseConnection.deleteRates(myRateID)
+            myDatabaseConnection.deleteRates(myRateID, teamID: myTeamID)
         }
     }
 }
@@ -244,7 +244,7 @@ extension coreDatabase
     {
         var myItem: Rates!
         
-        let myReturn = getRatesDetails(rateID)
+        let myReturn = getRatesDetails(rateID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -298,9 +298,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteRates(_ rateID: Int)
+    func deleteRates(_ rateID: Int, teamID: Int)
     {
-        let myReturn = getRatesDetails(rateID)
+        let myReturn = getRatesDetails(rateID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -312,13 +312,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getRates(clientID: Int)->[Rates]
+    func getRates(clientID: Int, teamID: Int)->[Rates]
     {
         let fetchRequest = NSFetchRequest<Rates>(entityName: "Rates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -336,13 +336,13 @@ extension coreDatabase
         }
     }
     
-    func getRatesDetails(_ rateID: Int)->[Rates]
+    func getRatesDetails(_ rateID: Int, teamID: Int)->[Rates]
     {
         let fetchRequest = NSFetchRequest<Rates>(entityName: "Rates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(rateID == \(rateID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(rateID == \(rateID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

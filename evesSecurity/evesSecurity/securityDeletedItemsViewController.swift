@@ -219,13 +219,13 @@ class deletedItem: UITableViewCell
         switch source
         {
             case projectType:
-                myDatabaseConnection.restoreProject(recordID)
+                myDatabaseConnection.restoreProject(recordID, teamID: currentUser.currentTeam!.teamID)
             
             case clientType:
-                myDatabaseConnection.restoreClient(recordID)
+                myDatabaseConnection.restoreClient(recordID, teamID: currentUser.currentTeam!.teamID)
             
             case peopleType:
-                myDatabaseConnection.restorePerson(recordID)
+                myDatabaseConnection.restorePerson(recordID, teamID: currentUser.currentTeam!.teamID)
             
             default:
                 print("deletedItem unknown type - \(source)")

@@ -43,11 +43,11 @@ class reports: NSObject
 {
     fileprivate var myReports: [report] = Array()
     
-    init(reportType: String)
+    init(reportType: String, teamID: Int)
     {
         super.init()
         
-        for myReport in myDatabaseConnection.getReports(teamID: currentUser.currentTeam!.teamID, reportType: reportType)
+        for myReport in myDatabaseConnection.getReports(teamID: teamID, reportType: reportType)
         {
             let reportInstance = report(reportID: Int(myReport.reportID),
                                         reportTitle: myReport.reportTitle!,
@@ -282,7 +282,7 @@ class report: NSObject
     fileprivate var disvisor: Double = 2
     fileprivate var leftSide: CGFloat = 50
     fileprivate var myDisplayWidth: CGFloat = 0.0
-    fileprivate var myTeamID: Int = 0
+    var myTeamID: Int = 0
     fileprivate var myFileCriteria1: String = ""
     fileprivate var myFileCriteria2: String = ""
     
@@ -1221,11 +1221,11 @@ class report: NSObject
         myReportID = myDatabaseConnection.getNextID("Reports", teamID: teamID)
     }
     
-    init(reportID: Int)
+    init(reportID: Int, teamID: Int)
     {
         super.init()
         
-        for myRecord in myDatabaseConnection.getReportDetails(reportID)
+        for myRecord in myDatabaseConnection.getReportDetails(reportID, teamID: teamID)
         {
             myReportID = Int(myRecord.reportID)
             myReportName = myRecord.reportTitle!
@@ -1767,7 +1767,7 @@ class report: NSObject
     
     func delete()
     {
-        myDatabaseConnection.deleteReport(myReportID)
+        myDatabaseConnection.deleteReport(myReportID, teamID: myTeamID)
     }
     
     func run()
@@ -1787,16 +1787,16 @@ class report: NSObject
                         
                         if mySelectionCriteria2 == ""
                         {
-                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName)
+                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName, teamID: myTeamID)
                         }
                         else
                         {
-                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName, searchString: mySelectionCriteria2)
+                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName, searchString: mySelectionCriteria2, teamID: myTeamID)
                         }
 //                        
                         for myDataItem in dataList.personAddEntries
                         {
-                            let myPerson = person(personID: myDataItem.personID)
+                            let myPerson = person(personID: myDataItem.personID, teamID: myTeamID)
                             
                             let newLine = reportLine()
                             
@@ -2291,7 +2291,7 @@ extension coreDatabase
     {
         var myItem: Reports!
         
-        let myReturn = getReportDetails(reportID)
+        let myReturn = getReportDetails(reportID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -2445,9 +2445,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteReport(_ reportID: Int)
+    func deleteReport(_ reportID: Int, teamID: Int)
     {
-        let myReturn = getReportDetails(reportID)
+        let myReturn = getReportDetails(reportID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -2509,13 +2509,13 @@ extension coreDatabase
         }
     }
     
-    func getReportDetails(_ reportID: Int)->[Reports]
+    func getReportDetails(_ reportID: Int, teamID: Int)->[Reports]
     {
         let fetchRequest = NSFetchRequest<Reports>(entityName: "Reports")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(reportID == \(reportID))")
+        let predicate = NSPredicate(format: "(reportID == \(reportID))AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -26,6 +26,7 @@ class meetingAgendaItem
     fileprivate var myUpdateAllowed: Bool = true
     fileprivate var myMeetingOrder: Int = 0
     fileprivate var saveCalled: Bool = false
+    fileprivate var myTeamID: Int = 0
     
     var actualEndTime: Date?
     {
@@ -155,26 +156,27 @@ class meetingAgendaItem
         }
     }
     
-    init(meetingID: String)
+    init(meetingID: String, teamID: Int)
     {
         myMeetingID = meetingID
         myTitle = "New Item"
         myTimeAllocation = 10
         myActualEndTime = getDefaultDate() as Date!
         myActualStartTime = getDefaultDate() as Date!
+        myTeamID = teamID
         
-        let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
+        let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID, teamID: teamID)
         
         myAgendaID = Int(tempAgendaItems.count + 1)
         
         save()
     }
     
-    init(meetingID: String, agendaID: Int)
+    init(meetingID: String, agendaID: Int, teamID: Int)
     {
         myMeetingID = meetingID
         
-        let tempAgendaItems = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: agendaID)
+        let tempAgendaItems = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: agendaID, teamID: teamID)
         
         if tempAgendaItems.count > 0
         {
@@ -188,14 +190,16 @@ class meetingAgendaItem
             myMeetingOrder = Int(tempAgendaItems[0].meetingOrder)
             myActualStartTime = tempAgendaItems[0].actualStartTime! as Date
             myActualEndTime = tempAgendaItems[0].actualEndTime! as Date
+            myTeamID = Int(tempAgendaItems[0].teamID)
         }
         else
         {
             myAgendaID = 0
+            myTeamID = teamID
         }
     }
     
-    init(rowType: String)
+    init(rowType: String, teamID: Int)
     {
         switch rowType
         {
@@ -219,13 +223,14 @@ class meetingAgendaItem
         myStatus = "Open"
         myOwner = "All"
         myUpdateAllowed = false
+        myTeamID = teamID
     }
     
     func save()
     {
         if myUpdateAllowed
         {
-            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime!, actualStartTime: myActualStartTime!, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
+            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime!, actualStartTime: myActualStartTime!, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder, teamID: myTeamID)
             
             if !saveCalled
             {
@@ -237,7 +242,7 @@ class meetingAgendaItem
     
     @objc func performSave()
     {
-        let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: myAgendaID)[0]
+        let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: myAgendaID, teamID: myTeamID)[0]
         
         myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem)
         
@@ -249,7 +254,7 @@ class meetingAgendaItem
         // call code to perform the delete
         if myUpdateAllowed
         {
-            myDatabaseConnection.deleteAgendaItem(myMeetingID, agendaID: myAgendaID)
+            myDatabaseConnection.deleteAgendaItem(myMeetingID, agendaID: myAgendaID, teamID: myTeamID)
         }
     }
     
@@ -257,11 +262,11 @@ class meetingAgendaItem
     {
         myTasks.removeAll()
         
-        let myAgendaTasks = myDatabaseConnection.getAgendaTasks(myMeetingID, agendaID:myAgendaID)
+        let myAgendaTasks = myDatabaseConnection.getAgendaTasks(myMeetingID, agendaID:myAgendaID, teamID: myTeamID)
         
         for myAgendaTask in myAgendaTasks
         {
-            let myNewTask = task(taskID: Int(myAgendaTask.taskID))
+            let myNewTask = task(taskID: Int(myAgendaTask.taskID), teamID: myTeamID)
             myTasks.append(myNewTask)
         }
     }
@@ -269,12 +274,12 @@ class meetingAgendaItem
     func addTask(_ taskItem: task)
     {
         // Is there ale=ready a link between the agenda and the task, if there is then no need to save
-        let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID)
+        let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID, teamID: myTeamID)
         
         if myCheck.count == 0
         {
             // Associate Agenda to Task
-            myDatabaseConnection.saveAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID)
+            myDatabaseConnection.saveAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID, teamID: myTeamID)
         }
         
         // reload the tasks array
@@ -284,7 +289,7 @@ class meetingAgendaItem
     func removeTask(_ taskItem: task)
     {
         // Associate Agenda to Task
-        myDatabaseConnection.deleteAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID)
+        myDatabaseConnection.deleteAgendaTask(myAgendaID, meetingID: myMeetingID, taskID: taskItem.taskID, teamID: myTeamID)
         
         // reload the tasks array
         loadTasks()
@@ -293,7 +298,7 @@ class meetingAgendaItem
 
 extension coreDatabase
 {
-    func loadAgendaItem(_ meetingID: String)->[MeetingAgendaItem]
+    func loadAgendaItem(_ meetingID: String, teamID: Int)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -302,7 +307,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\") AND (teamID == \(currentUser.currentTeam!.teamID))")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\") AND (teamID == \(currentUser.currentTeam!.teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -324,11 +329,11 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
-        let myAgendaItem = loadSpecificAgendaItem(meetingID, agendaID: agendaID)
+        let myAgendaItem = loadSpecificAgendaItem(meetingID, agendaID: agendaID, teamID: teamID)
         
         if myAgendaItem.count == 0
         {
@@ -388,7 +393,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func loadSpecificAgendaItem(_ meetingID: String, agendaID: Int)->[MeetingAgendaItem]
+    func loadSpecificAgendaItem(_ meetingID: String, agendaID: Int, teamID: Int)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -397,7 +402,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\") AND (teamID == \(currentUser.currentTeam!.teamID)")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -419,12 +424,12 @@ extension coreDatabase
         }
     }
     
-    func deleteAgendaItem(_ meetingID: String, agendaID: Int)
+    func deleteAgendaItem(_ meetingID: String, agendaID: Int, teamID: Int)
     {
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\") AND (teamID == \(currentUser.currentTeam!.teamID)")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -447,12 +452,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAllAgendaItems(_ meetingID: String)
+    func deleteAllAgendaItems(_ meetingID: String, teamID: Int)
     {
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
-        predicate = NSPredicate(format: "meetingID == \"\(meetingID)\"")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -609,13 +614,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTasks(_ meetingID: String, agendaID: Int)->[MeetingTasks]
+    func getAgendaTasks(_ meetingID: String, agendaID: Int, teamID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) AND (meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) AND (meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -633,13 +638,13 @@ extension coreDatabase
         }
     }
     
-    func getMeetingsTasks(_ meetingID: String)->[MeetingTasks]
+    func getMeetingsTasks(_ meetingID: String, teamID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -657,7 +662,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID)
+    func saveAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int)
     {
         var myTask: MeetingTasks
         
@@ -674,13 +679,13 @@ extension coreDatabase
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
-    func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID)->[MeetingTasks]
+    func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int, teamID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) && (meetingID == \"\(meetingID)\") && (updateType != \"Delete\") && (taskID == \(taskID))")
+        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) && (meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (taskID == \(taskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -698,11 +703,11 @@ extension coreDatabase
         }
     }
     
-    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: MeetingTasks
         
-        let myTaskList = checkMeetingTask(meetingID, agendaID: agendaID, taskID: taskID)
+        let myTaskList = checkMeetingTask(meetingID, agendaID: agendaID, taskID: taskID, teamID: teamID)
         
         if myTaskList.count == 0
         {
@@ -744,13 +749,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int)
+    func deleteAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int)
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) AND (meetingID == \"\(meetingID)\") AND (taskID == \(taskID))")
+        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) AND (meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (taskID == \(taskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -772,13 +777,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int)->[MeetingTasks]
+    func getAgendaTask(_ agendaID: Int, meetingID: String, taskID: Int, teamID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) && (meetingID == \"\(meetingID)\") && (taskID == \(taskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) && (meetingID == \"\(meetingID)\") AND (teamID == \(teamID)) AND (taskID == \(taskID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -68,11 +68,11 @@ class people: NSObject
         sortArray()
     }
     
-    init(clientID: Int)
+    init(clientID: Int, teamID: Int)
     {
         super.init()
         
-        for myItem in myDatabaseConnection.getPeopleForClient(clientID: clientID)
+        for myItem in myDatabaseConnection.getPeopleForClient(clientID: clientID, teamID: teamID)
         {
             let dob: Date = myItem.dob! as Date
             
@@ -91,11 +91,11 @@ class people: NSObject
         sortArray()
     }
     
-    init(projectID: Int)
+    init(projectID: Int, teamID: Int)
     {
         super.init()
         
-        for myItem in myDatabaseConnection.getPeopleForProject(projectID: projectID)
+        for myItem in myDatabaseConnection.getPeopleForProject(projectID: projectID, teamID: teamID)
         {
             let dob: Date = myItem.dob! as Date
             
@@ -155,7 +155,7 @@ class person: NSObject
     fileprivate var myAddresses: personAddresses!
     fileprivate var myContacts: personContacts!
     fileprivate var myAddInfo: personAddInfoEntries!
-    fileprivate var myTeamID: Int = 0
+    var myTeamID: Int = 0
     fileprivate var myCanRoster: String = ""
     var tempArray: [Any] = Array()
     
@@ -338,10 +338,10 @@ class person: NSObject
         save()
     }
     
-    init(personID: Int)
+    init(personID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getPersonDetails(personID)
+        let myReturn = myDatabaseConnection.getPersonDetails(personID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -402,7 +402,7 @@ class person: NSObject
     {
         if currentUser.checkPermission(hrRoleType) == writePermission
         {
-            myDatabaseConnection.deletePerson(myPersonID)
+            myDatabaseConnection.deletePerson(myPersonID, teamID: myTeamID)
         }
     }
     
@@ -422,7 +422,7 @@ class person: NSObject
     
     func loadAddresses()
     {
-        myAddresses = personAddresses(personID: myPersonID)
+        myAddresses = personAddresses(personID: myPersonID, teamID: myTeamID)
     }
     
     func removeContact(contactType: String)
@@ -441,7 +441,7 @@ class person: NSObject
     
     func loadContacts()
     {
-        myContacts = personContacts(personID: myPersonID)
+        myContacts = personContacts(personID: myPersonID, teamID: myTeamID)
     }
     
     func removeAddInfo(addInfoType: String)
@@ -460,7 +460,7 @@ class person: NSObject
     
     func loadAddInfo()
     {
-        myAddInfo = personAddInfoEntries(personID: myPersonID)
+        myAddInfo = personAddInfoEntries(personID: myPersonID, teamID: myTeamID)
     }
 }
 
@@ -479,7 +479,7 @@ extension coreDatabase
     {
         var myItem: Person!
         
-        let myReturn = getPersonDetails(personID)
+        let myReturn = getPersonDetails(personID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -537,9 +537,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deletePerson(_ personID: Int)
+    func deletePerson(_ personID: Int, teamID: Int)
     {
-        let myReturn = getPersonDetails(personID)
+        let myReturn = getPersonDetails(personID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -551,13 +551,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getPersonDetails(_ personID: Int)->[Person]
+    func getPersonDetails(_ personID: Int, teamID: Int)->[Person]
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID))")
+        let predicate = NSPredicate(format: "(personID == \(personID)) AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -632,13 +632,13 @@ extension coreDatabase
         }
     }
     
-    func getPeopleForClient(clientID: Int)->[Person]
+    func getPeopleForClient(clientID: Int, teamID: Int)->[Person]
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (clientID == \(clientID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID)) AND (clientID == \(clientID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -656,13 +656,13 @@ extension coreDatabase
         }
     }
     
-    func getPeopleForProject(projectID: Int)->[Person]
+    func getPeopleForProject(projectID: Int, teamID: Int)->[Person]
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (projectID == \(projectID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID)) AND (projectID == \(projectID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -708,9 +708,9 @@ extension coreDatabase
         }
     }
     
-    func restorePerson(_ personID: Int)
+    func restorePerson(_ personID: Int, teamID: Int)
     {
-        for myItem in getPersonDetails(personID)
+        for myItem in getPersonDetails(personID, teamID: teamID)
         {
             myItem.updateType = "Update"
             myItem.updateTime = NSDate()

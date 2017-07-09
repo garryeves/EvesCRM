@@ -345,7 +345,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         {
-            let agendaItem = meetingAgendaItem(meetingID: passedMeeting.meetingID)
+            let agendaItem = meetingAgendaItem(meetingID: passedMeeting.meetingID, teamID: currentUser.currentTeam!.teamID)
             agendaItem.status = "Open"
             agendaItem.decisionMade = ""
             agendaItem.discussionNotes = ""
@@ -431,7 +431,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         { // Previous meeting exists
-            let previousMinutes  = meetingAgendaItem(rowType: "PreviousMinutes")
+            let previousMinutes  = meetingAgendaItem(rowType: "PreviousMinutes", teamID: currentUser.currentTeam!.teamID)
             
             myAgendaList.removeAll(keepingCapacity: false)
             myAgendaList.append(previousMinutes)
@@ -441,7 +441,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             }
         }
         
-        let closeMeeting = meetingAgendaItem(rowType: "Close")
+        let closeMeeting = meetingAgendaItem(rowType: "Close", teamID: currentUser.currentTeam!.teamID)
         myAgendaList.append(closeMeeting)
     }
     

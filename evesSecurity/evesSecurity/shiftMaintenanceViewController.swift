@@ -61,11 +61,11 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         // Get the client details
         
-        let tempProject = project(projectID: shiftList[indexPath.row].projectID)
+        let tempProject = project(projectID: shiftList[indexPath.row].projectID, teamID: currentUser.currentTeam!.teamID)
         
         if tempProject.clientID != 0
         {
-            cell.rateList = rates(clientID: tempProject.clientID)
+            cell.rateList = rates(clientID: tempProject.clientID, teamID: currentUser.currentTeam!.teamID)
         }
 
         cell.shiftLineID = shiftList[indexPath.row].shiftLineID

@@ -42,7 +42,7 @@ class clients: NSObject
             case alertClientNoProject:
                 for myItem in myDatabaseConnection.getClients(teamID: teamID)
                 {
-                    let myReturn = projects(clientID: Int(myItem.clientID))
+                    let myReturn = projects(clientID: Int(myItem.clientID), teamID: teamID)
                     
                     if myReturn.projects.count == 0
                     {
@@ -53,7 +53,7 @@ class clients: NSObject
             case alertClientNoRates:
                 for myItem in myDatabaseConnection.getClients(teamID: teamID)
                 {
-                    let myReturn = rates(clientID: Int(myItem.clientID))
+                    let myReturn = rates(clientID: Int(myItem.clientID), teamID: teamID)
                     
                     if myReturn.rates.count == 0
                     {
@@ -143,7 +143,7 @@ class client: NSObject
     
     var projectList: [project]
     {
-        return projects(clientID: myClientID, type: "").projects
+        return projects(clientID: myClientID, teamID: myTeamID, type: "").projects
     }
     
     init(teamID: Int)
@@ -157,10 +157,10 @@ class client: NSObject
         save()
     }
     
-    init(clientID: Int)
+    init(clientID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID)
+        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -205,25 +205,25 @@ class client: NSObject
             
             // Close any existing projects
             
-            for myProject in projects(clientID: myClientID).projects
+            for myProject in projects(clientID: myClientID, teamID: myTeamID).projects
             {
                 myProject.projectStatus = archivedProjectStatus
             }
             
             // Now delete the client
             
-            myDatabaseConnection.deleteClient(myClientID)
+            myDatabaseConnection.deleteClient(myClientID, teamID: myTeamID)
         }
     }
 }
 
 extension alerts
 {
-    func clientAlerts()
+    func clientAlerts(_ teamID: Int)
     {
         // check for clients with no projects
         
-        for myItem in clients(query: alertClientNoProject, teamID: currentUser.currentTeam!.teamID).clients
+        for myItem in clients(query: alertClientNoProject, teamID: teamID).clients
         {
             let alertEntry = alertItem()
             
@@ -262,7 +262,7 @@ extension coreDatabase
     {
         var myItem: Clients!
         
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getClientDetails(clientID: clientID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -312,9 +312,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
         
-    func deleteClient(_ clientID: Int)
+    func deleteClient(_ clientID: Int, teamID: Int)
     {
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getClientDetails(clientID: clientID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -326,13 +326,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientDetails(clientID: Int)->[Clients]
+    func getClientDetails(clientID: Int, teamID: Int)->[Clients]
     {
         let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(clientID == \(clientID))")
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) AND (teamID = \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -378,9 +378,9 @@ extension coreDatabase
         }
     }
     
-    func restoreClient(_ clientID: Int)
+    func restoreClient(_ clientID: Int, teamID: Int)
     {
-        for myItem in getClientDetails(clientID: clientID)
+        for myItem in getClientDetails(clientID: clientID, teamID: teamID)
         {
             myItem.updateType = "Update"
             myItem.updateTime = NSDate()
