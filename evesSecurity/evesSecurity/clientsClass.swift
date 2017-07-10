@@ -237,7 +237,7 @@ extension alerts
         
         // check for clients with no projects
         
-        for myItem in clients(query: alertClientNoRates, teamID: currentUser.currentTeam!.teamID).clients
+        for myItem in clients(query: alertClientNoRates, teamID: teamID).clients
         {
             let alertEntry = alertItem()
             

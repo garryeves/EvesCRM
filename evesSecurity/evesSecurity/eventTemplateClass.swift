@@ -15,9 +15,9 @@ class eventTemplates: NSObject
 {
     fileprivate var myEventTemplate:[eventTemplate] = Array()
     
-    init(eventID: Int)
+    init(eventID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getEventTemplateItems(eventID: eventID)
+        for myItem in myDatabaseConnection.getEventTemplateItems(eventID: eventID, teamID: teamID)
         {
             let myObject = eventTemplate(eventID: Int(myItem.eventID),
                                          role: myItem.role!,
@@ -270,13 +270,13 @@ extension coreDatabase
     }
     
     
-    func getEventTemplateItems(eventID: Int)->[EventTemplate]
+    func getEventTemplateItems(eventID: Int, teamID: Int)->[EventTemplate]
     {
         let fetchRequest = NSFetchRequest<EventTemplate>(entityName: "EventTemplate")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "eventID == \(eventID) AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "eventID == \(eventID) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -623,7 +623,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         
         if currentEvent != nil
         {
-            rateList = rates(clientID: currentEvent.clientID)
+            rateList = rates(clientID: currentEvent.clientID, teamID: currentUser.currentTeam!.teamID)
             shiftList = currentEvent.staff!.shifts
             
             if shiftList.count == 0

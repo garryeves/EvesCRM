@@ -298,7 +298,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                     workingLine.column4 = ""
                 }
                 
-                let tempProject = project(projectID: myShift.projectID)
+                let tempProject = project(projectID: myShift.projectID, teamID: currentUser.currentTeam!.teamID)
                 
                 workingLine.column5 = tempProject.projectName
                 
@@ -382,7 +382,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YYYY"
             let workingYear = dateFormatter.string(from: Date())
-            selectedPerson.loadShifts(month: btnMonth.currentTitle!, year: workingYear)
+            selectedPerson.loadShifts(month: btnMonth.currentTitle!, year: workingYear, teamID: currentUser.currentTeam!.teamID)
             buildReport()
             tblRoster.reloadData()
         }

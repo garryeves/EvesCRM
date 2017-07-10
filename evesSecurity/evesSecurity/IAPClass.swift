@@ -291,51 +291,54 @@ class IAPHandler: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
     
     func processSuccess()
     {
+        if currentSubscription != nil
+        {
 print("product = \(currentSubscription!.productId) purchase date = \(currentSubscription!.purchaseDate) expires date = \(currentSubscription!.expiresDate) isactive = \(currentSubscription!.isActive)")
         
-        switch currentSubscription!.productId
-        {
-            case IAPConsumableID:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 15
-                
-            case IAPSubscriptionID1m5:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 5
-                
-            case IAPSubscriptionID1m10:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 10
-                
-            case IAPSubscriptionID1m20:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 20
-                
-            case IAPSubscriptionID1y5:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 5
-                
-            case IAPSubscriptionID1y10:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 10
-                
-            case IAPSubscriptionID1y20:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 20
-                
-            case IAPSubscriptionIDtest:
-                myPuchasedExpiryDate = currentSubscription!.expiresDate
-                myPurchasedUsers = 5
-                
-            default:
-                myPuchasedExpiryDate = Date()
-                myPurchasedUsers = 1
-                
-                print("processSuccess - unknown product ID = \(currentSubscription!.productId)")
+            switch currentSubscription!.productId
+            {
+                case IAPConsumableID:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 15
+                    
+                case IAPSubscriptionID1m5:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 5
+                    
+                case IAPSubscriptionID1m10:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 10
+                    
+                case IAPSubscriptionID1m20:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 20
+                    
+                case IAPSubscriptionID1y5:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 5
+                    
+                case IAPSubscriptionID1y10:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 10
+                    
+                case IAPSubscriptionID1y20:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 20
+                    
+                case IAPSubscriptionIDtest:
+                    myPuchasedExpiryDate = currentSubscription!.expiresDate
+                    myPurchasedUsers = 5
+                    
+                default:
+                    myPuchasedExpiryDate = Date()
+                    myPurchasedUsers = 1
+                    
+                    print("processSuccess - unknown product ID = \(currentSubscription!.productId)")
+            }
+     
+        //    myPuchasedExpiryDate = Date().add(.day, amount: 7)
+            updateSubscriptions(expiryDate: myPuchasedExpiryDate, numUsers: myPurchasedUsers)
         }
- 
-    //    myPuchasedExpiryDate = Date().add(.day, amount: 7)
-        updateSubscriptions(expiryDate: myPuchasedExpiryDate, numUsers: myPurchasedUsers)
     }
     
     func checkReceipt()

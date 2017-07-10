@@ -115,7 +115,7 @@ class reports: NSObject
     {
         super.init()
         
-        for myReport in myDatabaseConnection.getReports(teamID: currentUser.currentTeam!.teamID)
+        for myReport in myDatabaseConnection.getReports(teamID: teamID)
         {
             let reportInstance = report(reportID: Int(myReport.reportID),
                                         reportTitle: myReport.reportTitle!,
@@ -1132,7 +1132,7 @@ class report: NSObject
         }
         else if myReportType == peopleReportType
         {
-            for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+            for myItem in personAdditionalInfos(teamID: myTeamID).personAdditionalInfos
             {
                 if myItem.addInfoName == mySelectionCriteria1
                 {
@@ -1172,7 +1172,7 @@ class report: NSObject
         }
         else if myReportType == peopleReportType
         {
-            for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+            for myItem in personAdditionalInfos(teamID: myTeamID).personAdditionalInfos
             {
                 if myItem.addInfoName == mySelectionCriteria3
                 {
@@ -1779,7 +1779,7 @@ class report: NSObject
         {
             if mySelectionCriteria1 != ""
             {
-                for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+                for myItem in personAdditionalInfos(teamID: myTeamID).personAdditionalInfos
                 {
                     if myItem.addInfoName == mySelectionCriteria1
                     {

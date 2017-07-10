@@ -74,7 +74,7 @@ extension coreDatabase
         }
     }
     
-    func savePredecessorTask(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
+    func savePredecessorTask(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         

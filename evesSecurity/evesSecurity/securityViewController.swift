@@ -132,6 +132,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             self.populateMonthList()
         }
         
+        connectEventStore()
+        
         Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.buildReportList), userInfo: nil, repeats: false)
     }
     
@@ -302,7 +304,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         
                         if workingShift.type == eventShiftType
                         {
-                            let workingProject = project(projectID: workingShift.projectID)
+                            let workingProject = project(projectID: workingShift.projectID, teamID: currentUser.currentTeam!.teamID)
                             let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
                             eventsViewControl.communicationDelegate = self
                             eventsViewControl.currentEvent = workingProject
@@ -387,7 +389,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         if btnReportType.currentTitle! != "Select"
         {
-            reportList = reports(reportType: btnReportType.currentTitle!)
+            reportList = reports(reportType: btnReportType.currentTitle!, teamID: currentUser.currentTeam!.teamID)
             
             if reportList.reports.count > 0
             {
@@ -785,9 +787,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             alertList.clearAlerts()
         }
         
-        alertList.shiftAlerts()
-        alertList.clientAlerts()
-        alertList.projectAlerts()
+        alertList.shiftAlerts(currentUser.currentTeam!.teamID)
+        alertList.clientAlerts(currentUser.currentTeam!.teamID)
+        alertList.projectAlerts(currentUser.currentTeam!.teamID)
         
         if alertList.alertList.count == 0
         {
@@ -806,7 +808,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         if btnReportType.currentTitle! != "Select"
         {
-            reportList = reports(reportType: btnReportType.currentTitle!)
+            reportList = reports(reportType: btnReportType.currentTitle!, teamID: currentUser.currentTeam!.teamID)
         }
     }
         
@@ -1200,7 +1202,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     case reportWagesForMonth:  // Wage per person for month
                         if btnDropdown.currentTitle! != "Select"
                         {
-                            currentReport.reportWagesForMonth(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                            currentReport.reportWagesForMonth(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!, teamID: currentUser.currentTeam!.teamID)
                             showReport = true
                         }
                     

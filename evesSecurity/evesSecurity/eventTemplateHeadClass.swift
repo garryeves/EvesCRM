@@ -80,10 +80,10 @@ class eventTemplateHead: NSObject
         save()
     }
     
-    init(eventID: Int)
+    init(eventID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getEventTemplateHead(templateID: eventID)
+        let myReturn = myDatabaseConnection.getEventTemplateHead(templateID: eventID, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -118,13 +118,13 @@ class eventTemplateHead: NSObject
     {
         if currentUser.checkPermission(rosteringRoleType) == writePermission
         {
-            myDatabaseConnection.deleteEventTemplateHead(myTemplateID)
+            myDatabaseConnection.deleteEventTemplateHead(myTemplateID, teamID: myTeamID)
         }
     }
     
     func loadRoles()
     {
-        myRoles = eventTemplates(eventID: myTemplateID)
+        myRoles = eventTemplates(eventID: myTemplateID, teamID: myTeamID)
     }
     
     func addRole(role: String,
@@ -149,7 +149,7 @@ extension coreDatabase
     {
         var myItem: EventTemplateHead!
         
-        let myReturn = getEventTemplateHead(templateID: templateID)
+        let myReturn = getEventTemplateHead(templateID: templateID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -195,9 +195,9 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteEventTemplateHead(_ templateID: Int)
+    func deleteEventTemplateHead(_ templateID: Int, teamID: Int)
     {
-        let myReturn = getEventTemplateHead(templateID: templateID)
+        let myReturn = getEventTemplateHead(templateID: templateID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -234,13 +234,13 @@ extension coreDatabase
     }
 
     
-    func getEventTemplateHead(templateID: Int)->[EventTemplateHead]
+    func getEventTemplateHead(templateID: Int, teamID: Int)->[EventTemplateHead]
     {
         let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "eventID == \(templateID)")
+        let predicate = NSPredicate(format: "eventID == \(templateID) AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
