@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.19" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13137.5"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -209,6 +209,11 @@
                                                 <action selector="btnSettings:" destination="iPZ-KP-gev" id="epu-kS-Hmx"/>
                                             </connections>
                                         </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Add Appointment" id="RHa-nK-2az" userLabel="btnAddAppt">
+                                            <connections>
+                                                <action selector="btnAddAppt:" destination="iPZ-KP-gev" id="s9q-Tv-cAd"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -320,7 +325,7 @@
                                 </constraints>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <action selector="btnStartDate:" destination="iPZ-KP-gev" eventType="touchUpInside" id="tQP-ph-m5F"/>
+                                    <action selector="btnEndDate:" destination="iPZ-KP-gev" eventType="touchUpInside" id="mEM-KM-OOn"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Display" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ISC-KR-cbv" userLabel="lblFilterDate">
@@ -364,6 +369,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XLA-ge-KET" userLabel="btnResetFilter">
+                                <rect key="frame" x="178" y="974" width="78" height="30"/>
+                                <state key="normal" title="Reset Filter"/>
+                                <connections>
+                                    <action selector="btnResetFilter:" destination="iPZ-KP-gev" eventType="touchUpInside" id="haU-lh-VLY"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -389,13 +401,14 @@
                             <constraint firstItem="KuL-fN-Hef" firstAttribute="width" secondItem="ITq-ms-Zyc" secondAttribute="width" id="IN9-Up-PKU"/>
                             <constraint firstItem="Yhp-IT-h9I" firstAttribute="top" secondItem="5ms-gM-M1e" secondAttribute="bottom" constant="10" id="Iuw-Jj-cSC"/>
                             <constraint firstItem="TCE-0x-xKG" firstAttribute="top" secondItem="hk0-zb-l8h" secondAttribute="bottom" constant="15" id="LA8-Wy-ZJJ"/>
-                            <constraint firstItem="IhB-y2-J0m" firstAttribute="baseline" secondItem="LCm-4a-Tp2" secondAttribute="baseline" id="Li3-85-BdR"/>
+                            <constraint firstItem="LCm-4a-Tp2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="IhB-y2-J0m" secondAttribute="trailing" constant="10" id="Lht-LU-fCR"/>
                             <constraint firstItem="MvO-GP-ZX5" firstAttribute="leading" secondItem="TCE-0x-xKG" secondAttribute="trailing" constant="10" id="LwT-hc-6Od"/>
                             <constraint firstItem="5ms-gM-M1e" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="Mji-QG-p0o"/>
                             <constraint firstAttribute="trailing" secondItem="YNk-L1-2aa" secondAttribute="trailing" constant="20" id="NFj-Rm-5uT"/>
                             <constraint firstItem="KuL-fN-Hef" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" constant="20" id="Nch-at-sLb"/>
                             <constraint firstItem="IhB-y2-J0m" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" constant="120" id="Nij-tL-9bX"/>
                             <constraint firstItem="IhB-y2-J0m" firstAttribute="top" secondItem="743-rg-JIO" secondAttribute="bottom" constant="10" id="Pr9-7E-2Qa"/>
+                            <constraint firstItem="LCm-4a-Tp2" firstAttribute="top" secondItem="743-rg-JIO" secondAttribute="bottom" constant="10" id="RYY-uC-hMn"/>
                             <constraint firstItem="Rhg-XT-k3M" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="RoU-gk-XP4"/>
                             <constraint firstItem="DWT-EX-w7e" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="10" id="SIa-BB-3jp"/>
                             <constraint firstItem="d2Y-Ul-eaq" firstAttribute="top" secondItem="0zF-5c-lX6" secondAttribute="bottom" constant="10" id="SaM-3u-9Sf"/>
@@ -403,21 +416,24 @@
                             <constraint firstItem="SX7-zA-ZSN" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="Ujb-kH-5o9"/>
                             <constraint firstAttribute="trailing" secondItem="743-rg-JIO" secondAttribute="trailing" id="V7R-EP-R6h"/>
                             <constraint firstItem="Y10-VR-vAz" firstAttribute="top" secondItem="KuL-fN-Hef" secondAttribute="bottom" constant="10" id="VGk-kH-NLf"/>
+                            <constraint firstItem="LCm-4a-Tp2" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="70" id="VQ5-wQ-K9C"/>
                             <constraint firstItem="Y10-VR-vAz" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" constant="20" id="VwB-Tw-tib"/>
                             <constraint firstItem="ITq-ms-Zyc" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leadingMargin" id="WYw-FN-SaR"/>
                             <constraint firstItem="hk0-zb-l8h" firstAttribute="leading" secondItem="Rhg-XT-k3M" secondAttribute="trailing" constant="10" id="awi-gb-xGS"/>
                             <constraint firstItem="ITq-ms-Zyc" firstAttribute="top" secondItem="Y10-VR-vAz" secondAttribute="bottom" constant="10" id="cc8-O5-yX8"/>
+                            <constraint firstItem="XLA-ge-KET" firstAttribute="leading" secondItem="Mv0-1y-cgs" secondAttribute="trailing" constant="100" id="ckE-vl-Ngg"/>
                             <constraint firstItem="Rhg-XT-k3M" firstAttribute="top" secondItem="YNk-L1-2aa" secondAttribute="bottom" constant="15" id="ez6-Bo-onq"/>
                             <constraint firstItem="oox-bb-tDg" firstAttribute="top" secondItem="IhB-y2-J0m" secondAttribute="bottom" constant="10" id="ffh-lI-5mb"/>
                             <constraint firstItem="JNP-OT-9FV" firstAttribute="leading" secondItem="d2Y-Ul-eaq" secondAttribute="trailing" id="flK-KJ-gJT"/>
                             <constraint firstItem="jsh-hK-FTV" firstAttribute="top" secondItem="SX7-zA-ZSN" secondAttribute="bottom" constant="15" id="fo1-Oy-M4f"/>
                             <constraint firstItem="SX7-zA-ZSN" firstAttribute="top" secondItem="Yhp-IT-h9I" secondAttribute="bottom" constant="10" id="ges-EH-ZDK"/>
                             <constraint firstItem="TCE-0x-xKG" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="gs3-EI-ygh"/>
-                            <constraint firstAttribute="trailing" secondItem="LCm-4a-Tp2" secondAttribute="trailing" constant="283" id="kVS-5Z-G5t"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="LCm-4a-Tp2" secondAttribute="trailing" constant="10" id="kVS-5Z-G5t"/>
                             <constraint firstAttribute="trailing" secondItem="MvO-GP-ZX5" secondAttribute="trailing" constant="20" id="l4K-io-6Ad"/>
                             <constraint firstItem="5ms-gM-M1e" firstAttribute="top" secondItem="DWT-EX-w7e" secondAttribute="bottom" constant="20" id="lfM-Gw-FTN"/>
                             <constraint firstItem="Y10-VR-vAz" firstAttribute="width" secondItem="ITq-ms-Zyc" secondAttribute="width" id="mTA-dv-Sb9"/>
                             <constraint firstAttribute="trailing" secondItem="Vpn-e7-aaC" secondAttribute="trailing" constant="20" id="nUq-IO-r7D"/>
+                            <constraint firstItem="XLA-ge-KET" firstAttribute="top" secondItem="ITq-ms-Zyc" secondAttribute="bottom" constant="20" id="nmv-Zl-a5F"/>
                             <constraint firstItem="dDc-fN-hfC" firstAttribute="top" secondItem="MvO-GP-ZX5" secondAttribute="bottom" constant="20" id="oCQ-cu-v7n"/>
                             <constraint firstItem="DWT-EX-w7e" firstAttribute="top" secondItem="LCm-4a-Tp2" secondAttribute="bottom" constant="10" id="opQ-ZS-Iz6"/>
                             <constraint firstItem="YNk-L1-2aa" firstAttribute="leading" secondItem="jsh-hK-FTV" secondAttribute="trailing" constant="10" id="p64-Mx-yId"/>
@@ -434,17 +450,19 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnAddAppt" destination="RHa-nK-2az" id="Wh3-Bm-Wmt"/>
                         <outlet property="btnAgenda" destination="AY7-Ap-2dq" id="tEz-QC-iJt"/>
                         <outlet property="btnCalendarView" destination="0zF-5c-lX6" id="UZ9-hs-lQt"/>
                         <outlet property="btnClient" destination="hk0-zb-l8h" id="nTo-ls-8Hd"/>
                         <outlet property="btnClients" destination="Mv0-1y-cgs" id="AxV-yY-tPt"/>
                         <outlet property="btnDate" destination="oox-bb-tDg" id="4rA-IE-R4T"/>
-                        <outlet property="btnEndDate" destination="0lP-QP-Wyd" id="iPS-cz-Abi"/>
+                        <outlet property="btnEndDate" destination="0lP-QP-Wyd" id="vcX-CU-hQz"/>
                         <outlet property="btnEvent" destination="dDc-fN-hfC" id="c3m-sj-7ez"/>
                         <outlet property="btnFilterClient" destination="KuL-fN-Hef" id="kfG-gg-VBQ"/>
                         <outlet property="btnFilterProject" destination="Y10-VR-vAz" id="cra-hq-si1"/>
                         <outlet property="btnPeople" destination="Vpn-e7-aaC" id="xUG-Ws-JU9"/>
                         <outlet property="btnProject" destination="MvO-GP-ZX5" id="7UV-Od-uKy"/>
+                        <outlet property="btnResetFilter" destination="XLA-ge-KET" id="7qy-Oi-HKg"/>
                         <outlet property="btnSettings" destination="Lxp-kf-cIs" id="DXD-KI-eNX"/>
                         <outlet property="btnStartDate" destination="d2Y-Ul-eaq" id="Nkz-cV-1gg"/>
                         <outlet property="btnType" destination="YNk-L1-2aa" id="v9J-kV-mBO"/>

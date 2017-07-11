@@ -46,6 +46,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBOutlet weak var lblFilterDash: UILabel!
     @IBOutlet weak var lblType: UILabel!
     @IBOutlet weak var btnType: UIButton!
+    @IBOutlet weak var btnAddAppt: UIBarButtonItem!
+    @IBOutlet weak var btnResetFilter: UIButton!
     
     fileprivate let listView = "List View"
     fileprivate let dayView = "Day View"
@@ -71,6 +73,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     fileprivate var dayList: [dayViewList] = Array()
     fileprivate var startDate: Date!
     fileprivate var endDate: Date!
+    fileprivate var filterClient: Int = 0
+    fileprivate var filterProject: Int = 0
     
     var communicationDelegate: myCommunicationDelegate?
 
@@ -178,15 +182,15 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                 
                 if btnCalendarView.currentTitle == listView
                 {
-                    cell.lblName.text = appointmentList.events[indexPath.row].title
+                    cell.lblName.text = appointmentList.events[indexPath.row].iCalItem!.title
                     
-                    if appointmentList.events[indexPath.row].isAllDay
+                    if appointmentList.events[indexPath.row].iCalItem!.isAllDay
                     {
                         cell.lblDate.text = appointmentList.events[indexPath.row].startDate.formatDateToString
                     }
                     else
                     {
-                        cell.lblDate.text = "\(appointmentList.events[indexPath.row].startDate.formatDateAndTimeString) - \(appointmentList.events[indexPath.row].endDate.formatTimeString)"
+                        cell.lblDate.text = "\(appointmentList.events[indexPath.row].iCalItem!.startDate.formatDateAndTimeString) - \(appointmentList.events[indexPath.row].iCalItem!.endDate.formatTimeString)"
                     }
                 }
                 else
@@ -219,7 +223,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             case tblCalendar:
                 if btnCalendarView.currentTitle == listView
                 {
-                    selectedEvent = appointmentList.events[indexPath.row]
+                    selectedEvent = appointmentList.events[indexPath.row].iCalItem
                 }
                 else
                 {
@@ -238,44 +242,24 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             
             case tblAlerts:
                 let _ = 1
-    //            switch alertList.alertList[indexPath.row].source
-    //            {
-    //            case "Project":
-    //                let workingProject = alertList.alertList[indexPath.row].object as! project
-    //                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-    //                contractEditViewControl.communicationDelegate = self
-    //                contractEditViewControl.workingContract = workingProject
-    //                self.present(contractEditViewControl, animated: true, completion: nil)
-    //
-    //            case "Client":
-    //                let clientMaintenanceViewControl = clientsStoryboard.instantiateViewController(withIdentifier: "clientMaintenance") as! clientMaintenanceViewController
-    //                clientMaintenanceViewControl.communicationDelegate = self
-    //                clientMaintenanceViewControl.selectedClient = alertList.alertList[indexPath.row].object as! client
-    //                self.present(clientMaintenanceViewControl, animated: true, completion: nil)
-    //
-    //            case "Shift":
-    //                let workingShift = alertList.alertList[indexPath.row].object as! shift
-    //
-    //                if workingShift.type == eventShiftType
-    //                {
-    //                    let workingProject = project(projectID: workingShift.projectID)
-    //                    let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
-    //                    eventsViewControl.communicationDelegate = self
-    //                    eventsViewControl.currentEvent = workingProject
-    //                    self.present(eventsViewControl, animated: true, completion: nil)
-    //
-    //                }
-    //                else
-    //                {
-    //                    let rosterMaintenanceViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "rosterForm") as! shiftMaintenanceViewController
-    //                    rosterMaintenanceViewControl.communicationDelegate = self
-    //                    rosterMaintenanceViewControl.currentWeekEndingDate = workingShift.weekEndDate
-    //                    self.present(rosterMaintenanceViewControl, animated: true, completion: nil)
-    //                }
-    //
-    //            default:
-    //                let _ = 1
-    //            }
+                switch alertList.alertList[indexPath.row].source
+                {
+                    case "Project":
+                        let workingProject = alertList.alertList[indexPath.row].object as! project
+                        let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+                        contractEditViewControl.communicationDelegate = self
+                        contractEditViewControl.workingContract = workingProject
+                        self.present(contractEditViewControl, animated: true, completion: nil)
+        
+                    case "Client":
+                        let clientMaintenanceViewControl = clientsStoryboard.instantiateViewController(withIdentifier: "clientMaintenance") as! clientMaintenanceViewController
+                        clientMaintenanceViewControl.communicationDelegate = self
+                        clientMaintenanceViewControl.selectedClient = alertList.alertList[indexPath.row].object as! client
+                        self.present(clientMaintenanceViewControl, animated: true, completion: nil)
+        
+                    default:
+                        let _ = 1
+                }
             
             default:
                 let _ = 1
@@ -285,6 +269,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction)
     {
         controller.dismiss(animated: true)
+        refreshScreen()
     }
     
     @IBAction func btnPeople(_ sender: UIButton)
@@ -379,7 +364,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
         displayList.removeAll()
         
-        projectSource = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true).projects
+        projectSource = projects(clientID: workingMeeting.clientID, teamID: workingMeeting.teamID).projects
         for myItem in projectSource
         {
             displayList.append(myItem.projectName)
@@ -430,18 +415,128 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     
     @IBAction func btnFilterClient(_ sender: UIButton)
     {
+        displayList.removeAll()
+        
+        clientSource = clients(teamID: currentUser.currentTeam!.teamID).clients
+        for myItem in clientSource
+        {
+            displayList.append(myItem.name)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "filterClients"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnClient.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnFilterProject(_ sender: UIButton)
     {
+        displayList.removeAll()
+        
+        if filterClient == 0
+        {
+            projectSource = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true).projects
+        }
+        else
+        {
+            projectSource = projects(clientID: filterClient, teamID: currentUser.currentTeam!.teamID).projects
+        }
+        
+        for myItem in projectSource
+        {
+            displayList.append(myItem.projectName)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "filterProjects"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = btnProject.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
     @IBAction func btnStartDate(_ sender: UIButton)
     {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "startDate"
+        pickerView.delegate = self
+        if startDate == nil
+        {
+            pickerView.currentDate = Date()
+        }
+        else
+        {
+            pickerView.currentDate = startDate
+        }
+        pickerView.showTimes = false
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnEndDate(_ sender: UIButton)
     {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "endDate"
+        pickerView.delegate = self
+        if endDate == nil
+        {
+            pickerView.currentDate = Date()
+        }
+        else
+        {
+            pickerView.currentDate = endDate
+        }
+        pickerView.showTimes = false
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnType(_ sender: UIButton)
@@ -473,26 +568,66 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         }
     }
     
+    @IBAction func btnAddAppt(_ sender: UIBarButtonItem)
+    {
+        let controller = EKEventEditViewController()
+        controller.eventStore = globalEventStore
+        controller.editViewDelegate = self
+        present(controller, animated: true)
+    }
+    
+    @IBAction func btnResetFilter(_ sender: UIButton)
+    {
+        filterClient = 0
+        filterProject = 0
+        btnFilterClient.setTitle("Filter by Client", for: .normal)
+        btnFilterProject.setTitle("Filter by Project", for: .normal)
+        
+        let startAdjust = readDefaultInt("CalBefore") as Int
+        let endAdjust = readDefaultInt("CalAfter") as Int
+        startDate = Date().add(.day, amount: -(7 * startAdjust))
+        endDate = Date().add(.day, amount: (7 * endAdjust))
+        btnStartDate.setTitle(startDate.formatDateToString, for: .normal)
+        btnEndDate.setTitle(endDate.formatDateToString, for: .normal)
+        
+        selectedEvent = nil
+        refreshScreen()
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        if source == "clients"
+        switch source
         {
-            createMeetingAgenda()
+            case "clients":
+                createMeetingAgenda()
+                
+                workingMeeting.clientID = clientSource[selectedItem].clientID
+                displayClientAndProjectFields()
             
-            workingMeeting.clientID = clientSource[selectedItem].clientID
-            displayClientAndProjectFields()
-        }
-        else if source == "projects"
-        {
-            workingMeeting.projectID = projectSource[selectedItem].projectID
-            displayClientAndProjectFields()
-        }
-        else if source == "type"
-        {
-            createMeetingAgenda()
+            case "projects":
+                workingMeeting.projectID = projectSource[selectedItem].projectID
+                displayClientAndProjectFields()
             
-            workingMeeting.minutesType = displayList[selectedItem]
-            displayClientAndProjectFields()
+            case "type":
+                createMeetingAgenda()
+                
+                workingMeeting.minutesType = displayList[selectedItem]
+                displayClientAndProjectFields()
+            
+            case "filterClients":
+                filterClient = clientSource[selectedItem].clientID
+                btnFilterClient.setTitle(clientSource[selectedItem].name, for: .normal)
+                selectedEvent = nil
+                refreshScreen()
+            
+            case "filterProjects":
+                filterProject = projectSource[selectedItem].projectID
+                btnFilterProject.setTitle(projectSource[selectedItem].projectName, for: .normal)
+                selectedEvent = nil
+                refreshScreen()
+            
+            default:
+                print("myPickerDidFinish selectedItem hit default - source = \(source)")
         }
     }
     
@@ -507,10 +642,16 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                 buildArrayForDay()
             
             case "startDate":
-                let _ = 1
+                startDate = selectedDate
+                btnStartDate.setTitle("\(startDate.formatDateToString)", for: .normal)
+                selectedEvent = nil
+                refreshScreen()
             
             case "endDate":
-                let _ = 1
+                endDate = selectedDate
+                btnEndDate.setTitle("\(endDate.formatDateToString)", for: .normal)
+                selectedEvent = nil
+                refreshScreen()
             
             default:
                 print("myPickerDidFinish Date got unknown source - \(source)")
@@ -532,7 +673,14 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         var currentColour: UIColor = greenColour
         var currentTitle: String = ""
         
-        appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
+        if filterClient > 0 || filterProject > 0
+        {
+            appointmentList = iOSCalendar(clientID: filterClient, projectID: filterProject, teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+        }
+        else
+        {
+            appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, workingDate: workingDate)
+        }
         
         dayList.removeAll()
         if appointmentList.events.count == 0
@@ -552,46 +700,46 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                 
                 for eventEntry in appointmentList.events
                 {
-                    if eventEntry.isAllDay
+                    if eventEntry.iCalItem!.isAllDay
                     {
                         if myTime == "00:00"
                         {
-                            newEntry = dayViewList(timeSlice: "All Day", title: eventEntry.title, dateString: eventEntry.startDate.formatDateToString, colour: currentColour, event: eventEntry)
+                            newEntry = dayViewList(timeSlice: "All Day", title: eventEntry.iCalItem!.title, dateString: eventEntry.iCalItem!.startDate.formatDateToString, colour: currentColour, event: eventEntry.iCalItem)
                             currentColour = switchColour(currentColour)
                         }
                         break
                     }
                     
-                    if eventEntry.startDate >= tempStartDate && eventEntry.endDate <= tempEndDate
+                    if eventEntry.iCalItem!.startDate >= tempStartDate && eventEntry.iCalItem!.endDate <= tempEndDate
                     {
                         // Entire meeting fits into this slot
-                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.title, dateString: "\(eventEntry.startDate.formatTimeString) - \(eventEntry.endDate.formatTimeString)", colour: currentColour, event: eventEntry)
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: eventEntry.iCalItem)
                         
                         currentColour = switchColour(currentColour)
                         currentTitle = ""
                     }
-                    else if eventEntry.startDate < tempStartDate && eventEntry.endDate >= tempEndDate
+                    else if eventEntry.iCalItem!.startDate < tempStartDate && eventEntry.iCalItem!.endDate >= tempEndDate
                     {
                         // Meeting already in progress and runs over entire slot
-                        newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: currentColour, event: eventEntry)
+                        newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: currentColour, event: eventEntry.iCalItem)
                     }
-                    else if eventEntry.startDate >= tempEndDate
+                    else if eventEntry.iCalItem!.startDate >= tempEndDate
                     {
                         // Do nothing
                     }
-                    else if eventEntry.startDate >= tempStartDate && eventEntry.endDate > tempEndDate
+                    else if eventEntry.iCalItem!.startDate >= tempStartDate && eventEntry.iCalItem!.endDate > tempEndDate
                     {
                         // Meeting straddles slots
-                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.title, dateString: "\(eventEntry.startDate.formatTimeString) - \(eventEntry.endDate.formatTimeString)", colour: currentColour, event: eventEntry)
-                        currentTitle = eventEntry.title
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: eventEntry.iCalItem)
+                        currentTitle = eventEntry.iCalItem!.title
                     }
-                    else if eventEntry.endDate < tempEndDate && currentTitle != ""
+                    else if eventEntry.iCalItem!.endDate < tempEndDate && currentTitle != ""
                     {
                         currentColour = switchColour(currentColour)
                         currentTitle = ""
                     }
                     
-                    if eventEntry.endDate > tempEndDate
+                    if eventEntry.iCalItem!.endDate > tempEndDate
                     {
                         break
                     }
@@ -661,6 +809,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             btnClient.isEnabled = true
             btnProject.isEnabled = false
             btnAgenda.setTitle("Create Agenda", for: .normal)
+            workingMeeting = nil
         }
         else
         {
@@ -832,6 +981,11 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             {
                 btnClients.isEnabled = true
             }
+            
+            if selectedEvent != nil
+            {
+                displayEvent()
+            }
         }
         
         btnStartDate.setTitle(startDate.formatDateToString, for: .normal)
@@ -841,7 +995,14 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         {
             // Load calendar items
             
-            appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+            if filterClient > 0 || filterProject > 0
+            {
+                appointmentList = iOSCalendar(clientID: filterClient, projectID: filterProject, teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+            }
+            else
+            {
+                appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+            }
             tblCalendar.reloadData()
             Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
         }

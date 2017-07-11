@@ -92,9 +92,9 @@ class iOSCalendarListItem
 
 class iOSCalendar
 {
-    fileprivate var eventRecords: [EKEvent] = Array()
+    fileprivate var eventRecords: [mergedCalendarItem] = Array()
     
-    var events: [EKEvent]
+    var events: [mergedCalendarItem]
     {
         get
         {
@@ -182,6 +182,53 @@ class iOSCalendar
                 storeEvent(event, attendee: nil, teamID: teamID)
             }
         }
+    }
+    
+    init(clientID: Int, projectID: Int, teamID: Int, startDate: Date, endDate: Date)
+    {
+        var meetingList: [MeetingAgenda] = Array()
+        
+        if clientID > 0 && projectID > 0
+        {
+            meetingList = myDatabaseConnection.getAgenda(clientID: clientID, projectID: projectID, startDate: startDate, endDate: endDate, teamID: teamID)
+        }
+        else if clientID > 0
+        {
+            meetingList = myDatabaseConnection.getAgenda(clientID: clientID, startDate: startDate, endDate: endDate, teamID: teamID)
+        }
+        else if projectID > 0
+        {
+            meetingList = myDatabaseConnection.getAgenda(projectID: projectID, startDate: startDate, endDate: endDate, teamID: teamID)
+        }
+        
+        // Check through the meetings for ones that match the context
+        
+        let myEventList = getEventsForDateRange(startDate: startDate, endDate: endDate)
+        
+        for myMeeting in meetingList
+        {
+            // check to see if there is an event for this meeting
+            
+            var foundEvent: EKEvent!
+            
+            for myEvent in myEventList
+            {
+                let convertedDate = myMeeting.startTime! as Date
+                
+                if myEvent.title == myMeeting.name! && myEvent.startDate == convertedDate
+                {
+                    print("found an event")
+                    foundEvent = myEvent
+                    break
+                }
+            }
+            
+            let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+            let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: foundEvent)
+            eventRecords.append(newItem)
+        }
+        
+        eventRecords.sort(by: {$0.startDate < $1.startDate})
     }
     
     fileprivate func getEventsForDateRange(startDate: Date, endDate: Date) -> [EKEvent]
@@ -278,7 +325,9 @@ class iOSCalendar
     
     fileprivate func storeEvent(_ event: EKEvent, attendee: EKParticipant?, teamID: Int)
     {
-        eventRecords.append(event)
+        let calendarEntry = calendarItem(event: event, teamID: teamID)
+        let newItem = mergedCalendarItem(startDate: event.startDate, databaseItem: calendarEntry, iCalItem: event)
+        eventRecords.append(newItem)
     }
     
 //    func displayEvent() -> [TableData]

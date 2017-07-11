@@ -507,11 +507,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                     
                                     if myMeetingCheck.count == 0
                                     { // No meeting found, so need to create
-                                        let nextEvent = topCalendar()
-                                        
-                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], startDate: self.pickerStartDateArray[self.mySelectedRow], teamID: currentUser.currentTeam!.teamID)
-                                        
-                                        nextCalItem = nextEvent.appointments[0].databaseItem
+//                                        let nextEvent = topCalendar()
+//
+//                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], startDate: self.pickerStartDateArray[self.mySelectedRow], teamID: currentUser.currentTeam!.teamID)
+//
+//                                        nextCalItem = nextEvent.appointments[0].databaseItem
                                     }
                                     else
                                     { // meeting found use it
@@ -570,11 +570,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                 
                                 if myMeetingCheck.count == 0
                                 { // No meeting found, so need to create
-                                    let nextEvent = topCalendar()
-                                    
-                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
-                                    
-                                    nextCalItem = nextEvent.appointments[0].databaseItem
+//                                    let nextEvent = topCalendar()
+//
+//                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
+//
+//                                    nextCalItem = nextEvent.appointments[0].databaseItem
                                 }
                                 else
                                 { // meeting found use it
@@ -620,11 +620,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         
                         if myMeetingCheck.count == 0
                         { // No meeting found, so need to create
-                            let nextEvent = topCalendar()
-                        
-                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
-                        
-                            nextCalItem = nextEvent.appointments[0].databaseItem
+//                            let nextEvent = topCalendar()
+//                        
+//                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], startDate: pickerStartDateArray[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
+//                        
+//                            nextCalItem = nextEvent.appointments[0].databaseItem
                         }
                         else
                         { // meeting found use it

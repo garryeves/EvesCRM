@@ -29,231 +29,234 @@ func generateMeetingID(_ passedEvent: EKEvent) -> String
     return "\(passedEvent.calendarItemExternalIdentifier) Date: \(passedEvent.occurrenceDate)"
     
 }
-class topCalendar: NSObject
-{
-    fileprivate var mergedList: [mergedCalendarItem] = Array()
-    
-    var appointments: [mergedCalendarItem]
-    {
-        return mergedList
-    }
-//    var events: [EKEvent]
+//class topCalendar: NSObject
+//{
+//    fileprivate var mergedList: [mergedCalendarItem] = Array()
+//    
+//    var appointments: [mergedCalendarItem]
 //    {
-//        get
+//        return mergedList
+//    }
+////    var events: [EKEvent]
+////    {
+////        get
+////        {
+////            return eventRecords
+////        }
+////    }
+////    var calendarItems: [calendarItem]
+////    {
+////        get
+////        {
+////            return eventDetails
+////        }
+////    }
+//
+//    func loadCalendarDetails(_ emailAddresses: [String], teamID: Int)
+//    {
+//        mergedList.removeAll()
+//        
+//        for myEmail in emailAddresses
 //        {
-//            return eventRecords
+//            let startAdjust = readDefaultInt("CalBefore") as Int
+//            let endAdjust = readDefaultInt("CalAfter") as Int
+//            let startDate = Date().add(.day, amount: -(7 * startAdjust))
+//            let endDate = Date().add(.day, amount: (7 * endAdjust))
+//            
+//            for myEvent in iOSCalendar(email: myEmail, teamID: teamID, startDate: startDate, endDate: endDate).events
+//            {
+//                let newItem = mergedCalendarItem(startDate: myEvent.startDate, databaseItem: nil, iCalItem: myEvent.iCalItem)
+//                mergedList.append(newItem)
+//            }
+//        
+//            loadMeetingsForContext(myEmail, teamID: teamID, startDate: startDate, endDate: endDate)
+//        }
+//        
+//        // Now sort the array into date order
+//        
+//        mergedList.sort(by: {$0.startDate < $1.startDate})
+//    }
+//    
+//    func loadCalendarForEvent(_ meetingID: String, startDate: Date, teamID: Int)
+//    {
+//        /* The end date */
+//        //Calculate - Days * hours * mins * secs
+//        mergedList.removeAll()
+//        
+//        let myEndDateValue:TimeInterval = 60 * 60
+//        
+//        let endDate = startDate.addingTimeInterval(myEndDateValue)
+//        
+//        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+//        let searchPredicate = globalEventStore.predicateForEvents(
+//            withStart: startDate,
+//            end: endDate,
+//            calendars: nil)
+//        
+//        /* Fetch all the events that fall between the starting and the ending dates */
+//        
+//        if globalEventStore.sources.count > 0
+//        {
+//            let calItems = globalEventStore.events(matching: searchPredicate)
+//            
+//            for calItem in calItems
+//            {
+//                if generateMeetingID(calItem) == meetingID
+//                {
+//                    let calendarEntry = calendarItem(event: calItem, attendee: nil, teamID: teamID)
+//                    
+//                    let newItem = mergedCalendarItem(startDate: calItem.startDate, databaseItem: calendarEntry, iCalItem: calItem)
+//                    mergedList.append(newItem)
+//                }
+//            }
 //        }
 //    }
-//    var calendarItems: [calendarItem]
+//
+//    fileprivate func loadMeetingsForContext(_ context: String, teamID: Int, startDate: Date, endDate: Date)
 //    {
-//        get
+//        let myMeetingArray = getMeetingsForDateRange(teamID, startDate: startDate, endDate: endDate)
+//        mergedList.removeAll()
+//        
+//        // Check through the meetings for ones that match the context
+//        
+//        for myMeeting in myMeetingArray
 //        {
-//            return eventDetails
+//            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID!, teamID: teamID)
+//            
+//            for myAttendee in myAttendeeList
+//            {
+//                if (myAttendee.name == context) || (myAttendee.email == context)
+//                {
+//                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+//                    
+//                    // Check through the list of events to make sure we do not have a duplicate
+//                    
+//                    var itemMatched: Bool = false
+//                    
+//                    for myEvent in mergedList
+//                    {
+//                        if myEvent.startDate == calendarEntry.startDate
+//                        {
+//                            if myEvent.iCalItem != nil
+//                            {
+//                                if myEvent.iCalItem?.eventIdentifier == calendarEntry.title
+//                                {
+//                                    itemMatched = true
+//                                }
+//                            }
+//                            else if myEvent.databaseItem != nil
+//                            {
+//                                if myEvent.databaseItem?.title == calendarEntry.title
+//                                {
+//                                    itemMatched = true
+//                                }
+//                            }
+//                        }
+//                    }
+//                    
+//                    if !itemMatched
+//                    {
+//                        let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
+//                        
+//                        mergedList.append(newItem)
+//                    }
+//                }
+//            }
 //        }
 //    }
-
-    func loadCalendarDetails(_ emailAddresses: [String], teamID: Int)
-    {
-        mergedList.removeAll()
-        
-        for myEmail in emailAddresses
-        {
-            let startAdjust = readDefaultInt("CalBefore") as Int
-            let endAdjust = readDefaultInt("CalAfter") as Int
-            let startDate = Date().add(.day, amount: -(7 * startAdjust))
-            let endDate = Date().add(.day, amount: (7 * endAdjust))
-            
-            for myEvent in iOSCalendar(email: myEmail, teamID: teamID, startDate: startDate, endDate: endDate).events
-            {
-                let newItem = mergedCalendarItem(startDate: myEvent.startDate, databaseItem: nil, iCalItem: myEvent)
-                mergedList.append(newItem)
-            }
-        
-            loadMeetingsForContext(myEmail, teamID: teamID)
-        }
-        
-        // Now sort the array into date order
-        
-        mergedList.sort(by: {$0.startDate < $1.startDate})
-    }
-    
-    func loadCalendarForEvent(_ meetingID: String, startDate: Date, teamID: Int)
-    {
-        /* The end date */
-        //Calculate - Days * hours * mins * secs
-        
-        let myEndDateValue:TimeInterval = 60 * 60
-        
-        let endDate = startDate.addingTimeInterval(myEndDateValue)
-        
-        /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEvents(
-            withStart: startDate,
-            end: endDate,
-            calendars: nil)
-        
-        /* Fetch all the events that fall between the starting and the ending dates */
-        
-        if globalEventStore.sources.count > 0
-        {
-            let calItems = globalEventStore.events(matching: searchPredicate)
-            
-            for calItem in calItems
-            {
-                if generateMeetingID(calItem) == meetingID
-                {
-                    let calendarEntry = calendarItem(event: calItem, attendee: nil, teamID: teamID)
-                    
-                    let newItem = mergedCalendarItem(startDate: calItem.startDate, databaseItem: calendarEntry, iCalItem: calItem)
-                    mergedList.append(newItem)
-                }
-            }
-        }
-    }
-
-    fileprivate func loadMeetingsForContext(_ context: String, teamID: Int)
-    {
-        let myMeetingArray = getMeetingsForDateRange(teamID)
-        
-        // Check through the meetings for ones that match the context
-        
-        for myMeeting in myMeetingArray
-        {
-            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID!, teamID: teamID)
-            
-            for myAttendee in myAttendeeList
-            {
-                if (myAttendee.name == context) || (myAttendee.email == context)
-                {
-                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
-                    
-                    // Check through the list of events to make sure we do not have a duplicate
-                    
-                    var itemMatched: Bool = false
-                    
-                    for myEvent in mergedList
-                    {
-                        if myEvent.startDate == calendarEntry.startDate
-                        {
-                            if myEvent.iCalItem != nil
-                            {
-                                if myEvent.iCalItem?.eventIdentifier == calendarEntry.title
-                                {
-                                    itemMatched = true
-                                }
-                            }
-                            else if myEvent.databaseItem != nil
-                            {
-                                if myEvent.databaseItem?.title == calendarEntry.title
-                                {
-                                    itemMatched = true
-                                }
-                            }
-                        }
-                    }
-                    
-                    if !itemMatched
-                    {
-                        let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
-                        
-                        mergedList.append(newItem)
-                    }
-                }
-            }
-        }
-    }
-    
-    fileprivate func loadMeetingsForProject(_ searchString: String, teamID: Int)
-    {
-        var meetingFound: Bool = false
-        var dateMatch: Bool = false
-        
-        let myMeetingArray = getMeetingsForDateRange(teamID)
-        
-        // Check through the meetings for ones that match the context
-        
-        for myMeeting in myMeetingArray
-        {
-            if myMeeting.name?.lowercased().range(of: searchString.lowercased()) != nil
-            {
-                // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
-                meetingFound = false
-                dateMatch = true
-                for myCheck in mergedList
-                {
-                    if myCheck.databaseItem?.meetingID == myMeeting.meetingID
-                    {
-                        meetingFound = true
-                        break
-                    }
-                    
-                    if myCheck.databaseItem?.title == myMeeting.name
-                    {  // Meeting names are the same
-                        if myCheck.startDate == myMeeting.startTime! as Date
-                        { // Dates are the same
-                            dateMatch = true
-                            break
-                        }
-                    }
-                    // Events Ids do not match
-                }
-                
-                if !meetingFound
-                {
-                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
-                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
-                    mergedList.append(newItem)
-                }
-                
-                if !dateMatch
-                {
-                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
-                    
-                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
-                    mergedList.append(newItem)
-                }
-            }
-        }
-    }
-    
-    func loadCalendarDetailsForProject(_ projectName: String, teamID: Int)
-    {
-        loadMeetingsForProject(projectName, teamID: teamID)
-        
-        // now sort the array into date order
-        
-        mergedList.sort(by: {$0.startDate < $1.startDate})
-    }
-
-    fileprivate func getMeetingsForDateRange(_ teamID: Int) -> [MeetingAgenda]
-    {
-        let startDateModifier = readDefaultInt("CalBefore") as Int
-        
-        let startDate = Date().add(.day, amount: -(startDateModifier * 7))
-        
-        let endDateModifier = readDefaultInt("CalAfter") as Int
-        
-        let endDate = Date().add(.day, amount: (endDateModifier * 7))
-        
-        /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        _ = globalEventStore.predicateForEvents(
-            withStart: startDate,
-            end: endDate,
-            calendars: nil)
-        
-        /* Fetch all the meetings that fall between the starting and the ending dates */
-        
-        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, endDate: endDate as NSDate, teamID: teamID)
-    }
-
-    fileprivate func storeEvent(_ event: EKEvent, attendee: EKParticipant?, teamID: Int)
-    {
-        let calendarEntry = calendarItem(event: event, attendee: attendee, teamID: teamID)
-        
-        let newItem = mergedCalendarItem(startDate: event.startDate, databaseItem: calendarEntry, iCalItem: event)
-        mergedList.append(newItem)
-    }
-}
+//    
+//    fileprivate func loadMeetingsForProject(_ searchString: String, teamID: Int, startDate: Date, endDate: Date)
+//    {
+//        var meetingFound: Bool = false
+//        var dateMatch: Bool = false
+//        mergedList.removeAll()
+//        
+//        let myMeetingArray = getMeetingsForDateRange(teamID, startDate: startDate, endDate: endDate)
+//        
+//        // Check through the meetings for ones that match the context
+//        
+//        for myMeeting in myMeetingArray
+//        {
+//            if myMeeting.name?.lowercased().range(of: searchString.lowercased()) != nil
+//            {
+//                // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
+//                meetingFound = false
+//                dateMatch = true
+//                for myCheck in mergedList
+//                {
+//                    if myCheck.databaseItem?.meetingID == myMeeting.meetingID
+//                    {
+//                        meetingFound = true
+//                        break
+//                    }
+//                    
+//                    if myCheck.databaseItem?.title == myMeeting.name
+//                    {  // Meeting names are the same
+//                        if myCheck.startDate == myMeeting.startTime! as Date
+//                        { // Dates are the same
+//                            dateMatch = true
+//                            break
+//                        }
+//                    }
+//                    // Events Ids do not match
+//                }
+//                
+//                if !meetingFound
+//                {
+//                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+//                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
+//                    mergedList.append(newItem)
+//                }
+//                
+//                if !dateMatch
+//                {
+//                    let calendarEntry = calendarItem(meetingAgenda: myMeeting)
+//                    
+//                    let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: nil)
+//                    mergedList.append(newItem)
+//                }
+//            }
+//        }
+//    }
+//    
+////    func loadCalendarDetailsForProject(_ projectName: String, teamID: Int, startDate: Date, endDate: Date)
+////    {
+////        loadMeetingsForProject(projectName, teamID: teamID, startDate: startDate, endDate: endDate)
+////
+////        // now sort the array into date order
+////
+////        mergedList.sort(by: {$0.startDate < $1.startDate})
+////    }
+//
+////    fileprivate func getMeetingsForDateRange(_ teamID: Int, startDate: Date, endDate: Date) -> [MeetingAgenda]
+////    {
+////        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+////        _ = globalEventStore.predicateForEvents(
+////            withStart: startDate,
+////            end: endDate,
+////            calendars: nil)
+////
+////        /* Fetch all the meetings that fall between the starting and the ending dates */
+////
+////        return myDatabaseConnection.getAgendaForDateRange(startDate, endDate: endDate, teamID: teamID)
+////    }
+//    
+////    fileprivate getEventsForDateRange(startDate: Date, endDate: Date) -> [EKEvent]
+////    {
+////        return globalEventStore.predicateForEvents(
+////        withStart: startDate,
+////        end: endDate,
+////        calendars: nil)
+////    }
+//
+//    fileprivate func storeEvent(_ event: EKEvent, attendee: EKParticipant?, teamID: Int)
+//    {
+//        let calendarEntry = calendarItem(event: event, attendee: attendee, teamID: teamID)
+//        
+//        let newItem = mergedCalendarItem(startDate: event.startDate, databaseItem: calendarEntry, iCalItem: event)
+//        mergedList.append(newItem)
+//    }
+//}
 
 //class topReminder: NSObject
 //{
@@ -474,6 +477,7 @@ class calendarItem
         }
         else
         {
+            myMeetingID = generateMeetingID(event)
             myEvent = event
             myTitle = event.title
             myStartDate = event.startDate
@@ -2788,7 +2792,7 @@ extension coreDatabase
         }
     }
 
-    func getAgendaForDateRange(_ inStartDate: NSDate, endDate: NSDate, teamID: Int)->[MeetingAgenda]
+    func getAgendaForDateRange(_ startDate: Date, endDate: Date, teamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2797,7 +2801,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@) && (updateType != \"Delete\") && (teamID == \(teamID))", inStartDate as CVarArg, endDate as CVarArg)
+        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@) && (updateType != \"Delete\") && (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2815,6 +2819,87 @@ extension coreDatabase
         }
     }
 
+    func getAgenda(clientID: Int, projectID: Int, startDate: Date, endDate: Date, teamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(clientID == \(clientID)) AND (projectID == \(projectID)) AND (startTime >= %@) AND (endTime <= %@) AND (updateType != \"Delete\") AND (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAgenda(clientID: Int, startDate: Date, endDate: Date, teamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(clientID == \(clientID)) AND (startTime >= %@) AND (endTime <= %@) AND (updateType != \"Delete\") AND (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAgenda(projectID: Int, startDate: Date, endDate: Date, teamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(projectID == \(projectID)) AND (startTime >= %@) AND (endTime <= %@) AND (updateType != \"Delete\") AND (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func resetMeetings()
     {
         let fetchRequest1 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
