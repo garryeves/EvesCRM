@@ -17,9 +17,8 @@ protocol MyAgendaItemDelegate
 
 class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate //, SMTEFillDelegate
 {
-    var delegate: MyAgendaItemDelegate?
-    var meetingCommunication: meetingCommunicationDelegate!
-
+    var communicationDelegate: myCommunicationDelegate?
+    
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var txtTitle: UITextField!
     @IBOutlet weak var lblOwner: UILabel!
@@ -141,7 +140,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         }
         else
         {
-            delegate?.myAgendaItemDidFinish(self, actionType: "Cancel")
+            communicationDelegate!.refreshScreen!()
         }
     }
     

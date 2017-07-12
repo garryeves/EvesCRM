@@ -80,7 +80,7 @@ class meetingAttendee
         }
     }
     
-    init(meetingID: String, name: String, teamID: Int)
+    func load(_ meetingID: String, name: String, teamID: Int)
     {
         let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID, teamID: teamID)
         
@@ -95,14 +95,6 @@ class meetingAttendee
                 myStatus = myItem.attendenceStatus!
                 myTeamID = Int(myItem.teamID)
             }
-        }
-        else
-        {
-            myMeetingID = meetingID
-            myName = name
-            myTeamID = teamID
-            myStatus = "Invited"
-            save()
         }
     }
     

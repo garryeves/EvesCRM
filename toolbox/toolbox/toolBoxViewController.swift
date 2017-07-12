@@ -16,7 +16,7 @@ struct dayViewList
     var title: String = ""
     var dateString: String = ""
     var colour: UIColor
-    var event: EKEvent!
+    var event: mergedCalendarItem!
 }
 
 class toolboxViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate, EKEventEditViewDelegate
@@ -65,7 +65,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     fileprivate var alertList: alerts!
     fileprivate var appointmentList: iOSCalendar!
     fileprivate var workingDate: Date!
-    fileprivate var selectedEvent: EKEvent!
+    fileprivate var selectedEvent: mergedCalendarItem!
     fileprivate var workingMeeting: calendarItem!
     fileprivate var displayList: [String] = Array()
     fileprivate var clientSource: [client] = Array()
@@ -223,7 +223,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             case tblCalendar:
                 if btnCalendarView.currentTitle == listView
                 {
-                    selectedEvent = appointmentList.events[indexPath.row].iCalItem
+                    selectedEvent = appointmentList.events[indexPath.row]
                 }
                 else
                 {
@@ -319,7 +319,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBAction func btnEvent(_ sender: UIButton)
     {
         let controller = EKEventEditViewController()
-        controller.event = selectedEvent
+        controller.event = selectedEvent.iCalItem
         controller.eventStore = globalEventStore
         controller.editViewDelegate = self
         present(controller, animated: true)
@@ -328,6 +328,14 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBAction func btnAgenda(_ sender: UIButton)
     {
         createMeetingAgenda()
+        
+        selectedEvent.databaseItem!.populateAttendeesFromInvite(selectedEvent.iCalItem)
+        
+        let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingAgenda") as! meetingAgendaViewController
+        agendaViewControl.communicationDelegate = self
+        agendaViewControl.passedMeeting = selectedEvent.databaseItem
+        agendaViewControl.actionType = "Agenda"
+        self.present(agendaViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnClient(_ sender: UIButton)
@@ -662,7 +670,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
         if workingMeeting == nil
         {
-            workingMeeting = calendarItem(event: selectedEvent, teamID: currentUser.currentTeam!.teamID)
+            workingMeeting = calendarItem(event: selectedEvent.iCalItem!, teamID: currentUser.currentTeam!.teamID)
         }
     }
     
@@ -704,7 +712,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                     {
                         if myTime == "00:00"
                         {
-                            newEntry = dayViewList(timeSlice: "All Day", title: eventEntry.iCalItem!.title, dateString: eventEntry.iCalItem!.startDate.formatDateToString, colour: currentColour, event: eventEntry.iCalItem)
+                            let newMerged = mergedCalendarItem(startDate: eventEntry.iCalItem!.startDate, databaseItem: nil, iCalItem: eventEntry.iCalItem!)
+                            newEntry = dayViewList(timeSlice: "All Day", title: eventEntry.iCalItem!.title, dateString: eventEntry.iCalItem!.startDate.formatDateToString, colour: currentColour, event: newMerged)
                             currentColour = switchColour(currentColour)
                         }
                         break
@@ -713,7 +722,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                     if eventEntry.iCalItem!.startDate >= tempStartDate && eventEntry.iCalItem!.endDate <= tempEndDate
                     {
                         // Entire meeting fits into this slot
-                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: eventEntry.iCalItem)
+                        let newMerged = mergedCalendarItem(startDate: eventEntry.iCalItem!.startDate, databaseItem: nil, iCalItem: eventEntry.iCalItem!)
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: newMerged)
                         
                         currentColour = switchColour(currentColour)
                         currentTitle = ""
@@ -721,7 +731,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                     else if eventEntry.iCalItem!.startDate < tempStartDate && eventEntry.iCalItem!.endDate >= tempEndDate
                     {
                         // Meeting already in progress and runs over entire slot
-                        newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: currentColour, event: eventEntry.iCalItem)
+                        let newMerged = mergedCalendarItem(startDate: eventEntry.iCalItem!.startDate, databaseItem: nil, iCalItem: eventEntry.iCalItem!)
+                        newEntry = dayViewList(timeSlice: myTime, title: myTime, dateString: "", colour: currentColour, event: newMerged)
                     }
                     else if eventEntry.iCalItem!.startDate >= tempEndDate
                     {
@@ -730,7 +741,8 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                     else if eventEntry.iCalItem!.startDate >= tempStartDate && eventEntry.iCalItem!.endDate > tempEndDate
                     {
                         // Meeting straddles slots
-                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: eventEntry.iCalItem)
+                        let newMerged = mergedCalendarItem(startDate: eventEntry.iCalItem!.startDate, databaseItem: nil, iCalItem: eventEntry.iCalItem!)
+                        newEntry = dayViewList(timeSlice: myTime, title: eventEntry.iCalItem!.title, dateString: "\(eventEntry.iCalItem!.startDate.formatTimeString) - \(eventEntry.iCalItem!.endDate.formatTimeString)", colour: currentColour, event: newMerged)
                         currentTitle = eventEntry.iCalItem!.title
                     }
                     else if eventEntry.iCalItem!.endDate < tempEndDate && currentTitle != ""
@@ -783,22 +795,22 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     {
         showFields()
         
-        lblTitle.text = selectedEvent.title
+        lblTitle.text = selectedEvent.iCalItem!.title
         
-        if selectedEvent.isAllDay
+        if selectedEvent.iCalItem!.isAllDay
         {
             lblDate.text = selectedEvent.startDate.formatDateToString
         }
         else
         {
-            lblDate.text = "\(selectedEvent.startDate.formatDateAndTimeString) - \(selectedEvent.endDate.formatTimeString)"
+            lblDate.text = "\(selectedEvent.iCalItem!.startDate.formatDateAndTimeString) - \(selectedEvent.iCalItem!.endDate.formatTimeString)"
         }
         
-        lblLocation.text = selectedEvent.structuredLocation?.title
+        lblLocation.text = selectedEvent.iCalItem!.structuredLocation?.title
         
         // Is there a meeting entry for this
         
-        workingMeeting = calendarItem(meetingID: generateMeetingID(selectedEvent), teamID: currentUser.currentTeam!.teamID)
+        workingMeeting = calendarItem(meetingID: generateMeetingID(selectedEvent.iCalItem!), teamID: currentUser.currentTeam!.teamID)
         
         if workingMeeting.meetingID == ""
         {

@@ -992,24 +992,31 @@ class calendarItem
             save()
         }
     }
-    
     func addAttendee(_ name: String, emailAddress: String, type: String, status: String)
     {
-        // see if there is already an entry for the user for this meeting
+        // make sure we have saved the Agenda
         
-        let attendee = meetingAttendee(meetingID: meetingID, name: name, teamID: currentUser.currentTeam!.teamID)
+        save()
+
+        let attendee: meetingAttendee = meetingAttendee()
+        attendee.name = name
         attendee.emailAddress = emailAddress
         attendee.type = type
-        save()
+        attendee.status = status
+        attendee.meetingID = meetingID
+        attendee.save()
         
         myAttendees.append(attendee)
     }
     
     fileprivate func initaliseAttendee(_ name: String, emailAddress: String, type: String, status: String)
     {
-        let attendee = meetingAttendee(meetingID: meetingID, name: name, teamID: currentUser.currentTeam!.teamID)
+        let attendee: meetingAttendee = meetingAttendee()
+        attendee.name = name
         attendee.emailAddress = emailAddress
         attendee.type = type
+        attendee.status = status
+        attendee.meetingID = meetingID
         
         myAttendees.append(attendee)
     }
@@ -1024,30 +1031,21 @@ class calendarItem
         myAttendees[index].delete()
     }
     
-    func populateAttendeesFromInvite(_ passedEvent: EKEvent?)
+    func populateAttendeesFromInvite()
     {
         // Use this for the initial population of the attendees
-        save()
-        if passedEvent != nil
+        
+        for attendee in event!.attendees!
         {
-            // Get the list of attendees
-            
-            for attendee in passedEvent!.attendees!
+            if !attendee.isCurrentUser
             {
-                if !attendee.isCurrentUser
-                {
-                    // Is the Attendee is not the current user then we need to parse the email address
-                    
-                    // Split the URL string on : - to give an array, the second element is the email address
-                    
-                    let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
- 
-                    addAttendee(attendee.name!, emailAddress: emailSplit[1], type: "Participant", status: "Invited")
-                }
-                else
-                {
-                    addAttendee(attendee.name!, emailAddress: currentUser.email, type: "Participant", status: "Invited")
-                }
+                // Is the Attendee is not the current user then we need to parse the email address
+                
+                // Split the URL string on : - to give an array, the second element is the email address
+                
+                let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
+                
+                addAttendee(attendee.name!, emailAddress: emailSplit[1], type: "Participant", status: "Invited")
             }
         }
     }
