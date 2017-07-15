@@ -200,32 +200,41 @@ class iOSCalendar
         {
             meetingList = myDatabaseConnection.getAgenda(projectID: projectID, startDate: startDate, endDate: endDate, teamID: teamID)
         }
+        else
+        {
+            meetingList = myDatabaseConnection.getAgenda(startDate: startDate, endDate: endDate, teamID: teamID)
+        }
         
         // Check through the meetings for ones that match the context
         
         let myEventList = getEventsForDateRange(startDate: startDate, endDate: endDate)
         
-        for myMeeting in meetingList
+        for myEvent in myEventList
         {
-            // check to see if there is an event for this meeting
+            var foundMeeting: MeetingAgenda!
             
-            var foundEvent: EKEvent!
-            
-            for myEvent in myEventList
+            for myMeeting in meetingList
             {
                 let convertedDate = myMeeting.startTime! as Date
                 
                 if myEvent.title == myMeeting.name! && myEvent.startDate == convertedDate
                 {
-                    print("found an event")
-                    foundEvent = myEvent
+                    foundMeeting = myMeeting
                     break
                 }
             }
             
-            let calendarEntry = calendarItem(meetingAgenda: myMeeting)
-            let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: foundEvent)
-            eventRecords.append(newItem)
+            if foundMeeting != nil
+            {
+                let calendarEntry = calendarItem(meetingAgenda: foundMeeting)
+                let newItem = mergedCalendarItem(startDate: calendarEntry.startDate, databaseItem: calendarEntry, iCalItem: myEvent)
+                eventRecords.append(newItem)
+            }
+            else
+            {
+                let newItem = mergedCalendarItem(startDate: myEvent.startDate, databaseItem: nil, iCalItem: myEvent)
+                eventRecords.append(newItem)
+            }
         }
         
         eventRecords.sort(by: {$0.startDate < $1.startDate})

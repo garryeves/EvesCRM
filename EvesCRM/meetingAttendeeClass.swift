@@ -65,6 +65,7 @@ class meetingAttendee
         set
         {
             myStatus = newValue
+            save()
         }
     }
     

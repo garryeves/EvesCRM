@@ -8,16 +8,24 @@
 
 import Foundation
 import UIKit
+import EventKit
+
 //import TextExpander
 
-class meetingAgendaViewController: UIViewController, myCommunicationDelegate, MyTaskListDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate , MyPickerDelegate //,  SMTEFillDelegate
+let meetingAttendenceAttended = "Attended"
+let meetingAttendenceApologised = "Apologised"
+let meetingAttendenceNotAttend = "Did not attend"
+let meetingAttendenceDelegated = "Delegated"
+
+class meetingAgendaViewController: UIViewController, myCommunicationDelegate, MyTaskListDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate , MyPickerDelegate, UIPopoverPresentationControllerDelegate //,  SMTEFillDelegate
 {
     var passedMeeting: calendarItem!
     var communicationDelegate: myCommunicationDelegate?
     var actionType: String!
     
+    @IBOutlet weak var navBarTitle: UINavigationItem!
+    @IBOutlet weak var tblAgenda: UITableView!
     @IBOutlet weak var lblAgendaItems: UILabel!
-    @IBOutlet weak var colAgenda: UICollectionView!
     @IBOutlet weak var btnAddAgendaItem: UIButton!
     @IBOutlet weak var lblAddAgendaItem: UILabel!
     @IBOutlet weak var lblDescription: UILabel!
@@ -26,21 +34,29 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     @IBOutlet weak var txtTimeAllocation: UITextField!
     @IBOutlet weak var lblOwner: UILabel!
     @IBOutlet weak var btnOwner: UIButton!
-    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var tblAttendees: UITableView!
     @IBOutlet weak var lblChair: UILabel!
     @IBOutlet weak var lblMinutes: UILabel!
     @IBOutlet weak var btnChair: UIButton!
     @IBOutlet weak var btnMinutes: UIButton!
+    @IBOutlet weak var navBar: UINavigationBar!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
+    @IBOutlet weak var lblNextMeeting: UILabel!
+    @IBOutlet weak var lblPreviousMeeting: UILabel!
+    @IBOutlet weak var btnPreviousMeeting: UIButton!
+    @IBOutlet weak var btnNextMeeting: UIButton!
+    @IBOutlet weak var btnViewPreviousMeeting: UIButton!
+    @IBOutlet weak var btnViewNextMeeting: UIButton!
     
     fileprivate let reuseAgendaTime = "reuseAgendaTime"
     fileprivate let reuseAgendaTitle = "reuseAgendaTitle"
     fileprivate let reuseAgendaOwner = "reuseAgendaOwner"
     fileprivate let reuseAgendaAction = "reuseAgendaAction"
     
-    fileprivate var pickerOptions: [String] = Array()
     fileprivate var myAgendaList: [meetingAgendaItem] = Array()
     fileprivate var displayList: [String] = Array()
+    fileprivate var meetingList: [String] = Array()
     
     fileprivate var myDateFormatter = DateFormatter()
     fileprivate let myCalendar = Calendar.current
@@ -64,33 +80,6 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         super.viewDidLoad()
         
-//        if passedMeeting == nil
-//        {
-//            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
-//            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
-//        }
-//
-        toolbar.isTranslucent = false
-        
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-            target: self, action: nil)
-        
-        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
-        
-        if actionType != nil
-        {
-            let pageHead = UIBarButtonItem(title: actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
-            pageHead.tintColor = UIColor.black
-        
-            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-            self.toolbar.items=[spacer,pageHead, spacer2, share]
-        }
-        else
-        {
-            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-            self.toolbar.items=[spacer, spacer2, share]
-        }
-        
         if actionType != nil
         {
             if actionType != "Agenda"
@@ -98,21 +87,11 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
                 btnAddAgendaItem.isHidden = true
             }
         }
-        
-        buildAgendaArray()
-        
-        btnOwner.setTitle("Select Owner", for: .normal)
-        
+
         myDateFormatter.timeStyle = DateFormatter.Style.short
         myWorkingTime = passedMeeting.startDate as Date
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
-        self.view.addGestureRecognizer(showGestureRecognizer)
-        
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
-        self.view.addGestureRecognizer(hideGestureRecognizer)
+        refreshScreen()
         
 //        // TextExpander
 //        textExpander = SMTEDelegateController()
@@ -121,7 +100,6 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
 //        textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
 //        textExpander.fillDelegate = self
 //        textExpander.nextDelegate = self
-        myCurrentViewController = self
     }
     
     override func didReceiveMemoryWarning()
@@ -130,141 +108,108 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillLayoutSubviews()
-    {
-        super.viewWillLayoutSubviews()
-        colAgenda.collectionViewLayout.invalidateLayout()
-        myWorkingTime = passedMeeting.startDate as Date
-        colAgenda.reloadData()
-    }
-    
-    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
-    {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.left
-        {
-            // Do nothing
-        }
-        else
-        {
-            // Move to previous item in tab hierarchy
-            
-            let myCurrentTab = self.tabBarController
-            
-            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex - 1
-        }
-    }
+//    override func viewWillLayoutSubviews()
+//    {
+//        super.viewWillLayoutSubviews()
+//        myWorkingTime = passedMeeting.startDate as Date
+//        refreshScreen()
+//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return passedMeeting.attendees.count
+        if tableView == tblAttendees
+        {
+            return passedMeeting.attendees.count
+        }
+        else if tableView == tblAgenda
+        {
+            return myAgendaList.count
+        }
+        else
+        {
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier:"attendeeItem", for: indexPath) as! meetingAgendaEntry
+        if tableView == tblAttendees
+        {
+            let cell = tableView.dequeueReusableCell(withIdentifier:"attendeeItem", for: indexPath) as! meetingAgendaEntry
             
-        cell.lblName.text = passedMeeting.attendees[indexPath.row].name
-        cell.attendeeEntry = passedMeeting.attendees[indexPath.row]
-        cell.btnAction.setTitle(passedMeeting.attendees[indexPath.row].status, for: .normal)
-        
-        return cell
-    }
-    
-//    func numberOfSections(in collectionView: UICollectionView) -> Int
-//    {
-//        return 1
-//    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
-        return myAgendaList.count
-    }
-    
-    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
-        var cell: myMovableAgendaItem!
-     
-        if indexPath.row == 0
-        {
-            myWorkingTime = passedMeeting.startDate as Date
-        }
-        
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseAgendaTime, for: indexPath as IndexPath) as! myMovableAgendaItem
-        cell.lblTime.text = "\(myDateFormatter.string(from: myWorkingTime))"
-        cell.lblItem.text = myAgendaList[indexPath.row].title
-        cell.lblOwner.text = myAgendaList[indexPath.row].owner
+            cell.lblName.text = passedMeeting.attendees[indexPath.row].name
+            cell.attendeeEntry = passedMeeting.attendees[indexPath.row]
+            
+            if passedMeeting.attendees[indexPath.row].status == ""
+            {
+                cell.btnAction.setTitle("Select", for: .normal)
+            }
+            else
+            {
+                cell.btnAction.setTitle(passedMeeting.attendees[indexPath.row].status, for: .normal)
+            }
 
-        myWorkingTime = myCalendar.date(
-            byAdding: .minute,
-            value: Int(myAgendaList[indexPath.row].timeAllocation),
-            to: myWorkingTime)!
-        
-        if (indexPath.row % 2 == 0)  // was .row
+            cell.mainView = self
+            cell.sourceView = cell
+            
+            return cell
+        }
+        else if tableView == tblAgenda
         {
-            cell.backgroundColor = greenColour
+            let cell = tableView.dequeueReusableCell(withIdentifier:"cellAgenda", for: indexPath) as! myAgendaItem
+            
+            cell.lblTime.text = "\(myDateFormatter.string(from: myWorkingTime))"
+            cell.lblItem.text = myAgendaList[indexPath.row].title
+            cell.lblOwner.text = myAgendaList[indexPath.row].owner
+            
+            myWorkingTime = myWorkingTime.add(.minute, amount: Int(myAgendaList[indexPath.row].timeAllocation))
+            
+            return cell
         }
         else
         {
-            cell.backgroundColor = UIColor.clear
-        }
-        
-        cell.layoutSubviews()
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
-    {
-        let itemToUpdate = indexPath.row
-  
-        if myAgendaList[itemToUpdate].agendaID == 0
-        {  // This is a previous meeting tasks row, so call the task list
- print("collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)   to do")
-//            if meetingCommunication != nil
-//            {
-//                meetingCommunication.displayTaskList(passedMeeting)
-//            }
-//            else
-//            {
-//                let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
-//                taskListViewControl.delegate = self
-//                taskListViewControl.myTaskListType = "Meeting"
-//                taskListViewControl.passedMeeting = passedMeeting
-//
-//                self.present(taskListViewControl, animated: true, completion: nil)
-//            }
-        }
-        else
-        {  // This is a normal Agenda item so call the Agenda item screen
-            let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
-            agendaViewControl.communicationDelegate = self
-            agendaViewControl.event = passedMeeting
-            agendaViewControl.actionType = actionType
-            
-            let agendaItem = myAgendaList[itemToUpdate]
-            agendaViewControl.agendaItem = agendaItem
-            
-            self.present(agendaViewControl, animated: true, completion: nil)
+            return UITableViewCell()
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        var headerView:UICollectionReusableView!
-
-        if kind == UICollectionElementKindSectionHeader
+        if tableView == tblAgenda
         {
-        headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "agendaItemHeader", for: indexPath as IndexPath) 
+            let itemToUpdate = indexPath.row
+            
+            if myAgendaList[itemToUpdate].agendaID == 0
+            {  // This is a previous meeting tasks row, so call the task list
+                print("collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)   to do")
+                //            if meetingCommunication != nil
+                //            {
+                //                meetingCommunication.displayTaskList(passedMeeting)
+                //            }
+                //            else
+                //            {
+                //                let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+                //                taskListViewControl.delegate = self
+                //                taskListViewControl.myTaskListType = "Meeting"
+                //                taskListViewControl.passedMeeting = passedMeeting
+                //
+                //                self.present(taskListViewControl, animated: true, completion: nil)
+                //            }
+            }
+            else
+            {  // This is a normal Agenda item so call the Agenda item screen
+                let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
+                agendaViewControl.communicationDelegate = self
+                agendaViewControl.event = passedMeeting
+                agendaViewControl.actionType = actionType
+                
+                let agendaItem = myAgendaList[itemToUpdate]
+                agendaViewControl.agendaItem = agendaItem
+                
+                self.present(agendaViewControl, animated: true, completion: nil)
+            }
         }
-        return headerView
     }
-    
-    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
-    {
-        return CGSize(width: colAgenda.bounds.size.width, height: 39)
-    }
-    
+
     // Start move
     
     func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
@@ -327,7 +272,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
 
         buildAgendaArray()
         
-        colAgenda.reloadData()
+        tblAgenda.reloadData()
     }
     
     // End move
@@ -369,7 +314,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             buildAgendaArray()
             
             myWorkingTime = passedMeeting.startDate as Date
-            colAgenda.reloadData()
+            tblAgenda.reloadData()
         
             // set the fields to blank
         
@@ -381,24 +326,302 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     
     @IBAction func btnOwner(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
         
-        pickerOptions.append("")
+        displayList.append("")
         for attendee in passedMeeting.attendees
         {
-            pickerOptions.append(attendee.name)
+            displayList.append(attendee.name)
         }
-        hideFields()
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "owner"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnChair(_ sender: UIButton)
     {
+        displayList.removeAll(keepingCapacity: false)
+        
+        displayList.append("")
+        for attendee in passedMeeting.attendees
+        {
+            displayList.append(attendee.name)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "chair"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnMinutes(_ sender: UIButton)
     {
+        displayList.removeAll(keepingCapacity: false)
+        
+        displayList.append("")
+        for attendee in passedMeeting.attendees
+        {
+            displayList.append(attendee.name)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "minutes"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
+    @IBAction func btnPreviousMeeting(_ sender: UIButton)
+    {
+        // We only list items here that we have Meeting records for, as otherwise there is no previous actions to get and display
+        
+        // if a recurring meeting invite then display previous occurances at the top of the list
+        
+        displayList.removeAll(keepingCapacity: false)
+        meetingList.removeAll(keepingCapacity: false)
+        
+        displayList.append("")
+        meetingList.append("")
+        
+        if passedMeeting.event!.recurrenceRules != nil
+        {
+            // Recurring event, so display rucurrences first
+            
+            // get the meeting id, and remove the trailing portion in order to use in a search
+            
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+            
+            if myItems.count > 0
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.meetingID
+                    { // Not this meeting meeting
+                        let startDateFormatter = DateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
+                        
+                        displayList.append("\(myItem.name!) - \(myDisplayDate)")
+                        meetingList.append(myItem.meetingID!)
+                    }
+                }
+            }
+            
+            // display remaining items, newest first
+            
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+            
+            if myNonItems.count > 0
+            { // There is an previous meeting
+                for myItem in myNonItems
+                {
+                    if myItem.meetingID != passedMeeting.meetingID
+                    { // Not this meeting meeting
+                        let startDateFormatter = DateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
+                        
+                        displayList.append("\(myItem.name!) - \(myDisplayDate)")
+                        meetingList.append(myItem.meetingID!)
+                    }
+                }
+            }
+            
+            // Next meeting could also be a non entry so need to show calendar items as well
+        }
+        else
+        {
+            //non-recurring event, so display in date order, newest first
+            
+            // list items prior to meeting date
+            
+            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+            
+            if myItems.count > 0
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.meetingID
+                    { // Not this meeting meeting
+                        let startDateFormatter = DateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
+                        
+                        displayList.append("\(myItem.name!) - \(myDisplayDate)")
+                        meetingList.append(myItem.meetingID!)
+                    }
+                }
+            }
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "previousMeeting"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func btnNextMeeting(_ sender: UIButton)
+    {
+        displayList.removeAll(keepingCapacity: false)
+        meetingList.removeAll(keepingCapacity: false)
+        
+        displayList.append("")
+        meetingList.append("")
+        
+        var calItems: [EKEvent] = []
+        
+        let startDate = passedMeeting.startDate
+        
+        let endDateModifier = readDefaultInt("CalAfter") as Int
+        
+        let endDate = Date().add(.day, amount: (endDateModifier * 7))
+        
+        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+        let searchPredicate = globalEventStore.predicateForEvents(
+            withStart: startDate as Date,
+            end: endDate,
+            calendars: nil)
+        
+        /* Fetch all the events that fall between the starting and the ending dates */
+        
+        if globalEventStore.sources.count > 0
+        {
+            calItems = globalEventStore.events(matching: searchPredicate)
+        }
+        
+        if calItems.count >  0
+        {
+            // Go through all the events and print them to the console
+            for calItem in calItems
+            {
+                if passedMeeting.meetingID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
+                {
+                    let startDateFormatter = DateFormatter()
+                    startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                    let myDisplayDate = startDateFormatter.string(from: calItem.startDate)
+                    
+                    displayList.append("\(calItem.title) - \(myDisplayDate)")
+                    meetingList.append("\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)")
+                }
+            }
+        }
+        
+        if passedMeeting.event?.recurrenceRules != nil
+        {
+            // Recurring event, so display rucurrences first
+            
+            // get the meeting id, and remove the trailing portion in order to use in a search
+            
+            var myItems: [MeetingAgenda]!
+            
+            let tempMeetingID = passedMeeting.meetingID
+            if tempMeetingID.range(of: "/") != nil
+            {
+                let myStringArr = tempMeetingID.components(separatedBy: "/")
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+            }
+            else
+            {
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: currentUser.currentTeam!.teamID)
+            }
+            
+            if myItems.count > 1
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.meetingID
+                    { // Not this meeting meeting
+                        let startDateFormatter = DateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
+                        
+                        displayList.append("\(myItem.name!) - \(myDisplayDate)")
+                        meetingList.append(myItem.meetingID!)
+                    }
+                }
+            }
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "nextMeeting"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func btnViewPreviousMeeting(_ sender: UIButton)
+    {
+        passedMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: passedMeeting.teamID)
+        refreshScreen()
+    }
+    
+    @IBAction func btnViewNextMeeting(_ sender: UIButton)
+    {
+        passedMeeting = calendarItem(meetingID: passedMeeting.nextMeeting, teamID: passedMeeting.teamID)
+        refreshScreen()
+    }
+
     func buildPeopleList()
     {
         displayList.removeAll()
@@ -424,6 +647,20 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             case "owner":
                 btnOwner.setTitle(displayList[selectedItem], for: .normal)
             
+            case "previousMeeting":
+                let tempMeeting = calendarItem(meetingID: meetingList[selectedItem], teamID: passedMeeting.teamID)
+                btnPreviousMeeting.setTitle(tempMeeting.displayStartDate, for: .normal)
+                passedMeeting.previousMinutes = meetingList[selectedItem]
+                
+                btnViewPreviousMeeting.isHidden = false
+            
+            case "nextMeeting":
+                let tempMeeting = calendarItem(meetingID: meetingList[selectedItem], teamID: passedMeeting.teamID)
+                tempMeeting.previousMinutes = passedMeeting.meetingID
+                btnNextMeeting.setTitle(tempMeeting.displayStartDate, for: .normal)
+                
+                btnViewNextMeeting.isHidden = false
+            
             default:
                 print("myPickerDidFinish selectedItem hit default - source = \(source)")
         }
@@ -432,7 +669,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     func hideFields()
     {
         lblAgendaItems.isHidden = true
-        colAgenda.isHidden = true
+        tblAgenda.isHidden = true
         btnAddAgendaItem.isHidden = true
         lblAddAgendaItem.isHidden = true
         lblDescription.isHidden = true
@@ -441,12 +678,18 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         txtTimeAllocation.isHidden = true
         lblOwner.isHidden = true
         btnOwner.isHidden = true
+        lblNextMeeting.isHidden = true
+        lblPreviousMeeting.isHidden = true
+        btnPreviousMeeting.isHidden = true
+        btnNextMeeting.isHidden = true
+        btnViewPreviousMeeting.isHidden = true
+        btnViewNextMeeting.isHidden = true
     }
     
     func showFields()
     {
         lblAgendaItems.isHidden = false
-        colAgenda.isHidden = false
+        tblAgenda.isHidden = false
         btnAddAgendaItem.isHidden = false
         lblAddAgendaItem.isHidden = false
         lblDescription.isHidden = false
@@ -455,6 +698,52 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         txtTimeAllocation.isHidden = false
         lblOwner.isHidden = false
         btnOwner.isHidden = false
+        lblNextMeeting.isHidden = false
+        lblPreviousMeeting.isHidden = false
+        btnPreviousMeeting.isHidden = false
+        btnNextMeeting.isHidden = false
+        
+        if passedMeeting.previousMinutes == ""
+        {
+            btnPreviousMeeting.setTitle("Select", for: .normal)
+            btnViewPreviousMeeting.isHidden = true
+        }
+        else
+        {
+            let tempMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: passedMeeting.teamID)
+            if tempMeeting.title == ""
+            {
+                btnPreviousMeeting.setTitle("Select", for: .normal)
+                btnViewPreviousMeeting.isHidden = true
+            }
+            else
+            {
+                btnPreviousMeeting.setTitle(tempMeeting.displayStartDate, for: .normal)
+                btnViewPreviousMeeting.isHidden = false
+            }
+        }
+      
+        // See if there is a meeting with this one as its previous ID
+        
+        if passedMeeting.nextMeeting == ""
+        {
+            btnNextMeeting.setTitle("Select", for: .normal)
+            btnViewNextMeeting.isHidden = true
+        }
+        else
+        {
+            let tempMeeting = calendarItem(meetingID: passedMeeting.nextMeeting, teamID: passedMeeting.teamID)
+            if tempMeeting.title == ""
+            {
+                btnNextMeeting.setTitle("Select", for: .normal)
+                btnViewNextMeeting.isHidden = true
+            }
+            else
+            {
+                btnNextMeeting.setTitle(tempMeeting.displayStartDate, for: .normal)
+                btnViewNextMeeting.isHidden = false
+            }
+        }
     }
 
     func buildAgendaArray()
@@ -483,16 +772,57 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     func refreshScreen()
     {
         buildAgendaArray()
+        passedMeeting.loadAttendees()
+        
+        btnOwner.setTitle("Select Owner", for: .normal)
+        
+        if passedMeeting.attendees.count == 0
+        {
+            btnOwner.setTitle(currentUser.name, for: .normal)
+            passedMeeting.chair = currentUser.name
+            passedMeeting.minutes = currentUser.name
+            btnChair.setTitle(passedMeeting.chair, for: .normal)
+            btnMinutes.setTitle(passedMeeting.minutes, for: .normal)
+            btnOwner.isEnabled = false
+            btnChair.isEnabled = false
+            btnMinutes.isEnabled = false
+        }
+        else
+        {
+            btnOwner.isEnabled = true
+            btnChair.isEnabled = true
+            btnMinutes.isEnabled = true
+            
+            if passedMeeting.chair == ""
+            {
+                btnChair.setTitle("Select Chair", for: .normal)
+            }
+            else
+            {
+                btnChair.setTitle(passedMeeting.chair, for: .normal)
+            }
+            
+            if passedMeeting.minutes == ""
+            {
+                btnMinutes.setTitle("Select Minute taker", for: .normal)
+            }
+            else
+            {
+                btnMinutes.setTitle(passedMeeting.minutes, for: .normal)
+            }
+        }
+        navBarTitle.title = passedMeeting.title
         myWorkingTime = passedMeeting.startDate as Date
-        colAgenda.reloadData()
+        
+        showFields()
+        tblAttendees.reloadData()
+        tblAgenda.reloadData()
     }
     
     func myTaskListDidFinish(_ controller:taskListViewController)
     {
-        buildAgendaArray()
-        myWorkingTime = passedMeeting.startDate as Date
-        colAgenda.reloadData()
-        
+print("Garry - find where calls this and replace with my call to refreshScreen via commsdeletgate")
+        refreshScreen()
         controller.dismiss(animated: true, completion: nil)
     }
     
@@ -543,15 +873,23 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         // as it says, do nothing
     }
-    
-    func share(_ sender: AnyObject)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
-        if UIDevice.current.userInterfaceIdiom == .phone {
+        self.dismiss(animated: true, completion: nil)
+        communicationDelegate?.refreshScreen!()
+    }
+    
+    @IBAction func btnShre(_ sender: UIBarButtonItem)
+    {
+        if UIDevice.current.userInterfaceIdiom == .phone
+        {
             //self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
             let activityViewController: UIActivityViewController = createActivityController()
-            activityViewController.popoverPresentationController!.sourceView = sender.view
+            activityViewController.popoverPresentationController!.sourceView = lblChair
             present(activityViewController, animated:true, completion:nil)
-        } else if UIDevice.current.userInterfaceIdiom == .pad {
+        }
+        else if UIDevice.current.userInterfaceIdiom == .pad
+        {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
             iPad(sender)
         }
@@ -561,7 +899,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         let activityViewController: UIActivityViewController = createActivityController()
         activityViewController.modalPresentationStyle = UIModalPresentationStyle.popover
-        activityViewController.popoverPresentationController!.sourceView = sender.view
+        activityViewController.popoverPresentationController!.sourceView = lblChair
         present(activityViewController, animated:true, completion:nil)
         /*
         if !self.activityPopover.popoverVisible {
@@ -838,36 +1176,12 @@ class myAgendaItemHeader: UICollectionReusableView
     @IBOutlet weak var lblOwner: UILabel!
 }
 
-class myAgendaItem: UICollectionViewCell
+class myAgendaItem: UITableViewCell
 {
     @IBOutlet weak var lblTime: UILabel!
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
   
-    override init(frame: CGRect)
-    {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder aDecoder: NSCoder)
-    {
-        super.init(coder: aDecoder)
-    }
-    
-    override func awakeFromNib()
-    {
-        super.awakeFromNib()
-    }
-    
-    var dragging : Bool = false
-    {
-        didSet
-        {
-            
-        }
-        
-    }
-
     override func layoutSubviews()
     {
         contentView.frame = bounds
@@ -875,26 +1189,46 @@ class myAgendaItem: UICollectionViewCell
     }
 }
 
-class myMovableAgendaItem: myAgendaItem
-{
-    override func awakeFromNib()
-    {
-        super.awakeFromNib()
-        
-        //  self.layer.cornerRadius = self.frame.size.width * 0.5
-        self.clipsToBounds = true
-    }
-}
-
-class meetingAgendaEntry: UITableViewCell
+class meetingAgendaEntry: UITableViewCell, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var btnAction: UIButton!
+    
+    fileprivate var displayList: [String] = Array()
+    
+    var sourceView: meetingAgendaEntry!
+    var mainView: meetingAgendaViewController!
     
     var attendeeEntry: meetingAttendee!
     
     @IBAction func btnAction(_ sender: UIButton)
     {
+        displayList.append(meetingAttendenceAttended)
+        displayList.append(meetingAttendenceApologised)
+        displayList.append(meetingAttendenceNotAttend)
+        displayList.append(meetingAttendenceDelegated)
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = sourceView
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "chair"
+        pickerView.delegate = sourceView
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        mainView.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        attendeeEntry.status = displayList[selectedItem]
+        btnAction.setTitle(displayList[selectedItem], for: .normal)
     }
 }
 

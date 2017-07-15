@@ -1007,14 +1007,15 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         {
             // Load calendar items
             
-            if filterClient > 0 || filterProject > 0
-            {
-                appointmentList = iOSCalendar(clientID: filterClient, projectID: filterProject, teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
-            }
-            else
-            {
-                appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
-            }
+            appointmentList = iOSCalendar(clientID: filterClient, projectID: filterProject, teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+//            if filterClient > 0 || filterProject > 0
+//            {
+//                appointmentList = iOSCalendar(clientID: filterClient, projectID: filterProject, teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+//            }
+//            else
+//            {
+//                appointmentList = iOSCalendar(teamID: currentUser.currentTeam!.teamID, startDate: startDate, endDate: endDate)
+//            }
             tblCalendar.reloadData()
             Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.scrollCalendar), userInfo: nil, repeats: false)
         }

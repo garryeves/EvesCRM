@@ -792,6 +792,11 @@ class calendarItem
     {
         get
         {
+            myAttendees.sort
+            {
+                return $0.name < $1.name
+            }
+            
             return myAttendees
         }
     }
@@ -1032,21 +1037,24 @@ class calendarItem
         {
             // Get the list of attendees
             
-            for attendee in passedEvent!.attendees!
+            if passedEvent!.attendees != nil
             {
-                if !attendee.isCurrentUser
+                for attendee in passedEvent!.attendees!
                 {
-                    // Is the Attendee is not the current user then we need to parse the email address
-                    
-                    // Split the URL string on : - to give an array, the second element is the email address
-                    
-                    let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
- 
-                    addAttendee(attendee.name!, emailAddress: emailSplit[1], type: "Participant", status: "Invited")
-                }
-                else
-                {
-                    addAttendee(attendee.name!, emailAddress: currentUser.email, type: "Participant", status: "Invited")
+                    if !attendee.isCurrentUser
+                    {
+                        // Is the Attendee is not the current user then we need to parse the email address
+                        
+                        // Split the URL string on : - to give an array, the second element is the email address
+                        
+                        let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
+     
+                        addAttendee(attendee.name!, emailAddress: emailSplit[1], type: "Participant", status: "Invited")
+                    }
+                    else
+                    {
+                        addAttendee(attendee.name!, emailAddress: currentUser.email, type: "Participant", status: "Invited")
+                    }
                 }
             }
         }
@@ -2885,6 +2893,33 @@ extension coreDatabase
         var predicate: NSPredicate
         
         predicate = NSPredicate(format: "(projectID == \(projectID)) AND (startTime >= %@) AND (endTime <= %@) AND (updateType != \"Delete\") AND (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAgenda(startDate: Date, endDate: Date, teamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime >= %@) AND (endTime <= %@) AND (updateType != \"Delete\") AND (teamID == \(teamID))", startDate as CVarArg, endDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
