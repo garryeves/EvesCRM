@@ -1171,7 +1171,7 @@ extension CloudKitInteraction
 
     func replaceTeamInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) OR (teamOwner == \(currentUser.userID))")
+        let predicate: NSPredicate = NSPredicate(format: "(\(buildTeamList(currentUser.userID)))")
         
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
@@ -1202,6 +1202,140 @@ extension CloudKitInteraction
             let nextInvoiceNumber = record.object(forKey: "nextInvoiceNumber") as! Int
             let subscriptionLevel = record.object(forKey: "subscriptionLevel") as! Int
             let teamOwner = record.object(forKey: "teamOwner") as! Int
+            
+            var subscriptionDate = Date()
+            if record.object(forKey: "subscriptionDate") != nil
+            {
+                subscriptionDate = record.object(forKey: "subscriptionDate") as! Date
+            }
+            
+            var logo: NSData!
+            
+            if let asset = record["logo"] as? CKAsset
+            {
+                logo = NSData(contentsOf: asset.fileURL)
+            }
+            
+            myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, teamOwner: teamOwner, updateTime: updateTime, updateType: updateType)
+            
+            if logo != nil
+            {
+                myDatabaseConnection.saveTeamLogo(teamID: teamID, logo: logo)
+            }
+            
+            usleep(self.sleepTime)
+        }
+        let operationQueue = OperationQueue()
+        
+        executePublicQueryOperation(targetTable: "Team", queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
+        
+        replaceTeamForOwnerInCoreData()
+    }
+    
+    func replaceTeamForOwnerInCoreData()
+    {
+        let predicate: NSPredicate = NSPredicate(format: "(teamOwner == \(currentUser.userID))")
+        
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let teamID = record.object(forKey: "teamID") as! Int
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            
+            
+            var name: String = ""
+            
+            if record.object(forKey: "name") != nil
+            {
+                name =  record.object(forKey: "name") as! String
+            }
+
+            var note: String = ""
+            
+            if record.object(forKey: "note") != nil
+            {
+                note = record.object(forKey: "note") as! String
+            }
+
+            var status: String = ""
+            
+            if record.object(forKey: "status") != nil
+            {
+                status = record.object(forKey: "status") as! String
+            }
+
+            var type: String = ""
+            
+            if record.object(forKey: "type") != nil
+            {
+                type = record.object(forKey: "type") as! String
+            }
+
+            var externalID: String = ""
+            
+            if record.object(forKey: "externalID") != nil
+            {
+                externalID = record.object(forKey: "externalIDString") as! String
+            }
+
+            var taxNumber: String = ""
+            
+            if record.object(forKey: "taxNumber") != nil
+            {
+                taxNumber = record.object(forKey: "taxNumber") as! String
+            }
+
+            var companyRegNumber: String = ""
+            
+            if record.object(forKey: "companyRegNumber") != nil
+            {
+                companyRegNumber = record.object(forKey: "companyRegNumber") as! String
+            }
+
+            var predecessor: Int = 0
+            
+            if record.object(forKey: "predecessor") != nil
+            {
+                predecessor = record.object(forKey: "predecessor") as! Int
+            }
+
+            var nextInvoiceNumber: Int = 0
+            
+            if record.object(forKey: "nextInvoiceNumber") != nil
+            {
+                nextInvoiceNumber = record.object(forKey: "nextInvoiceNumber") as! Int
+            }
+
+            var subscriptionLevel: Int = 0
+            
+            if record.object(forKey: "subscriptionLevel") != nil
+            {
+                subscriptionLevel = record.object(forKey: "subscriptionLevel") as! Int
+            }
+
+            var teamOwner: Int = 0
+            
+            if record.object(forKey: "teamOwner") != nil
+            {
+                teamOwner = record.object(forKey: "teamOwner") as! Int
+            }
             
             var subscriptionDate = Date()
             if record.object(forKey: "subscriptionDate") != nil

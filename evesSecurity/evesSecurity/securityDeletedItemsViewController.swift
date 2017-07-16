@@ -11,6 +11,7 @@ import UIKit
 private let projectType = "Contract/Project"
 private let clientType = "Client"
 private let peopleType = "People"
+private let ratesType = "Rates"
 
 let NotificationItemDeleted = Notification.Name("NotificationItemDeleted")
 
@@ -28,7 +29,8 @@ class securityDeletedItemsViewController: UIViewController, UIPopoverPresentatio
     private var projectRecords: [Projects] = Array()
     private var clientRecords: [Clients] = Array()
     private var peopleRecords: [Person] = Array()
-    
+    private var ratesRecords: [Rates] = Array()
+
     override func viewDidLoad()
     {
         hideFields()
@@ -58,6 +60,9 @@ class securityDeletedItemsViewController: UIViewController, UIPopoverPresentatio
                     
                     case peopleType:
                         return peopleRecords.count
+                    
+                    case ratesType:
+                        return ratesRecords.count
                     
                     default:
                         return 0
@@ -96,6 +101,12 @@ class securityDeletedItemsViewController: UIViewController, UIPopoverPresentatio
                         cell.source = peopleType
                         cell.recordID = Int(peopleRecords[indexPath.row].personID)
                     
+                    case ratesType:
+                        cell.lblName.text = ratesRecords[indexPath.row].rateName
+                        cell.lblDate.text = formatDate(ratesRecords[indexPath.row].updateTime! as Date)
+                        cell.source = ratesType
+                        cell.recordID = Int(ratesRecords[indexPath.row].rateID)
+                    
                     default:
                         print("refreshScreen unknow type - \(selectedType)")
                 }
@@ -123,6 +134,7 @@ class securityDeletedItemsViewController: UIViewController, UIPopoverPresentatio
         displayList.append(projectType)
         displayList.append(clientType)
         displayList.append(peopleType)
+        displayList.append(ratesType)
         
         if displayList.count > 0
         {
@@ -197,6 +209,9 @@ class securityDeletedItemsViewController: UIViewController, UIPopoverPresentatio
                 case peopleType:
                     peopleRecords = myDatabaseConnection.getDeletedPeople(currentUser.currentTeam!.teamID)
                 
+                case ratesType:
+                    ratesRecords = myDatabaseConnection.getDeletedRates(currentUser.currentTeam!.teamID)
+                
                 default:
                     print("refreshScreen unknown type - \(selectedType)")
             }
@@ -226,6 +241,9 @@ class deletedItem: UITableViewCell
             
             case peopleType:
                 myDatabaseConnection.restorePerson(recordID, teamID: currentUser.currentTeam!.teamID)
+            
+            case ratesType:
+                myDatabaseConnection.restoreRate(recordID, teamID: currentUser.currentTeam!.teamID)
             
             default:
                 print("deletedItem unknown type - \(source)")
