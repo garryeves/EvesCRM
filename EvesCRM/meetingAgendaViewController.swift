@@ -93,6 +93,8 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         
         refreshScreen()
         
+        
+        
 //        // TextExpander
 //        textExpander = SMTEDelegateController()
 //        txtDescription.delegate = textExpander
@@ -161,7 +163,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             cell.lblTime.text = "\(myDateFormatter.string(from: myWorkingTime))"
             cell.lblItem.text = myAgendaList[indexPath.row].title
             cell.lblOwner.text = myAgendaList[indexPath.row].owner
-            
+
             myWorkingTime = myWorkingTime.add(.minute, amount: Int(myAgendaList[indexPath.row].timeAllocation))
             
             return cell
@@ -197,7 +199,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             }
             else
             {  // This is a normal Agenda item so call the Agenda item screen
-                let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
+                let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItem") as! agendaItemViewController
                 agendaViewControl.communicationDelegate = self
                 agendaViewControl.event = passedMeeting
                 agendaViewControl.actionType = actionType
@@ -209,71 +211,191 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+    {
+        if tableView == tblAgenda
+        {
+            if actionType != "Agenda"
+            {
+                return false
+            }
+            
+            if myAgendaList[indexPath.item].title == "Close meeting"
+            {
+                return false
+            }
+            
+            if myAgendaList[indexPath.item].title == "Review of previous meeting actions"
+            {
+                return false
+            }
+            
+            return true
+        }
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool
+    {
+        if tableView == tblAgenda
+        {
+            if actionType != "Agenda"
+            {
+                return false
+            }
+            
+            if myAgendaList[indexPath.item].title == "Close meeting"
+            {
+                return false
+            }
+            
+            if myAgendaList[indexPath.item].title == "Review of previous meeting actions"
+            {
+                return false
+            }
+            
+            return true
+        }
+        return false
+    }
 
+    func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to toIndexPath: IndexPath)
+    {
+        if tableView == tblAgenda
+        {
+            if toIndexPath.row > fromIndexPath.row
+            {
+
+                myAgendaList[fromIndexPath.row].meetingOrder = myAgendaList[toIndexPath.row].meetingOrder
+
+                var loopCount: Int = fromIndexPath.row
+
+                while loopCount < toIndexPath.row
+                {
+                    myAgendaList[loopCount + 1].meetingOrder = loopCount - 1
+                    loopCount += 1
+                }
+            }
+            else // toIndexPath.row < fromIndexPath.row
+            {
+                myAgendaList[fromIndexPath.row].meetingOrder = myAgendaList[toIndexPath.row].meetingOrder
+
+                var loopCount: Int = toIndexPath.row
+
+                while loopCount < fromIndexPath.row - 1
+                {
+                    myAgendaList[loopCount].meetingOrder = loopCount + 1
+                    loopCount += 1
+                }
+            }
+        
+            buildAgendaArray()
+    
+            tblAgenda.reloadData()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if tableView == tblAgenda
+        {
+            if editingStyle == .delete
+            {
+                // Get row details to delete
+                var performDelete: Bool = true
+                
+                if actionType != "Agenda"
+                {
+                    performDelete = false
+                }
+                
+                if myAgendaList[indexPath.row].title == "Close meeting"
+                {
+                    performDelete = false
+                }
+                
+                if myAgendaList[indexPath.row].title == "Review of previous meeting actions"
+                {
+                    performDelete = false
+                }
+                
+                if performDelete
+                {
+                    myAgendaList[indexPath.row].delete()
+                    
+                    buildAgendaArray()
+                    
+                    tblAgenda.reloadData()
+                }
+            }
+        }
+    }
+    
     // Start move
     
-    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
-    {
-        if actionType != "Agenda"
-        {
-            let alert = UIAlertController(title: "Move item", message:
-                "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.alert)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-            self.present(alert, animated: false, completion: nil)
-        }
-        else if myAgendaList[toIndexPath.item].title == "Close meeting" ||
-           myAgendaList[fromIndexPath.item].title == "Close meeting"
-        {
-            let alert = UIAlertController(title: "Move item", message:
-                "Unable to move \"Close meeting\" item", preferredStyle: UIAlertControllerStyle.alert)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-            self.present(alert, animated: false, completion: nil)
-        }
-        else if myAgendaList[toIndexPath.item].title == "Review of previous meeting actions" ||
-            myAgendaList[fromIndexPath.item].title == "Review of previous meeting actions"
-        {
-            let alert = UIAlertController(title: "Move item", message:
-                "Unable to move \"Review of previous meeting actions\" item", preferredStyle: UIAlertControllerStyle.alert)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-            self.present(alert, animated: false, completion: nil)
-        }
-        else
-        {
-            if toIndexPath.item > fromIndexPath.item
-            {
-                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
-                
-                var loopCount: Int = fromIndexPath.item
-                
-                while loopCount < toIndexPath.item
-                {
-                    myAgendaList[loopCount].meetingOrder = Int(loopCount + 2)
-                    loopCount += 1
-                }
-            }
-            else // toIndexPath.item < fromIndexPath.item
-            {
-                let tempToIndex = toIndexPath.item
-
-                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
-
-                var loopCount: Int = tempToIndex + 1
-                
-                while loopCount <= fromIndexPath.item
-                {
-                    myAgendaList[loopCount].meetingOrder = Int(loopCount)
-                    loopCount += 1
-                }
-            }
-        }
-
-        buildAgendaArray()
-        
-        tblAgenda.reloadData()
-    }
+//    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
+//    {
+//        if actionType != "Agenda"
+//        {
+//            let alert = UIAlertController(title: "Move item", message:
+//                "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.alert)
+//
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+//            self.present(alert, animated: false, completion: nil)
+//        }
+//        else if myAgendaList[toIndexPath.item].title == "Close meeting" ||
+//           myAgendaList[fromIndexPath.item].title == "Close meeting"
+//        {
+//            let alert = UIAlertController(title: "Move item", message:
+//                "Unable to move \"Close meeting\" item", preferredStyle: UIAlertControllerStyle.alert)
+//
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+//            self.present(alert, animated: false, completion: nil)
+//        }
+//        else if myAgendaList[toIndexPath.item].title == "Review of previous meeting actions" ||
+//            myAgendaList[fromIndexPath.item].title == "Review of previous meeting actions"
+//        {
+//            let alert = UIAlertController(title: "Move item", message:
+//                "Unable to move \"Review of previous meeting actions\" item", preferredStyle: UIAlertControllerStyle.alert)
+//
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+//            self.present(alert, animated: false, completion: nil)
+//        }
+//        else
+//        {
+//            if toIndexPath.item > fromIndexPath.item
+//            {
+//                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
+//
+//                var loopCount: Int = fromIndexPath.item
+//
+//                while loopCount < toIndexPath.item
+//                {
+//                    myAgendaList[loopCount].meetingOrder = Int(loopCount + 2)
+//                    loopCount += 1
+//                }
+//            }
+//            else // toIndexPath.item < fromIndexPath.item
+//            {
+//                let tempToIndex = toIndexPath.item
+//
+//                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
+//
+//                var loopCount: Int = tempToIndex + 1
+//
+//                while loopCount <= fromIndexPath.item
+//                {
+//                    myAgendaList[loopCount].meetingOrder = Int(loopCount)
+//                    loopCount += 1
+//                }
+//            }
+//        }
+//
+//        buildAgendaArray()
+//
+//        tblAgenda.reloadData()
+//    }
     
     // End move
     
@@ -748,6 +870,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
 
     func buildAgendaArray()
     {
+        myWorkingTime = passedMeeting.startDate as Date
         passedMeeting.loadAgendaItems()
         if passedMeeting.previousMinutes == ""
         { // No previous meeting
@@ -817,6 +940,15 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         showFields()
         tblAttendees.reloadData()
         tblAgenda.reloadData()
+        
+        if actionType == "Agenda"
+        {
+            tblAgenda.setEditing(true, animated: true)
+        }
+        else
+        {
+            tblAgenda.setEditing(false, animated: true)
+        }
     }
     
     func myTaskListDidFinish(_ controller:taskListViewController)
@@ -1181,12 +1313,6 @@ class myAgendaItem: UITableViewCell
     @IBOutlet weak var lblTime: UILabel!
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
-  
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }
 }
 
 class meetingAgendaEntry: UITableViewCell, MyPickerDelegate, UIPopoverPresentationControllerDelegate

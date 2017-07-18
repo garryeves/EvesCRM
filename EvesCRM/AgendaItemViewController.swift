@@ -10,12 +10,12 @@ import Foundation
 import UIKit
 //import TextExpander
 
-protocol MyAgendaItemDelegate
-{
-    func myAgendaItemDidFinish(_ controller:agendaItemViewController, actionType: String)
-}
+//protocol MyAgendaItemDelegate
+//{
+//    func myAgendaItemDidFinish(_ controller:agendaItemViewController, actionType: String)
+//}
 
-class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate //, SMTEFillDelegate
+class agendaItemViewController: UIViewController, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate, MyPickerDelegate //, SMTEFillDelegate
 {
     var communicationDelegate: myCommunicationDelegate?
     
@@ -25,27 +25,21 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
     @IBOutlet weak var btnOwner: UIButton!
     @IBOutlet weak var lblTimeAllocation: UILabel!
     @IBOutlet weak var txtTimeAllocation: UITextField!
-    @IBOutlet weak var lblStatus: UILabel!
-    @IBOutlet weak var btnStatus: UIButton!
     @IBOutlet weak var lblNotes: UILabel!
     @IBOutlet weak var txtDiscussionNotes: UITextView!
     @IBOutlet weak var lblDecisionMade: UILabel!
     @IBOutlet weak var txtDecisionMade: UITextView!
     @IBOutlet weak var lblActions: UILabel!
     @IBOutlet weak var btnAddAction: UIButton!
-    @IBOutlet weak var colActions: UICollectionView!
-    @IBOutlet weak var myPicker: UIPickerView!
+    @IBOutlet weak var tblTasks: UITableView!
     
-    fileprivate let cellTaskName = "cellTaskName"
+    fileprivate let cellTaskName = "cellTasks"
     
     var event: calendarItem!
     var agendaItem: meetingAgendaItem!
     var actionType: String = ""
     
-    fileprivate var pickerOptions: [String] = Array()
-    fileprivate var pickerTarget: String = ""
-    fileprivate var myCells: [cellDetails] = Array()
-    fileprivate var headerSize: CGFloat = 0.0
+    private var displayList: [String] = Array()
     
 //    // Textexpander
 //    
@@ -68,13 +62,12 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         
         if agendaItem.agendaID != 0
         {
-            btnStatus.setTitle(agendaItem.status, for: .normal)
             txtDecisionMade.text = agendaItem.decisionMade
             txtDiscussionNotes.text = agendaItem.discussionNotes
             txtTimeAllocation.text = "\(agendaItem.timeAllocation)"
             if agendaItem.owner == ""
             {
-                btnOwner.setTitle("Select Item Owner", for: .normal)
+                btnOwner.setTitle("Select", for: .normal)
             }
             else
             {
@@ -82,16 +75,6 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
             }
             txtTitle.text = agendaItem.title
         }
-        
-        myPicker.isHidden = true
-        
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
-        self.view.addGestureRecognizer(showGestureRecognizer)
-        
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
-        self.view.addGestureRecognizer(hideGestureRecognizer)
 
         txtDiscussionNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtDiscussionNotes.layer.borderWidth = 0.5
@@ -123,131 +106,73 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    override func viewWillLayoutSubviews()
-    {
-        super.viewWillLayoutSubviews()
-        colActions.collectionViewLayout.invalidateLayout()
-        
-        colActions.reloadData()
-    }
 
-    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
-    {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.left
-        {
-            // Do nothing
-        }
-        else
-        {
-            communicationDelegate!.refreshScreen!()
-        }
-    }
-    
-    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
-    {
-        myCells.removeAll()
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return agendaItem.tasks.count
     }
     
-    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         var cell : myTaskItem!
  
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellTaskName, for: indexPath as IndexPath) as! myTaskItem
+        cell = tableView.dequeueReusableCell(withIdentifier: cellTaskName, for: indexPath as IndexPath) as! myTaskItem
 
-        if agendaItem.tasks.count == 0
-        {
-            cell.lblTaskName.text = ""
-            cell.lblTaskStatus.text = ""
-            cell.lblTaskOwner.text = ""
-            cell.lblTaskTargetDate.text = ""
-        }
-        else
-        {
-            cell.lblTaskName.text = agendaItem.tasks[indexPath.row].title
-            cell.lblTaskStatus.text = agendaItem.tasks[indexPath.row].status
-            cell.lblTaskOwner.text = "Owner"
-            cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
-        }
-        
-        if (indexPath.row % 2 == 0)  // was .row
-        {
-            cell.backgroundColor = greenColour
-        }
-        else
-        {
-            cell.backgroundColor = UIColor.clear
-        }
-       
-        cell.layoutSubviews()
+        cell.lblTaskName.text = agendaItem.tasks[indexPath.row].title
+        cell.btnStatus.setTitle(agendaItem.tasks[indexPath.row].status, for: .normal)
+        cell.lblTaskOwner.text = "Owner"
+        cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
         
         return cell
     }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
-    {
-        var headerView:UICollectionReusableView!
-        if kind == UICollectionElementKindSectionHeader
-        {
-            headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "taskItemHeader", for: indexPath as IndexPath) 
-        }
-
-        return headerView
-    }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        let myOptions = displayTaskOptions(collectionView, workingTask: agendaItem.tasks[indexPath.row])
-        myOptions.popoverPresentationController!.sourceView = collectionView
+        let myOptions = displayTaskOptions(tableView, workingTask: agendaItem.tasks[indexPath.row])
+        myOptions.popoverPresentationController!.sourceView = tableView
         
         self.present(myOptions, animated: true, completion: nil)
     }
 
-    
-    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
-        var retVal: CGSize!
-        
-        retVal = CGSize(width: colActions.bounds.size.width, height: 39)
-        
-        return retVal
-    }
-
-    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerOptions.count
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
-        return pickerOptions[row]
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        // Write code for select
-        if pickerTarget == "Owner"
+        if txtTitle.isFirstResponder
         {
-            btnOwner.setTitle(pickerOptions[row], for: .normal)
-            agendaItem.owner = btnOwner.currentTitle!
+            if txtTitle.text != ""
+            {
+                agendaItem.title = txtTitle.text!
+            }
         }
         
-        if pickerTarget == "Status"
+        if txtTimeAllocation.isFirstResponder
         {
-            btnStatus.setTitle(pickerOptions[row], for: .normal)
-            agendaItem.status = btnStatus.currentTitle!
+            if txtTimeAllocation.text != ""
+            {
+                if txtTimeAllocation.text!.isNumber
+                {
+                    agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
+                }
+            }
         }
         
-        myPicker.isHidden = true
-        showFields()
+        if txtDiscussionNotes.isFirstResponder
+        {
+            if txtDiscussionNotes.text != ""
+            {
+                agendaItem.discussionNotes = txtDiscussionNotes.text
+            }
+        }
+        
+        if txtDecisionMade.isFirstResponder
+        {
+            if txtDecisionMade.text != ""
+            {
+                agendaItem.decisionMade = txtDecisionMade.text
+            }
+        }
+        
+        self.dismiss(animated: true, completion: nil)
+        communicationDelegate?.refreshScreen!()
     }
     
     @IBAction func btnAddAction(_ sender: UIButton)
@@ -268,28 +193,45 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
     
     @IBAction func btnOwner(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
 
-        pickerOptions.append("")
+        displayList.append("")
         for attendee in event.attendees
         {
-            pickerOptions.append(attendee.name)
+            displayList.append(attendee.name)
         }
-        hideFields()
-        myPicker.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Owner"
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "Owner"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
     }
     
-    @IBAction func btnStatus(_ sender: UIButton)
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
-        pickerOptions.append("Open")
-        pickerOptions.append("Closed")
-        hideFields()
-        myPicker.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Status"
+        // Write code for select
+        if source == "Owner"
+        {
+            btnOwner.setTitle(displayList[selectedItem], for: .normal)
+            agendaItem.owner = btnOwner.currentTitle!
+        }
+        
+        showFields()
     }
     
     @IBAction func txtTitle(_ sender: UITextField)
@@ -325,15 +267,13 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         btnOwner.isHidden = true
         lblTimeAllocation.isHidden = true
         txtTimeAllocation.isHidden = true
-        lblStatus.isHidden = true
-        btnStatus.isHidden = true
         lblNotes.isHidden = true
         txtDiscussionNotes.isHidden = true
         lblDecisionMade.isHidden = true
         txtDecisionMade.isHidden = true
         lblActions.isHidden = true
         btnAddAction.isHidden = true
-        colActions.isHidden = true
+        tblTasks.isHidden = true
     }
     
     func showFields()
@@ -343,16 +283,13 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         lblOwner.isHidden = false
         btnOwner.isHidden = false
         lblTimeAllocation.isHidden = false
-        txtTimeAllocation.isHidden = false
-        lblStatus.isHidden = false
-        btnStatus.isHidden = false
         lblNotes.isHidden = false
         txtDiscussionNotes.isHidden = false
         lblDecisionMade.isHidden = false
         txtDecisionMade.isHidden = false
         lblActions.isHidden = false
         btnAddAction.isHidden = false
-        colActions.isHidden = false
+        tblTasks.isHidden = false
     }
     
     func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
@@ -678,24 +615,14 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
 //    
 }
 
-class myTaskItemHeader: UICollectionReusableView
+class myTaskItem: UITableViewCell
 {
-    @IBOutlet weak var lblTaskStatus: UILabel!
+    @IBOutlet weak var btnStatus: UIButton!
     @IBOutlet weak var lblTaskTargetDate: UILabel!
     @IBOutlet weak var lblTaskOwner: UILabel!
     @IBOutlet weak var lblTaskName: UILabel!
-}
-
-class myTaskItem: UICollectionViewCell
-{
-    @IBOutlet weak var lblTaskStatus: UILabel!
-    @IBOutlet weak var lblTaskTargetDate: UILabel!
-    @IBOutlet weak var lblTaskOwner: UILabel!
-    @IBOutlet weak var lblTaskName: UILabel!
-
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }    
+    
+    @IBAction func btnStatus(_ sender: UIButton) {
+    }
+    
 }

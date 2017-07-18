@@ -37,6 +37,7 @@ class meetingAgendaItem
         set
         {
             myActualEndTime = newValue
+            save()
         }
     }
     
@@ -49,6 +50,7 @@ class meetingAgendaItem
         set
         {
             myActualStartTime = newValue
+            save()
         }
     }
     
@@ -61,6 +63,7 @@ class meetingAgendaItem
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -73,6 +76,7 @@ class meetingAgendaItem
         set
         {
             myDecisionMade = newValue
+            save()
         }
     }
     
@@ -85,6 +89,7 @@ class meetingAgendaItem
         set
         {
             myDiscussionNotes = newValue
+            save()
         }
     }
     
@@ -97,6 +102,7 @@ class meetingAgendaItem
         set
         {
             myTimeAllocation = newValue
+            save()
         }
     }
     
@@ -109,6 +115,7 @@ class meetingAgendaItem
         set
         {
             myOwner = newValue
+            save()
         }
     }
     
@@ -121,6 +128,7 @@ class meetingAgendaItem
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -133,6 +141,7 @@ class meetingAgendaItem
         set
         {
             myAgendaID = newValue
+            save()
         }
     }
     
@@ -145,6 +154,7 @@ class meetingAgendaItem
         set
         {
             myMeetingOrder = newValue
+            save()
         }
     }
     
