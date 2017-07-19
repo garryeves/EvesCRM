@@ -32,6 +32,8 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
     @IBOutlet weak var lblActions: UILabel!
     @IBOutlet weak var btnAddAction: UIButton!
     @IBOutlet weak var tblTasks: UITableView!
+    @IBOutlet weak var txtTaskName: UITextField!
+    @IBOutlet weak var btnTaskOwner: UIButton!
     
     fileprivate let cellTaskName = "cellTasks"
     
@@ -53,11 +55,23 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
     {
         super.viewDidLoad()
         
-        if actionType == "Agenda"
+        if actionType == agendaStatus
+        {
+            txtDiscussionNotes.isEditable = false
+            txtDecisionMade.isEditable = false
+            txtTaskName.isEnabled = false
+            btnTaskOwner.isEnabled = false
+        }
+        else if actionType == finishedStatus
         {
             txtDiscussionNotes.isEditable = false
             txtDecisionMade.isEditable = false
             btnAddAction.isEnabled = false
+            txtTitle.isEnabled = false
+            txtTimeAllocation.isEnabled = false
+            btnOwner.isEnabled = false
+            txtTaskName.isEnabled = false
+            btnTaskOwner.isEnabled = false
         }
         
         if agendaItem.agendaID != 0
@@ -99,6 +113,9 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
 //        textExpander.nextDelegate = self
         myCurrentViewController = agendaItemViewController()
         myCurrentViewController = self
+        
+        enableTaskAdd()
+        agendaItem.loadTasks()
     }
     
     override func didReceiveMemoryWarning()
@@ -120,7 +137,27 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
 
         cell.lblTaskName.text = agendaItem.tasks[indexPath.row].title
         cell.btnStatus.setTitle(agendaItem.tasks[indexPath.row].status, for: .normal)
-        cell.lblTaskOwner.text = "Owner"
+        agendaItem.tasks[indexPath.row].loadContexts()
+        for myItem in agendaItem.tasks[indexPath.row].contexts
+        {
+            if myItem.contextType == personContextType
+            {
+                if myItem.contextID > 0
+                {
+                    let tempPerson = person(personID: myItem.contextID, teamID: currentUser.currentTeam!.teamID)
+                    cell.lblTaskOwner.text = tempPerson.name
+                }
+                else
+                {
+                    cell.lblTaskOwner.text = "Not Set"
+                }
+                break
+            }
+            else
+            {
+                cell.lblTaskOwner.text = "Not Set"
+            }
+        }
         cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
         
         return cell
@@ -177,18 +214,45 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
     
     @IBAction func btnAddAction(_ sender: UIButton)
     {
-        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
-        popoverContent.modalPresentationStyle = .popover
-        let popover = popoverContent.popoverPresentationController
-        popover!.sourceView = sender
-        popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
+//        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+//        popoverContent.modalPresentationStyle = .popover
+//        let popover = popoverContent.popoverPresentationController
+//        popover!.sourceView = sender
+//        popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
+//
+//        let newTask = task(teamID: currentUser.currentTeam!.teamID)
+//        popoverContent.passedTask = newTask
+//
+//        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+//
+//        present(popoverContent, animated: true, completion: nil)
         
         let newTask = task(teamID: currentUser.currentTeam!.teamID)
-        popoverContent.passedTask = newTask
+        newTask.title = txtTaskName.text!
         
-        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+        // See if we have the person in the person list
+        var myPerson: person!
         
-        present(popoverContent, animated: true, completion: nil)
+        myPerson = person(name: btnTaskOwner.currentTitle!, teamID: currentUser.currentTeam!.teamID)
+        // Person found, so add as context
+        
+        if myPerson.personID == 0
+        {
+            //Not an existing person so create a new entry
+            myPerson = person(teamID: currentUser.currentTeam!.teamID)
+            myPerson.name = btnTaskOwner.currentTitle!
+        }
+        
+        newTask.addContext(myPerson.personID, contextType: personContextType)
+        
+        agendaItem.addTask(newTask)
+        
+        agendaItem.loadTasks()
+        tblTasks.reloadData()
+        
+        txtTaskName.text = ""
+        btnTaskOwner.setTitle("Select", for: .normal)
+        enableTaskAdd()
     }
     
     @IBAction func btnOwner(_ sender: UIButton)
@@ -222,6 +286,37 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
         }
     }
     
+    @IBAction func btnTaskOwner(_ sender: UIButton)
+    {
+        displayList.removeAll(keepingCapacity: false)
+        
+        displayList.append("")
+        for attendee in event.attendees
+        {
+            displayList.append(attendee.name)
+        }
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "TaskOwner"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         // Write code for select
@@ -231,9 +326,31 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
             agendaItem.owner = btnOwner.currentTitle!
         }
         
+        if source == "TaskOwner"
+        {
+            btnTaskOwner.setTitle(displayList[selectedItem], for: .normal)
+            enableTaskAdd()
+        }
+        
         showFields()
     }
     
+    @IBAction func txtTaskName(_ sender: UITextField)
+    {
+        enableTaskAdd()
+    }
+    
+    func enableTaskAdd()
+    {
+        if txtTaskName.text != "" && btnTaskOwner.currentTitle != ""  && btnTaskOwner.currentTitle != "Select"
+        {
+            btnAddAction.isEnabled = true
+        }
+        else
+        {
+            btnAddAction.isEnabled = false
+        }
+    }
     @IBAction func txtTitle(_ sender: UITextField)
     {
         if txtTitle.text != ""

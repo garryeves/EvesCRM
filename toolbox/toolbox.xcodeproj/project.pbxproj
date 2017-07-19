@@ -122,6 +122,7 @@
 		341DBCEB1F088876003163D3 /* alertsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = alertsClass.swift; path = ../../evesSecurity/evesSecurity/alertsClass.swift; sourceTree = "<group>"; };
 		3435640B1F09DA6300AAF53E /* contextClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = contextClass.swift; path = ../../EvesCRM/contextClass.swift; sourceTree = "<group>"; };
 		34444FFA1F09EB36007B9284 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = ../../EvesCRM/Base.lproj/meetings.storyboard; sourceTree = "<group>"; };
+		3447E3D61F1EE2FD00AC1A28 /* EvesCRM 34.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 34.xcdatamodel"; sourceTree = "<group>"; };
 		344CEAFA1F07391F006FCFCE /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userRolesClass.swift; path = ../../evesSecurity/evesSecurity/userRolesClass.swift; sourceTree = "<group>"; };
 		344CEAFC1F07391F006FCFCE /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UsersClass.swift; path = ../../evesSecurity/evesSecurity/UsersClass.swift; sourceTree = "<group>"; };
 		344CEAFD1F07391F006FCFCE /* userTeamsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = userTeamsClass.swift; path = ../../evesSecurity/evesSecurity/userTeamsClass.swift; sourceTree = "<group>"; };
@@ -958,6 +959,7 @@
 		34D0FE061F0734B5009E5973 /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3447E3D61F1EE2FD00AC1A28 /* EvesCRM 34.xcdatamodel */,
 				34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */,
 				34FE990A1F0892F0000A7E72 /* EvesCRM 32.xcdatamodel */,
 				34D0FE071F0734B5009E5973 /* EvesCRM 10.xcdatamodel */,
@@ -992,7 +994,7 @@
 				34D0FE241F0734B5009E5973 /* EvesCRM 9.xcdatamodel */,
 				34D0FE251F0734B5009E5973 /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34C95BB21F0B608B0040853F /* EvesCRM 33.xcdatamodel */;
+			currentVersion = 3447E3D61F1EE2FD00AC1A28 /* EvesCRM 34.xcdatamodel */;
 			name = EvesCRM.xcdatamodeld;
 			path = ../../EvesCRM/EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";

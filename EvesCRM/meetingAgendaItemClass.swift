@@ -686,7 +686,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
+   //     myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
     func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int, teamID: Int)->[MeetingTasks]
@@ -1208,7 +1208,7 @@ extension CloudKitInteraction
 
     func updateMeetingTasksRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.object(forKey: "meetingIDInt") as! String
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
         let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil

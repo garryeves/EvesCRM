@@ -155,6 +155,7 @@ class task: NSObject
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -167,6 +168,7 @@ class task: NSObject
         set
         {
             myDetails = newValue
+            save()
         }
     }
     
@@ -179,6 +181,7 @@ class task: NSObject
         set
         {
             myDueDate = newValue
+            save()
         }
     }
     
@@ -212,6 +215,7 @@ class task: NSObject
         set
         {
             myStartDate = newValue
+            save()
         }
     }
     
@@ -250,6 +254,7 @@ class task: NSObject
                 checkForRepeat()
                 myCompletionDate = Date()
             }
+            save()
         }
     }
     
@@ -259,10 +264,11 @@ class task: NSObject
         {
             return myContexts
         }
-        set
-        {
-            myContexts = newValue
-        }
+//        set
+//        {
+//            myContexts = newValue
+//            save()
+//        }
     }
     
     var priority: String
@@ -274,6 +280,7 @@ class task: NSObject
         set
         {
             myPriority = newValue
+            save()
         }
     }
     
@@ -286,6 +293,7 @@ class task: NSObject
         set
         {
             myEnergyLevel = newValue
+            save()
         }
     }
     
@@ -298,6 +306,7 @@ class task: NSObject
         set
         {
             myEstimatedTime = newValue
+            save()
         }
     }
     
@@ -310,6 +319,7 @@ class task: NSObject
         set
         {
             myEstimatedTimeType = newValue
+            save()
         }
     }
     
@@ -331,6 +341,7 @@ class task: NSObject
             {
                 myTeamID = Int(tempProject[0].teamID)
             }
+            save()
         }
     }
     
@@ -387,6 +398,7 @@ class task: NSObject
         set
         {
             myRepeatInterval = newValue
+            save()
         }
     }
     
@@ -399,6 +411,7 @@ class task: NSObject
         set
         {
             myRepeatType = newValue
+            save()
         }
     }
     
@@ -411,6 +424,7 @@ class task: NSObject
         set
         {
             myRepeatBase = newValue
+            save()
         }
     }
     
@@ -423,6 +437,7 @@ class task: NSObject
         set
         {
             myFlagged = newValue
+            save()
         }
     }
     
@@ -435,6 +450,7 @@ class task: NSObject
         set
         {
             myUrgency = newValue
+            save()
         }
     }
     
@@ -443,10 +459,6 @@ class task: NSObject
         get
         {
             return myTeamID
-        }
-        set
-        {
-            myTeamID = newValue
         }
     }
     
@@ -477,6 +489,7 @@ class task: NSObject
     
     init(taskID: Int, teamID: Int)
     {
+        super.init()
         let myTaskData = myDatabaseConnection.getTask(taskID, teamID: teamID)
         
         for myTask in myTaskData
@@ -502,14 +515,7 @@ class task: NSObject
             
             // get contexts
             
-            let myContextList = myDatabaseConnection.getContextsForTask(taskID, teamID: teamID)
-            myContexts.removeAll()
-            
-            for myContextItem in myContextList
-            {
-                let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
-                myContexts.append(myNewContext)
-            }
+            loadContexts()
             
             let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID, teamID: teamID)
             
@@ -565,6 +571,18 @@ class task: NSObject
         }
     }
     
+    func loadContexts()
+    {
+        let myContextList = myDatabaseConnection.getContextsForTask(taskID, teamID: teamID)
+        myContexts.removeAll()
+        
+        for myContextItem in myContextList
+        {
+            let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID, contextType: myContextItem.contextType!)
+            myContexts.append(myNewContext)
+        }
+    }
+    
     func save()
     {
         if myDueDate == nil
@@ -584,28 +602,28 @@ class task: NSObject
         
         myDatabaseConnection.saveTask(myTaskID, title: myTitle, details: myDetails, dueDate: myDueDate, startDate: myStartDate, status: myStatus, priority: myPriority, energyLevel: myEnergyLevel, estimatedTime: myEstimatedTime, estimatedTimeType: myEstimatedTimeType, projectID: myProjectID, completionDate: myCompletionDate!, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, flagged: myFlagged, urgency: myUrgency, teamID: myTeamID)
         
-        if !saveCalled
-        {
-            saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
-        }
+//        if !saveCalled
+//        {
+//            saveCalled = true
+//            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
+//        }
     }
     
-    func performSave()
-    {
-        let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID, teamID: teamID)[0]
-        
-        myCloudDB.saveTaskRecordToCloudKit(myTask)
-        
-        // Save context link
-        
-        for myContext in myContexts
-        {
-            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID, teamID: teamID, contextType: myContext.contextType)
-        }
-        
-        saveCalled = false
-    }
+//    func performSave()
+//    {
+//        let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID, teamID: teamID)[0]
+//
+//        myCloudDB.saveTaskRecordToCloudKit(myTask)
+//
+//        // Save context link
+//
+//        for myContext in myContexts
+//        {
+//            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID, teamID: teamID, contextType: myContext.contextType)
+//        }
+//
+//        saveCalled = false
+//    }
     
     func addContext(_ contextID: Int, contextType: String)
     {
@@ -613,34 +631,24 @@ class task: NSObject
         
         // first we need to make sure the context is not already present
         
-        // Get the context name
-        
-        let myContext = context(contextID: contextID, teamID: teamID)
-        
         let myCheck = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
-        
+
         for myItem in myCheck
         {
-            let myRetrievedContext = context(contextID: Int(myItem.contextID), teamID: teamID)
-            if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
+            if myItem.contextType == contextType && myItem.contextID == contextID
             {
                 itemFound = true
                 break
             }
         }
         
+        // Get the context name
+        
         if !itemFound
         { // Not match found
             myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID, teamID: teamID, contextType: contextType)
             
-            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
-            myContexts.removeAll()
-            
-            for myContextItem in myContextList
-            {
-                let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
-                myContexts.append(myNewContext)
-            }
+            loadContexts()
         }
     }
     
@@ -648,14 +656,7 @@ class task: NSObject
     {
         myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID, teamID: teamID)
         
-        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID, teamID: teamID)
-        myContexts.removeAll()
-        
-        for myContextItem in myContextList
-        {
-            let myNewContext = context(contextID: Int(myContextItem.contextID), teamID: teamID)
-            myContexts.append(myNewContext)
-        }
+        loadContexts()
     }
     
     func delete() -> Bool
@@ -1561,7 +1562,7 @@ extension CloudKitInteraction
     func saveTaskRecordToCloudKit(_ sourceRecord: Task)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(sourceRecord.teamID)") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in

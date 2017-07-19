@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 import CloudKit
 
+let personContextType = "Person"
+let placeContextType = "Place"
+let toolContextType = "Tool"
+
 class contexts: NSObject
 {
     fileprivate var myContexts:[context] = Array()
@@ -19,13 +23,13 @@ class contexts: NSObject
     
     init(teamID: Int)
     {
-        for myItem in myDatabaseConnection.getContextsForType("Person", teamID: teamID)
+        for myItem in myDatabaseConnection.getContextsForType(personContextType, teamID: teamID)
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID)
+                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
                 myPeopleContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -33,13 +37,13 @@ class contexts: NSObject
         
         myPeopleContexts.sort { $0.name < $1.name }
         
-        for myItem in myDatabaseConnection.getContextsForType("Place", teamID: teamID)
+        for myItem in myDatabaseConnection.getContextsForType(placeContextType, teamID: teamID)
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID)
+                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
                 myPlaceContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -47,13 +51,13 @@ class contexts: NSObject
         
         myPlaceContexts.sort { $0.name < $1.name }
         
-        for myItem in myDatabaseConnection.getContextsForType("Tool", teamID: teamID)
+        for myItem in myDatabaseConnection.getContextsForType(toolContextType, teamID: teamID)
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID)
+                let myContext = context(contextID: Int(myItem.contextID), teamID: teamID, contextType: myItem.contextType!)
                 myToolContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -198,7 +202,7 @@ class context: NSObject
     {
         get
         {
-            return myDatabaseConnection.getTasksForContext(myContextID, teamID: myTeamID)
+            return myDatabaseConnection.getTasksForContext(myContextID, teamID: myTeamID, contextType: myContextType)
         }
     }
     
@@ -214,7 +218,7 @@ class context: NSObject
             }
             else
             { // Navigate to parent
-                let theParent = context(contextID: myParentContext, teamID: myTeamID)
+                let theParent = context(contextID: myParentContext, teamID: myTeamID, contextType: myContextType)
                 retString = "\(theParent.contextHierarchy) - \(myName)"
             }
             
@@ -274,7 +278,7 @@ class context: NSObject
         save()
     }
     
-    init(contextName: String, teamID: Int)
+    init(contextName: String, teamID: Int, contextType: String)
     {
         super.init()
         //       var matchFound: Bool = false
@@ -287,7 +291,7 @@ class context: NSObject
         
         for myContext in myContextList.allContexts
         {
-            if myContext.name.lowercased() == strippedContext.lowercased()
+            if myContext.name.lowercased() == strippedContext.lowercased() && myContext.contextType == contextType
             {
                 // Existing context found, so use this record
                 
@@ -308,23 +312,37 @@ class context: NSObject
         }
     }
     
-    init(contextID: Int, teamID: Int)
+    init(contextID: Int, teamID: Int, contextType: String)
     {
         super.init()
-        let myContexts = myDatabaseConnection.getContextDetails(contextID, teamID: teamID)
         
-        for myContext in myContexts
+        if contextType == personContextType
         {
-            myContextID = Int(myContext.contextID)
-            myName = myContext.name!
-            myEmail = myContext.email!
-            myAutoEmail = myContext.autoEmail!
-            myParentContext = Int(myContext.parentContext)
-            myStatus = myContext.status!
-            myPersonID = Int(myContext.personID)
-            myTeamID = Int(myContext.teamID)
-            myPredecessor = Int(myContext.predecessor)
-            myContextType = myContext.contextType!
+            let myPerson = person(personID: contextID, teamID: teamID)
+
+            myContextID = myPerson.personID
+            myName = myPerson.name
+            myPersonID = myPerson.personID
+            myTeamID = teamID
+            myContextType = personContextType
+        }
+        else
+        {
+            let tempContexts = myDatabaseConnection.getContextDetails(contextID, teamID: teamID, contextType: contextType)
+
+            for myContext in tempContexts
+            {
+                myContextID = Int(myContext.contextID)
+                myName = myContext.name!
+                myEmail = myContext.email!
+                myAutoEmail = myContext.autoEmail!
+                myParentContext = Int(myContext.parentContext)
+                myStatus = myContext.status!
+                myPersonID = Int(myContext.personID)
+                myTeamID = Int(myContext.teamID)
+                myPredecessor = Int(myContext.predecessor)
+                myContextType = myContext.contextType!
+            }
         }
     }
     
@@ -356,7 +374,7 @@ class context: NSObject
     
     func performSave()
     {
-        let myContext = myDatabaseConnection.getContextDetails(myContextID, teamID: myTeamID)[0]
+        let myContext = myDatabaseConnection.getContextDetails(myContextID, teamID: myTeamID, contextType: myContextType)[0]
         
         myCloudDB.saveContextRecordToCloudKit(myContext)
         
@@ -385,7 +403,7 @@ extension coreDatabase
     {
         var myContext: Context!
         
-        let myContexts = getContextDetails(contextID, teamID: teamID)
+        let myContexts = getContextDetails(contextID, teamID: teamID, contextType: contextType)
         
         if myContexts.count == 0
         { // Add
@@ -444,9 +462,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteContext(_ contextID: Int, teamID: Int)
+    func deleteContext(_ contextID: Int, teamID: Int, contextType: String)
     {
-        let myContexts = getContextDetails(contextID, teamID: teamID)
+        let myContexts = getContextDetails(contextID, teamID: teamID, contextType: contextType)
         
         if myContexts.count > 0
         {
@@ -535,13 +553,13 @@ extension coreDatabase
         }
     }
     
-    func getContextDetails(_ contextID: Int, teamID: Int)->[Context]
+    func getContextDetails(_ contextID: Int, teamID: Int, contextType: String)->[Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(contextID == \(contextID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(contextID == \(contextID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") && (status != \"Deleted\") AND (contextType == \"\(contextType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

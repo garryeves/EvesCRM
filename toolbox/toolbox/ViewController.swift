@@ -102,7 +102,7 @@ class ViewController: UIViewController, myCommunicationDelegate
     func loadMainScreen()
     {
         myDatabaseConnection.recordsProcessed = 0
-        
+
         myDatabaseConnection.fixDropDowns()
         
         let myReachability = Reachability()

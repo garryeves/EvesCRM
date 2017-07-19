@@ -341,7 +341,26 @@ class person: NSObject
     init(personID: Int, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getPersonDetails(personID, teamID: teamID)
+        let myReturn = myDatabaseConnection.getPersonDetails(personID: personID, teamID: teamID)
+        
+        for myItem in myReturn
+        {
+            myPersonID = Int(myItem.personID)
+            myName = myItem.name!
+            myDob = myItem.dob! as Date
+            myTeamID = Int(myItem.teamID)
+            myGender = myItem.gender!
+            myNote = myItem.note!
+            myClientID = Int(myItem.clientID)
+            myProjectID = Int(myItem.projectID)
+            myCanRoster = myItem.canRoster!
+        }
+    }
+    
+    init(name: String, teamID: Int)
+    {
+        super.init()
+        let myReturn = myDatabaseConnection.getPersonDetails(name: name, teamID: teamID)
         
         for myItem in myReturn
         {
@@ -479,7 +498,7 @@ extension coreDatabase
     {
         var myItem: Person!
         
-        let myReturn = getPersonDetails(personID, teamID: teamID)
+        let myReturn = getPersonDetails(personID: personID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -539,7 +558,7 @@ extension coreDatabase
     
     func deletePerson(_ personID: Int, teamID: Int)
     {
-        let myReturn = getPersonDetails(personID, teamID: teamID)
+        let myReturn = getPersonDetails(personID: personID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -551,7 +570,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getPersonDetails(_ personID: Int, teamID: Int)->[Person]
+    func getPersonDetails(personID: Int, teamID: Int)->[Person]
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
         
@@ -575,6 +594,30 @@ extension coreDatabase
         }
     }
  
+    func getPersonDetails(name: String, teamID: Int)->[Person]
+    {
+        let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(name == \"\(name)\") AND (teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getPeople(teamID: Int)->[Person]
     {
         let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
@@ -710,7 +753,7 @@ extension coreDatabase
     
     func restorePerson(_ personID: Int, teamID: Int)
     {
-        for myItem in getPersonDetails(personID, teamID: teamID)
+        for myItem in getPersonDetails(personID: personID, teamID: teamID)
         {
             myItem.updateType = "Update"
             myItem.updateTime = NSDate()

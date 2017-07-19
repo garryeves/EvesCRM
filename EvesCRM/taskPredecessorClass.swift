@@ -120,7 +120,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
+  //      myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
     func updatePredecessorTaskType(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int)

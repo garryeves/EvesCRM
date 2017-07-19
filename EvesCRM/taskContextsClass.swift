@@ -89,7 +89,7 @@ extension coreDatabase
     {
         var myContext: TaskContext!
         
-        let myContexts = getTaskContext(contextID, taskID: taskID, teamID: teamID)
+        let myContexts = getTaskContext(contextID, taskID: taskID, teamID: teamID, contextType: contextType)
         
         if myContexts.count == 0
         { // Add
@@ -131,7 +131,34 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveTaskContextRecordToCloudKit(myContext)
+  //      myCloudDB.saveTaskContextRecordToCloudKit(myContext)
+    }
+    
+    func deleteTaskContext(_ contextID: Int, taskID: Int, teamID: Int, contextType: String)
+    {
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
+        
+        let predicate = NSPredicate(format: "(contextID == \(contextID)) AND (teamID == \(teamID)) AND (taskID = \(taskID)) AND (contextType == \"\(contextType)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime =  NSDate()
+                myStage.updateType = "Delete"
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
     }
     
     func deleteTaskContext(_ contextID: Int, taskID: Int, teamID: Int)
@@ -161,13 +188,13 @@ extension coreDatabase
         saveContext()
     }
     
-    private func getTaskContext(_ contextID: Int, taskID: Int, teamID: Int)->[TaskContext]
+    private func getTaskContext(_ contextID: Int, taskID: Int, teamID: Int, contextType: String)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (teamID == \(teamID)) AND (contextID = \(contextID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (teamID == \(teamID)) AND (contextID = \(contextID)) && (updateType != \"Delete\") AND (contextType == \"\(contextType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -191,7 +218,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -209,6 +236,30 @@ extension coreDatabase
         }
     }
     
+    func getTasksForContext(_ contextID: Int, teamID: Int, contextType: String)->[TaskContext]
+    {
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(contextID = \(contextID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") AND (contextType == \"\(contextType)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     func getTasksForContext(_ contextID: Int, teamID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
@@ -232,7 +283,7 @@ extension coreDatabase
             return []
         }
     }
-
+    
     func resetTaskContextRecords()
     {
         let fetchRequest3 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
@@ -409,6 +460,7 @@ extension CloudKitInteraction
                         record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
                     }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.contextType, forKey: "contextType")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -431,6 +483,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
                     record.setValue(sourceRecord.contextID, forKey: "contextID")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.contextType, forKey: "contextType")
                     
                     if sourceRecord.updateTime != nil
                     {

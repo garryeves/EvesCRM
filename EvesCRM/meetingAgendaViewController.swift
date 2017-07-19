@@ -21,7 +21,6 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
 {
     var passedMeeting: calendarItem!
     var communicationDelegate: myCommunicationDelegate?
-    var actionType: String!
     
     @IBOutlet weak var navBarTitle: UINavigationItem!
     @IBOutlet weak var tblAgenda: UITableView!
@@ -48,6 +47,8 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     @IBOutlet weak var btnNextMeeting: UIButton!
     @IBOutlet weak var btnViewPreviousMeeting: UIButton!
     @IBOutlet weak var btnViewNextMeeting: UIButton!
+    @IBOutlet weak var btnFinalise: UIButton!
+    @IBOutlet weak var btnRearrange: UIButton!
     
     fileprivate let reuseAgendaTime = "reuseAgendaTime"
     fileprivate let reuseAgendaTitle = "reuseAgendaTitle"
@@ -80,20 +81,16 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         super.viewDidLoad()
         
-        if actionType != nil
+        if passedMeeting.meetingStatus != agendaStatus
         {
-            if actionType != "Agenda"
-            {
-                btnAddAgendaItem.isHidden = true
-            }
+            btnAddAgendaItem.isHidden = true
+            btnRearrange.isHidden = true
         }
 
         myDateFormatter.timeStyle = DateFormatter.Style.short
         myWorkingTime = passedMeeting.startDate as Date
         
         refreshScreen()
-        
-        
         
 //        // TextExpander
 //        textExpander = SMTEDelegateController()
@@ -109,13 +106,6 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-//    override func viewWillLayoutSubviews()
-//    {
-//        super.viewWillLayoutSubviews()
-//        myWorkingTime = passedMeeting.startDate as Date
-//        refreshScreen()
-//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -202,7 +192,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
                 let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItem") as! agendaItemViewController
                 agendaViewControl.communicationDelegate = self
                 agendaViewControl.event = passedMeeting
-                agendaViewControl.actionType = actionType
+                agendaViewControl.actionType = passedMeeting.meetingStatus
                 
                 let agendaItem = myAgendaList[itemToUpdate]
                 agendaViewControl.agendaItem = agendaItem
@@ -216,7 +206,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         if tableView == tblAgenda
         {
-            if actionType != "Agenda"
+            if passedMeeting.meetingStatus != agendaStatus
             {
                 return false
             }
@@ -240,7 +230,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
     {
         if tableView == tblAgenda
         {
-            if actionType != "Agenda"
+            if passedMeeting.meetingStatus != agendaStatus
             {
                 return false
             }
@@ -305,7 +295,7 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
                 // Get row details to delete
                 var performDelete: Bool = true
                 
-                if actionType != "Agenda"
+                if passedMeeting.meetingStatus != agendaStatus
                 {
                     performDelete = false
                 }
@@ -332,72 +322,19 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         }
     }
     
-    // Start move
-    
-//    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
-//    {
-//        if actionType != "Agenda"
-//        {
-//            let alert = UIAlertController(title: "Move item", message:
-//                "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.alert)
-//
-//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-//            self.present(alert, animated: false, completion: nil)
-//        }
-//        else if myAgendaList[toIndexPath.item].title == "Close meeting" ||
-//           myAgendaList[fromIndexPath.item].title == "Close meeting"
-//        {
-//            let alert = UIAlertController(title: "Move item", message:
-//                "Unable to move \"Close meeting\" item", preferredStyle: UIAlertControllerStyle.alert)
-//
-//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-//            self.present(alert, animated: false, completion: nil)
-//        }
-//        else if myAgendaList[toIndexPath.item].title == "Review of previous meeting actions" ||
-//            myAgendaList[fromIndexPath.item].title == "Review of previous meeting actions"
-//        {
-//            let alert = UIAlertController(title: "Move item", message:
-//                "Unable to move \"Review of previous meeting actions\" item", preferredStyle: UIAlertControllerStyle.alert)
-//
-//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-//            self.present(alert, animated: false, completion: nil)
-//        }
-//        else
-//        {
-//            if toIndexPath.item > fromIndexPath.item
-//            {
-//                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
-//
-//                var loopCount: Int = fromIndexPath.item
-//
-//                while loopCount < toIndexPath.item
-//                {
-//                    myAgendaList[loopCount].meetingOrder = Int(loopCount + 2)
-//                    loopCount += 1
-//                }
-//            }
-//            else // toIndexPath.item < fromIndexPath.item
-//            {
-//                let tempToIndex = toIndexPath.item
-//
-//                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
-//
-//                var loopCount: Int = tempToIndex + 1
-//
-//                while loopCount <= fromIndexPath.item
-//                {
-//                    myAgendaList[loopCount].meetingOrder = Int(loopCount)
-//                    loopCount += 1
-//                }
-//            }
-//        }
-//
-//        buildAgendaArray()
-//
-//        tblAgenda.reloadData()
-//    }
-    
-    // End move
+    @IBAction func btnRearrange(_ sender: UIButton)
+    {
+        tblAgenda.isEditing = !tblAgenda.isEditing
+        
+        if tblAgenda.isEditing
+        {
+            btnRearrange.setTitle("Stop Rearranging", for: .normal)
+        }
+        else
+        {
+            btnRearrange.setTitle("Rearrange Agenda Items", for: .normal)
+        }
+    }
     
     @IBAction func btnAddAgendaItem(_ sender: UIButton)
     {
@@ -744,6 +681,21 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         refreshScreen()
     }
 
+    @IBAction func btnFinalise(_ sender: UIButton)
+    {
+        if passedMeeting.meetingStatus == agendaStatus
+        {
+            passedMeeting.meetingStatus = minutesStatus
+            
+        }
+        else
+        {
+            passedMeeting.meetingStatus = finishedStatus
+        }
+        
+        setStatus()
+    }
+    
     func buildPeopleList()
     {
         displayList.removeAll()
@@ -941,13 +893,32 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
         tblAttendees.reloadData()
         tblAgenda.reloadData()
         
-        if actionType == "Agenda"
+        setStatus()
+        
+        tblAgenda.isEditing = false
+        btnRearrange.setTitle("Rearrange Agenda Items", for: .normal)
+    }
+    
+    func setStatus()
+    {
+        if passedMeeting.meetingStatus == agendaStatus
         {
             tblAgenda.setEditing(true, animated: true)
+            btnFinalise.setTitle("Finalise Agenda", for: .normal)
         }
         else
         {
             tblAgenda.setEditing(false, animated: true)
+            
+            if passedMeeting.meetingStatus == minutesStatus
+            {
+                btnFinalise.setTitle("Finalise Minutes", for: .normal)
+            }
+            else
+            {
+                btnFinalise.setTitle("Meeting Completed", for: .normal)
+                btnFinalise.isEnabled = false
+            }
         }
     }
     

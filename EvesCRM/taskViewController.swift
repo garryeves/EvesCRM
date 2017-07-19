@@ -582,7 +582,7 @@ print("Garry - get owner list from people table")
             }
 */
             
-            let myNewContext = context(contextName: txtNewContext.text!, teamID: currentUser.currentTeam!.teamID)
+            let myNewContext = context(contextName: txtNewContext.text!, teamID: currentUser.currentTeam!.teamID, contextType: "Garry - get the context type")
             
             setContext(myNewContext.contextID, contextType: myNewContext.contextType)
             lblNewContext.isHidden = true
@@ -730,7 +730,7 @@ print("Garry - get owner list from people table")
             
             if pickerTarget == "Context"
             {
-                let myNewContext = context(contextName: pickerOptions[mySelectedRow], teamID: currentUser.currentTeam!.teamID)
+                let myNewContext = context(contextName: pickerOptions[mySelectedRow], teamID: currentUser.currentTeam!.teamID, contextType: "Garry - get the context type")
                 
                 setContext(myNewContext.contextID, contextType: myNewContext.contextType)
                 

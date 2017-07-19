@@ -334,7 +334,6 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingAgenda") as! meetingAgendaViewController
         agendaViewControl.communicationDelegate = self
         agendaViewControl.passedMeeting = selectedEvent.databaseItem
-        agendaViewControl.actionType = "Agenda"
         self.present(agendaViewControl, animated: true, completion: nil)
     }
     

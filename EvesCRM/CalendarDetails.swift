@@ -17,6 +17,10 @@ let quoteMeetingType = "Assess for Quote"
 let performMeetingType = "Perform Work"
 let oneOnOneMeetingType = "One on One"
 
+let agendaStatus = "Agenda"
+let minutesStatus = "Minutes"
+let finishedStatus = "Finished"
+
 struct mergedCalendarItem
 {
     var startDate: Date
@@ -364,6 +368,7 @@ class calendarItem
     fileprivate var myTeamID: Int = 0
     fileprivate var myClientID: Int = 0
     fileprivate var myProjectID: Int = 0
+    fileprivate var myMeetingStatus: String = ""
 
     // Seup Date format for display
     fileprivate var startDateFormatter = DateFormatter()
@@ -406,6 +411,7 @@ class calendarItem
             myMinutesType = mySavedValues[0].minutesType!
             myClientID = Int(mySavedValues[0].clientID)
             myProjectID = Int(mySavedValues[0].projectID)
+            myMeetingStatus = mySavedValues[0].status!
             mySavedData = true
         }
         else
@@ -414,6 +420,7 @@ class calendarItem
             myTitle = event.title
             myStartDate = event.startDate
             myEndDate = event.endDate
+            myMeetingStatus = agendaStatus
             if event.location == nil
             {
                 myLocation = ""
@@ -473,6 +480,7 @@ class calendarItem
             myMinutesType = mySavedValues[0].minutesType!
             myClientID = Int(mySavedValues[0].clientID)
             myProjectID = Int(mySavedValues[0].projectID)
+            myMeetingStatus = mySavedValues[0].status!
             mySavedData = true
         }
         else
@@ -482,6 +490,7 @@ class calendarItem
             myTitle = event.title
             myStartDate = event.startDate
             myEndDate = event.endDate
+            myMeetingStatus = agendaStatus
             if event.location == nil
             {
                 myLocation = ""
@@ -526,6 +535,7 @@ class calendarItem
         myTeamID = Int(meetingAgenda.teamID)
         myClientID = Int(meetingAgenda.clientID)
         myProjectID = Int(meetingAgenda.projectID)
+        myMeetingStatus = meetingAgenda.status!
         
         loadAttendees()
         loadAgendaItems()
@@ -550,6 +560,7 @@ class calendarItem
             myMinutesType = mySavedValues[0].minutesType!
             myClientID = Int(mySavedValues[0].clientID)
             myProjectID = Int(mySavedValues[0].projectID)
+            myMeetingStatus = mySavedValues[0].status!
             mySavedData = true
         }
 
@@ -738,6 +749,19 @@ class calendarItem
         set
         {
             myStatus = newValue
+            save()
+        }
+    }
+    
+    var meetingStatus: String
+    {
+        get
+        {
+            return myMeetingStatus
+        }
+        set
+        {
+            myMeetingStatus = newValue
             save()
         }
     }
@@ -1072,7 +1096,7 @@ class calendarItem
         // Save Agenda details
   //      if mySavedData
  //       {
-        myDatabaseConnection.saveAgenda(myMeetingID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID, clientID: myClientID, projectID: myProjectID)
+        myDatabaseConnection.saveAgenda(myMeetingID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID, clientID: myClientID, projectID: myProjectID, status: myMeetingStatus)
 //        }
 //        else
 //        {
@@ -1121,6 +1145,7 @@ class calendarItem
             myMinutesType = mySavedValues[0].minutesType!
             myProjectID  = Int(mySavedValues[0].projectID)
             myClientID  = Int(mySavedValues[0].clientID)
+            myMeetingStatus = mySavedValues[0].status!
             mySavedData = true
         }
         
@@ -2621,7 +2646,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgenda(_ meetingID: String, previousMeetingID: String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, clientID: Int, projectID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAgenda(_ meetingID: String, previousMeetingID: String, name: String, chair: String, minutes: String, location: String, startTime: Date, endTime: Date, minutesType: String, teamID: Int, clientID: Int, projectID: Int, status: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -2642,6 +2667,7 @@ extension coreDatabase
             myAgenda.teamID = Int64(teamID)
             myAgenda.clientID = Int64(clientID)
             myAgenda.projectID = Int64(projectID)
+            myAgenda.status = status
             if updateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -2667,6 +2693,7 @@ extension coreDatabase
             myAgenda.teamID = Int64(teamID)
             myAgenda.clientID = Int64(clientID)
             myAgenda.projectID = Int64(projectID)
+            myAgenda.status = status
             if updateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -3184,6 +3211,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                     record!.setValue(sourceRecord.clientID, forKey: "clientID")
                     record!.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record!.setValue(sourceRecord.status, forKey: "status")
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -3220,6 +3248,7 @@ extension CloudKitInteraction
                     record.setValue("\(sourceRecord.teamID)", forKey: "teamID")
                     record.setValue(sourceRecord.clientID, forKey: "clientID")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record.setValue(sourceRecord.status, forKey: "status")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -3267,6 +3296,7 @@ extension CloudKitInteraction
         let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
         let clientID = sourceRecord.object(forKey: "clientID") as! Int
         let projectID = sourceRecord.object(forKey: "projectID") as! Int
+        let status = sourceRecord.object(forKey: "status") as! String
         
         myDatabaseConnection.recordsToChange += 1
         while self.recordCount > 0
@@ -3276,7 +3306,7 @@ extension CloudKitInteraction
         
         self.recordCount += 1
         
-        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID: previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, clientID: clientID, projectID: projectID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveAgenda(meetingID, previousMeetingID: previousMeetingID, name: name, chair: chair, minutes: minutes, location: location, startTime: startTime, endTime: endTime, minutesType: minutesType, teamID: teamID, clientID: clientID, projectID: projectID, status: status, updateTime: updateTime, updateType: updateType)
         self.recordCount -= 1
     }
 }
