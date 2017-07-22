@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 import CloudKit
 
+let taskStatusOpen = "Open"
+let taskStatusClosed = "Closed"
+let taskStatusOnHold = "On Hold"
+
 class tasks: NSObject
 {
     var myActiveTasks: [task] = Array()
@@ -479,7 +483,7 @@ class task: NSObject
         myDueDate = getDefaultDate() as Date!
         myStartDate = getDefaultDate() as Date!
         myCompletionDate = getDefaultDate() as Date!
-        myStatus = "Open"
+        myStatus = taskStatusOpen
         
         myTitle = "New Task"
         myTeamID = teamID

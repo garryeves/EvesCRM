@@ -159,6 +159,9 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
             }
         }
         cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
+        cell.taskItem = agendaItem.tasks[indexPath.row]
+        cell.mainView = self
+        cell.sourceView = cell
         
         return cell
     }
@@ -214,19 +217,6 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
     
     @IBAction func btnAddAction(_ sender: UIButton)
     {
-//        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
-//        popoverContent.modalPresentationStyle = .popover
-//        let popover = popoverContent.popoverPresentationController
-//        popover!.sourceView = sender
-//        popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
-//
-//        let newTask = task(teamID: currentUser.currentTeam!.teamID)
-//        popoverContent.passedTask = newTask
-//
-//        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
-//
-//        present(popoverContent, animated: true, completion: nil)
-        
         let newTask = task(teamID: currentUser.currentTeam!.teamID)
         newTask.title = txtTaskName.text!
         
@@ -732,14 +722,55 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UITableVie
 //    
 }
 
-class myTaskItem: UITableViewCell
+class myTaskItem: UITableViewCell, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
     @IBOutlet weak var btnStatus: UIButton!
     @IBOutlet weak var lblTaskTargetDate: UILabel!
     @IBOutlet weak var lblTaskOwner: UILabel!
     @IBOutlet weak var lblTaskName: UILabel!
     
-    @IBAction func btnStatus(_ sender: UIButton) {
+    var taskItem: task!
+    var sourceView: myTaskItem!
+    var mainView: agendaItemViewController!
+    
+    private var displayList: [String] = Array()
+    
+    @IBAction func btnStatus(_ sender: UIButton)
+    {
+        displayList.removeAll(keepingCapacity: false)
+        
+        displayList.append(taskStatusOpen)
+        displayList.append(taskStatusClosed)
+        displayList.append(taskStatusOnHold)
+        
+        if displayList.count > 0
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "TaskStatus"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            mainView.present(pickerView, animated: true, completion: nil)
+        }
     }
     
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        // Write code for select
+        if source == "TaskStatus"
+        {
+            btnStatus.setTitle(displayList[selectedItem], for: .normal)
+            taskItem.status = btnStatus.currentTitle!
+        }
+    }
 }

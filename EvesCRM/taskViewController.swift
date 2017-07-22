@@ -18,7 +18,7 @@ protocol MyTaskDelegate
 }
 
 let NotificationRemoveTaskContext = Notification.Name("NotificationRemoveTaskContext")
-class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDelegate
+class taskViewController: UIViewController,  UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate  //, SMTEFillDelegate
 {
     var passedTask: task!
     var passedMeeting: calendarItem!
@@ -30,16 +30,12 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var txtTaskTitle: UITextField!
     @IBOutlet weak var txtTaskDescription: UITextView!
-    @IBOutlet weak var myDatePicker: UIDatePicker!
-    @IBOutlet weak var myPicker: UIPickerView!
     @IBOutlet weak var btnTargetDate: UIButton!
     @IBOutlet weak var btnOwner: UIButton!
     @IBOutlet weak var btnStatus: UIButton!
-    @IBOutlet weak var btnSetTargetDate: UIButton!
     @IBOutlet weak var lblStart: UILabel!
     @IBOutlet weak var lblContexts: UILabel!
     @IBOutlet weak var btnStart: UIButton!
-    @IBOutlet weak var colContexts: UICollectionView!
     @IBOutlet weak var lblPriority: UILabel!
     @IBOutlet weak var txtEstTime: UITextField!
     @IBOutlet weak var btnEstTimeInterval: UIButton!
@@ -54,8 +50,6 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     @IBOutlet weak var btnProject: UIButton!
     @IBOutlet weak var lblUrgency: UILabel!
     @IBOutlet weak var btnUrgency: UIButton!
-    @IBOutlet weak var btnSelect: UIButton!
-    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var lblrepeatEvery: UILabel!
     @IBOutlet weak var lblFromActivity: UILabel!
     @IBOutlet weak var txtRepeatInterval: UITextField!
@@ -63,17 +57,16 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     @IBOutlet weak var btnRepeatBase: UIButton!
     @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnShare: UIBarButtonItem!
-
-    fileprivate var pickerOptions: [String] = Array()
-    fileprivate var pickerTarget: String = ""
+    @IBOutlet weak var tblContexts: UITableView!
+    
     fileprivate var myStartDate: Date!
     fileprivate var myDueDate: Date!
     fileprivate var myProjectID: Int = 0
     fileprivate var myProjectDetails: [project] = Array()
-    fileprivate var mySelectedRow: Int = 0
     fileprivate var kbHeight: CGFloat!
-    fileprivate var colContextsHeight: CGFloat!
     fileprivate var constraintArray: [NSLayoutConstraint] = Array()
+    
+    fileprivate var displayList: [String] = Array()
     
 //    lazy var activityPopover:UIPopoverController = {
 //        return UIPopoverController(contentViewController: self.activityViewController)
@@ -92,11 +85,6 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        myDatePicker.isHidden = true
-        myPicker.isHidden = true
-        btnSelect.isHidden = true
-        btnSetTargetDate.isHidden = true
         
         txtTaskDescription.layer.borderColor = UIColor.lightGray.cgColor
         txtTaskDescription.layer.borderWidth = 0.5
@@ -226,15 +214,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
             myCurrentViewController = self
         }
     }
-    
-//    override func viewWillAppear(_ animated:Bool)
-//    {
-//        super.viewWillAppear(animated)
-//        
-//        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-//        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-//    }
-    
+ 
     override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
@@ -247,90 +227,20 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    override func viewWillLayoutSubviews()
-    {
-        super.viewWillLayoutSubviews()
-        colContexts.collectionViewLayout.invalidateLayout()
-        
-        colContexts.reloadData()
-    }
-    
-    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
-    {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
-        return passedTask.contexts.count
-    }
-    
-    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
-        var cell: myContextItem!
 
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseContext", for: indexPath as IndexPath) as! myContextItem
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+         return passedTask.contexts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        let cell = tableView.dequeueReusableCell(withIdentifier:"cellContext", for: indexPath) as! myContextItem
         
-     //   cell.lblContext.text = passedTask.contexts[indexPath.row].name
+        cell.lblContext.text = passedTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", for: .normal)
-     //   cell.btnRemove.tag = Int(passedTask.contexts[indexPath.row].contextID)
          
-        if (indexPath.row % 2 == 0)  // was .row
-        {
-            cell.backgroundColor = greenColour
-        }
-        else
-        {
-            cell.backgroundColor = UIColor.clear
-        }
-        
-        cell.layoutSubviews()
-        
         return cell
-    }
-/*
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
-    {  // Leaving stub in here for use in other collections
-        
-    }
-    
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
-    {
-        var headerView:UICollectionReusableView!
-        
-        if kind == UICollectionElementKindSectionHeader
-        {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "agendaItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
-        }
-        return headerView
-    }
-*/
-    
-    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
-    {
-        return CGSize(width: colContexts.bounds.size.width, height: 39)
-    }
-
-    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int
-    {
-        return 1
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int
-    {
-        return pickerOptions.count
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
-    {
-        return pickerOptions[row]
-    }
-    
-    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int)
-    {
-        mySelectedRow = row
     }
     
     @IBAction func btnTargetDate(_ sender: UIButton)
@@ -358,120 +268,67 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         }
         else
         {
-       //     lblNewContext.isHidden = false
-      //      txtNewContext.isHidden = false
-      //      btnNewContext.isHidden = false
-      //      txtNewContext.text = ""
-print("Garry - get owner list from people table")
-//            let myContextList = contexts()
-//            
-//            pickerOptions.removeAll(keepingCapacity: false)
-//            
-//            pickerOptions.append("")
-//
-//            for myContext in myContextList.people
-//            {
-//                pickerOptions.append(myContext.contextHierarchy)
-//            }
-//            
-//            for myContext in myContextList.places
-//            {
-//                pickerOptions.append(myContext.contextHierarchy)
-//            }
-//            
-//            for myContext in myContextList.tools
-//            {
-//                pickerOptions.append(myContext.contextHierarchy)
-//            }
-//            
-            
-            /*  Need to look at this as this needs to provide a better way of select contexts for the task
-            
-            if passedTaskType == "minutes"
-            { // a meeting task
-                // First need to loop through the meetings attendees
-                
-                for myAttendee in passedEvent.attendees
+            displayList.removeAll(keepingCapacity: false)
+            displayList.append("")
+            if passedMeeting != nil
+            {
+                // Come in from a meeting so just show meeting attendees
+                for attendee in passedMeeting.attendees
                 {
-                    // check in the address book to see if we have a person for this email address, this is so we make sure we try and use consistent Context names
-                    let person:ABRecord! = findPersonbyEmail(myAttendee.emailAddress)
-                    
-                    if person != nil
-                    {
-                        let personName = ABRecordCopyCompositeName(person).takeRetainedValue() as String
-                        pickerOptions.append(personName)
-                    }
-                    else
-                    {
-                        pickerOptions.append(myAttendee.name)
-                    }
-                }
-                for myContext in myContextList.people
-                {
-                    pickerOptions.append(myContext.contextHierarchy)
+                    displayList.append(attendee.name)
                 }
             }
             else
-            { // Not a meeting task
-                for myContext in myContextList.people
+            {
+                // List from people table
+                for attendee in people(teamID: currentUser.currentTeam!.teamID).people
                 {
-                    pickerOptions.append(myContext.contextHierarchy)
+                    displayList.append(attendee.name)
                 }
             }
-*/
-            hideFields()
             
-            if pickerOptions.count > 0
-            {
-                myPicker.isHidden = false
-                btnSelect.isHidden = false
-                myPicker.reloadAllComponents()
-                btnSelect.setTitle("Set Context", for: .normal)
-                myPicker.selectRow(0,inComponent: 0, animated: true)
-                mySelectedRow = 0
-            }
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+            pickerView.modalPresentationStyle = .popover
             
-            pickerTarget = "Context"
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = "owner"
+            pickerView.delegate = self
+            pickerView.pickerValues = displayList
+            pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+            pickerView.currentValue = sender.currentTitle!
+            self.present(pickerView, animated: true, completion: nil)
         }
     }
     
     @IBAction func btnStatus(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
+       
         for myItem in myTaskStatus
         {
-            pickerOptions.append(myItem)
-        }
-
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Status"
-        btnSelect.setTitle("Set Status", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
-    }
-    
-    @IBAction func btnSetTargetDate(_ sender: UIButton)
-    {
-        if pickerTarget == "TargetDate"
-        {
-            setDisplayDate(btnTargetDate, targetDate: myDatePicker.date)
-            myDueDate = myDatePicker.date
-            passedTask.dueDate = myDueDate
-        }
-        else
-        {
-            setDisplayDate(btnStart, targetDate: myDatePicker.date)
-            myStartDate = myDatePicker.date
-            passedTask.startDate = myStartDate
+            displayList.append(myItem)
         }
         
-        btnSetTargetDate.isHidden = true
-        myDatePicker.isHidden = true
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
         
-        showFields()
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "Status"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnStart(_ sender: UIButton)
@@ -489,59 +346,80 @@ print("Garry - get owner list from people table")
     
     @IBAction func btnEstTimeInterval(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
+        
         for myItem in myTimeInterval
         {
-            pickerOptions.append(myItem)
+            displayList.append(myItem)
         }
-
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "TimeInterval"
-        btnSelect.setTitle("Set Time Interval", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "TimeInterval"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnPriority(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
         
         for myItem in myTaskPriority
         {
-            pickerOptions.append(myItem)
+            displayList.append(myItem)
         }
-
         
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Priority"
-        btnSelect.setTitle("Set Priority", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "Priority"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnEnergy(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
         
         for myItem in myTaskEnergy
         {
-            pickerOptions.append(myItem)
+            displayList.append(myItem)
         }
-
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Energy"
-        btnSelect.setTitle("Set Energy", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "Energy"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnNewContext(_ sender: UIButton)
@@ -588,71 +466,153 @@ print("Garry - get owner list from people table")
             lblNewContext.isHidden = true
             txtNewContext.isHidden = true
             btnNewContext.isHidden = true
-            myPicker.isHidden = true
-            btnSelect.isHidden = true
             showFields()
         }
     }
     
     @IBAction func btnProject(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
         myProjectDetails.removeAll(keepingCapacity: false)
         
-        pickerOptions.append("")
-        
-        // Get the projects for the tasks current team ID
-        let myProjects = projects(teamID: passedTask.teamID, includeEvents: true)
-//        let myProjects = myDatabaseConnection.getProjects(passedTask.teamID)
-        
-        for myProject in myProjects.projects
+        for myProject in projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true).projects
         {
-            pickerOptions.append(myProject.projectName)
+            displayList.append(myProject.projectName)
             myProjectDetails.append(myProject)
         }
         
-        // Now also add in the users projects for other team Ids they have access to
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
         
-        for myTeamItem in userTeams(userID: currentUser.userID).UserTeams
-        {
-            if myTeamItem.teamID != passedTask.teamID
-            {
-                let myProjects = projects(teamID: myTeamItem.teamID, includeEvents: true)
-                for myProject in myProjects.projects
-                {
-                    pickerOptions.append(myProject.projectName)
-                    myProjectDetails.append(myProject)
-                }
-            }
-        }
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
         
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Project"
-        btnSelect.setTitle("Set Project", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
+        pickerView.source = "Energy"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnUrgency(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepingCapacity: false)
+        displayList.removeAll(keepingCapacity: false)
         
         for myItem in myTaskUrgency
         {
-            pickerOptions.append(myItem)
+            displayList.append(myItem)
         }
-
-        hideFields()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        myPicker.reloadAllComponents()
-        pickerTarget = "Urgency"
-        btnSelect.setTitle("Set Urgency", for: .normal)
-        myPicker.selectRow(0,inComponent: 0, animated: true)
-        mySelectedRow = 0
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "Urgency"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        switch source
+        {
+            case "Status":
+                btnStatus.setTitle(displayList[selectedItem], for: .normal)
+                passedTask.status = displayList[selectedItem]
+            
+            case "TimeInterval":
+                btnEstTimeInterval.setTitle(displayList[selectedItem], for: .normal)
+                passedTask.estimatedTimeType = displayList[selectedItem]
+            
+            case "Priority":
+                btnPriority.setTitle(displayList[selectedItem], for: .normal)
+                passedTask.priority = displayList[selectedItem]
+            
+            case "Energy":
+                btnEnergy.setTitle(displayList[selectedItem], for: .normal)
+                passedTask.energyLevel = displayList[selectedItem]
+            
+            case "Urgency":
+                btnUrgency.setTitle(displayList[selectedItem], for: .normal)
+                passedTask.urgency = displayList[selectedItem]
+            
+            case "Project":
+                getProjectName(myProjectDetails[selectedItem].projectID)
+                passedTask.projectID = myProjectDetails[selectedItem].projectID
+            
+            case "RepeatPeriod":
+                passedTask.repeatType = displayList[selectedItem]
+                btnRepeatPeriod.setTitle(passedTask.repeatType, for: .normal)
+            
+            case "RepeatBase":
+                passedTask.repeatBase = displayList[selectedItem]
+                btnRepeatBase.setTitle(passedTask.repeatBase, for: .normal)
+            
+            case "Context":
+                let myNewContext = context(contextName: displayList[selectedItem], teamID: currentUser.currentTeam!.teamID, contextType: "Garry - get the context type")
+                
+                setContext(myNewContext.contextID, contextType: myNewContext.contextType)
+            
+                /*
+                 var matchFound: Bool = false
+                 // if we have just selected an "unknown" context then we need ot create it
+             
+                 // first lets see if there is already a context with this name
+                 let myContextList = contexts()
+             
+                 for myContext in myContextList.contexts
+                 {
+                 if myContext.name.lowercaseString == pickerOptions[mySelectedRow].lowercaseString
+                 {
+                 // Existing context found, so use this record
+             
+                 setContext(myContext.contextID)
+                 matchFound = true
+                 break
+                 }
+                 }
+             
+                 // if no match then create context
+             
+                 if !matchFound
+                 {
+                 let myNewContext = context(contextName: pickerOptions[mySelectedRow])
+             
+                 setContext(myNewContext.contextID)
+                 }
+                 */
+            
+            default:
+                print("myPickerDidFinish selectedItem - unknown source = \(source)")
+        }
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        if source == "TargetDate"
+        {
+            setDisplayDate(btnTargetDate, targetDate: selectedDate)
+            myDueDate = selectedDate
+            passedTask.dueDate = myDueDate
+        }
+        else
+        {
+            setDisplayDate(btnStart, targetDate: selectedDate)
+            myStartDate = selectedDate
+            passedTask.startDate = myStartDate
+        }
     }
     
     @IBAction func txtTaskDetail(_ sender: UITextField)
@@ -672,104 +632,6 @@ print("Garry - get owner list from people table")
                 passedTask.estimatedTime = Int(txtEstTime.text!)!
             }
         }
-    }
-    
-    @IBAction func btnSelect(_ sender: UIButton)
-    {
-        // Write code for select
-
-        if mySelectedRow != 0
-        {
-            if pickerTarget == "Status"
-            {
-                btnStatus.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedTask.status = btnStatus.currentTitle!
-            }
-        
-            if pickerTarget == "TimeInterval"
-            {
-                btnEstTimeInterval.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
-            }
-        
-            if pickerTarget == "Priority"
-            {
-                btnPriority.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedTask.priority = btnPriority.currentTitle!
-            }
-        
-            if pickerTarget == "Energy"
-            {
-                btnEnergy.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedTask.energyLevel = btnEnergy.currentTitle!
-            }
-        
-            if pickerTarget == "Urgency"
-            {
-                btnUrgency.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedTask.urgency = btnUrgency.currentTitle!
-            }
-        
-            if pickerTarget == "Project"
-            {
-                getProjectName(myProjectDetails[mySelectedRow - 1].projectID)
-                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID
-            }
-        
-            if pickerTarget == "RepeatPeriod"
-            {
-                passedTask.repeatType = myRepeatPeriods[mySelectedRow]
-                btnRepeatPeriod.setTitle(passedTask.repeatType, for: .normal)
-            }
-            
-            if pickerTarget == "RepeatBase"
-            {
-                passedTask.repeatBase = myRepeatBases[mySelectedRow]
-                btnRepeatBase.setTitle(passedTask.repeatBase, for: .normal)
-            }
-            
-            if pickerTarget == "Context"
-            {
-                let myNewContext = context(contextName: pickerOptions[mySelectedRow], teamID: currentUser.currentTeam!.teamID, contextType: "Garry - get the context type")
-                
-                setContext(myNewContext.contextID, contextType: myNewContext.contextType)
-                
-                /*
-                var matchFound: Bool = false
-                // if we have just selected an "unknown" context then we need ot create it
-            
-                // first lets see if there is already a context with this name
-                let myContextList = contexts()
-            
-                for myContext in myContextList.contexts
-                {
-                    if myContext.name.lowercaseString == pickerOptions[mySelectedRow].lowercaseString
-                    {
-                        // Existing context found, so use this record
-                    
-                        setContext(myContext.contextID)
-                        matchFound = true
-                        break
-                    }
-                }
-            
-                // if no match then create context
-            
-                if !matchFound
-                {
-                    let myNewContext = context(contextName: pickerOptions[mySelectedRow])
-                
-                    setContext(myNewContext.contextID)
-                }
-*/
-            }
-        }
-        myPicker.isHidden = true
-        btnSelect.isHidden = true
-        lblNewContext.isHidden = true
-        txtNewContext.isHidden = true
-        btnNewContext.isHidden = true
-        showFields()
     }
     
     func textViewDidEndEditing(_ textView: UITextView)
@@ -794,53 +656,54 @@ print("Garry - get owner list from people table")
     
     @IBAction func btnrepeatPeriod(_ sender: UIButton)
     {
-        var selectedRow: Int = 0
-        var rowCount: Int = 0
-        pickerOptions.removeAll()
+        displayList.removeAll(keepingCapacity: false)
         
         for myItem in myRepeatPeriods
         {
-            pickerOptions.append(myItem)
-            if myItem == passedTask.repeatType
-            {
-                selectedRow = rowCount
-            }
-            rowCount += 1
+            displayList.append(myItem)
         }
-        btnSelect.setTitle("Select Repeating type", for: .normal)
-        pickerTarget = "RepeatPeriod"
-        myPicker.reloadAllComponents()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        mySelectedRow = -1
-        myPicker.selectRow(selectedRow, inComponent: 0, animated: true)
-        hideFields()
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "RepeatPeriod"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnRepeatBase(_ sender: UIButton)
     {
-        var selectedRow: Int = 0
-        var rowCount: Int = 0
-
-        pickerOptions.removeAll()
+        displayList.removeAll(keepingCapacity: false)
         
         for myItem in myRepeatBases
         {
-            pickerOptions.append(myItem)
-            if myItem == passedTask.repeatBase
-            {
-                selectedRow = rowCount
-            }
-            rowCount += 1
+            displayList.append(myItem)
         }
-        btnSelect.setTitle("Select Repeating base", for: .normal)
-        pickerTarget = "RepeatBase"
-        myPicker.reloadAllComponents()
-        myPicker.isHidden = false
-        btnSelect.isHidden = false
-        mySelectedRow = -1
-        myPicker.selectRow(selectedRow, inComponent: 0, animated: true)
-        hideFields()
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "RepeatBase"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.currentValue = sender.currentTitle!
+        self.present(pickerView, animated: true, completion: nil)
     }
     
 //    func changeViewHeight(_ viewName: UIView, newHeight: CGFloat)
@@ -856,77 +719,43 @@ print("Garry - get owner list from people table")
     func showKeyboardFields()
     {
         lblTargetDate.isHidden = false
-//        changeViewHeight(lblTargetDate, newHeight: 30)
         btnTargetDate.isHidden = false
-//        changeViewHeight(btnTargetDate, newHeight: 30)
         lblStart.isHidden = false
-//        changeViewHeight(lblStart, newHeight: 30)
         btnStart.isHidden = false
-//        changeViewHeight(btnStart, newHeight: 30)
         lblContexts.isHidden = false
-//        changeViewHeight(lblContexts, newHeight: 30)
-        colContexts.isHidden = false
-//        changeViewHeight(colContexts, newHeight: 190)
+        tblContexts.isHidden = false
         lblPriority.isHidden = false
-//        changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.isHidden = false
-//        changeViewHeight(btnPriority, newHeight: 30)
         lblEnergy.isHidden = false
-//        changeViewHeight(lblEnergy, newHeight: 30)
         btnEnergy.isHidden = false
-//        changeViewHeight(btnEnergy, newHeight: 30)
         lblUrgency.isHidden = false
-//        changeViewHeight(lblUrgency, newHeight: 30)
         btnUrgency.isHidden = false
-//        changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.isHidden = false
- //       changeViewHeight(btnOwner, newHeight: 30)
         lblStatus.isHidden = false
-//        changeViewHeight(lblStatus, newHeight: 30)
         btnStatus.isHidden = false
-//        changeViewHeight(btnStatus, newHeight: 30)
         lblProject.isHidden = false
-//        changeViewHeight(lblProject, newHeight: 30)
         btnProject.isHidden = false
-//        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func hideKeyboardFields()
     {
         lblTargetDate.isHidden = true
-//        changeViewHeight(lblTargetDate, newHeight: 30)
         btnTargetDate.isHidden = true
-//        changeViewHeight(btnTargetDate, newHeight: 30)
         lblStart.isHidden = true
-//        changeViewHeight(lblStart, newHeight: 30)
         btnStart.isHidden = true
-//        changeViewHeight(btnStart, newHeight: 30)
         lblContexts.isHidden = true
-//        changeViewHeight(lblContexts, newHeight: 30)
-        colContexts.isHidden = true
-//        changeViewHeight(colContexts, newHeight: 190)
+        tblContexts.isHidden = true
         lblPriority.isHidden = true
-//        changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.isHidden = true
-//        changeViewHeight(btnPriority, newHeight: 30)
         lblEnergy.isHidden = true
-//        changeViewHeight(lblEnergy, newHeight: 30)
         btnEnergy.isHidden = true
-//        changeViewHeight(btnEnergy, newHeight: 30)
         lblUrgency.isHidden = true
- //       changeViewHeight(lblUrgency, newHeight: 30)
         btnUrgency.isHidden = true
-//        changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.isHidden = true
-//        changeViewHeight(btnOwner, newHeight: 30)
         lblStatus.isHidden = true
-//        changeViewHeight(lblStatus, newHeight: 30)
         btnStatus.isHidden = true
-//        changeViewHeight(btnStatus, newHeight: 30)
         lblProject.isHidden = true
-//        changeViewHeight(lblProject, newHeight: 30)
         btnProject.isHidden = true
-//        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func showFields()
@@ -985,7 +814,7 @@ print("Garry - get owner list from people table")
         
         // Reload the collection data
         
-        colContexts.reloadData()
+        tblContexts.reloadData()
     }
     
     func removeTaskContext(_ notification: Notification)
@@ -996,7 +825,7 @@ print("Garry - get owner list from people table")
         
         // Reload the collection data
         
-        colContexts.reloadData()
+        tblContexts.reloadData()
     }
     
     func createActivityController() -> UIActivityViewController
@@ -1246,35 +1075,61 @@ print("Garry - get owner list from people table")
         let myOption7 = UIAlertAction(title: "\(messagePrefix) Custom", style: .default, handler: { (action: UIAlertAction) -> () in
             if actionType == "Start"
             {
-                self.btnSetTargetDate.setTitle("Set Start Date", for: .normal)
-                self.pickerTarget = "StartDate"
-                if self.passedTask.displayStartDate == ""
+                let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+                pickerView.modalPresentationStyle = .popover
+                //      pickerView.isModalInPopover = true
+                
+                let popover = pickerView.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = self.btnStart
+                popover.sourceRect = self.btnStart.bounds
+                popover.permittedArrowDirections = .any
+                
+                pickerView.source = "StartDate"
+                pickerView.delegate = self
+                if self.passedTask.startDate == getDefaultDate()
                 {
-                    self.myDatePicker.date = Date()
+                    pickerView.currentDate = Date()
                 }
                 else
                 {
-                    self.myDatePicker.date = self.passedTask.startDate
+                    pickerView.currentDate = self.passedTask.startDate
                 }
+                pickerView.showTimes = true
+                
+                pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+                
+                self.present(pickerView, animated: true, completion: nil)
             }
             else
             { // actionType = Due
-                self.btnSetTargetDate.setTitle("Set Target Date", for: .normal)
-                self.pickerTarget = "TargetDate"
-                if self.passedTask.displayDueDate == ""
+                
+                let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+                pickerView.modalPresentationStyle = .popover
+                //      pickerView.isModalInPopover = true
+                
+                let popover = pickerView.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = self.btnTargetDate
+                popover.sourceRect = self.btnTargetDate.bounds
+                popover.permittedArrowDirections = .any
+                
+                pickerView.source = "TargetDate"
+                pickerView.delegate = self
+                if self.passedTask.dueDate == getDefaultDate()
                 {
-                    self.myDatePicker.date = Date()
+                    pickerView.currentDate = Date()
                 }
                 else
                 {
-                    self.myDatePicker.date = self.passedTask.dueDate
+                    pickerView.currentDate = self.passedTask.dueDate
                 }
+                pickerView.showTimes = true
+                
+                pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+                
+                self.present(pickerView, animated: true, completion: nil)
             }
-        
-            self.myDatePicker.datePickerMode = UIDatePickerMode.dateAndTime
-            self.hideFields()
-            self.myDatePicker.isHidden = false
-            self.btnSetTargetDate.isHidden = false
         })
         
         myOptions.addAction(myOption1)
@@ -1718,7 +1573,7 @@ print("Garry - get owner list from people table")
 //    */
 }
 
-class myContextItem: UICollectionViewCell
+class myContextItem: UITableViewCell
 {
     @IBOutlet weak var lblContext: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
