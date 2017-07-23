@@ -92,17 +92,6 @@ class taskUpdatesViewController: UIViewController//, SMTEFillDelegate
         newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         cell.txtUpdate.frame = newFrame;
         
-        if (indexPath.row % 2 == 0)  // was .row
-        {
-            cell.backgroundColor = greenColour
-            cell.txtUpdate.backgroundColor = greenColour
-        }
-        else
-        {
-            cell.backgroundColor = UIColor.clear
-            cell.txtUpdate.backgroundColor = UIColor.clear
-        }
-        
         return cell
     }
     

@@ -141,6 +141,7 @@ class task: NSObject
     fileprivate var myTeamID: Int = 0
     fileprivate var myPredecessors: [taskPredecessor] = Array()
     fileprivate var saveCalled: Bool = false
+    fileprivate var myMeetingID:String = ""
     
     var taskID: Int
     {
@@ -457,6 +458,20 @@ class task: NSObject
             save()
         }
     }
+    
+    var meetingID: String
+    {
+        get
+        {
+            return myMeetingID
+        }
+        set
+        {
+            myMeetingID = newValue
+        }
+    }
+    
+    
     
     var teamID: Int
     {

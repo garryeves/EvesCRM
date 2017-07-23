@@ -172,20 +172,13 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
             
             if myAgendaList[itemToUpdate].agendaID == 0
             {  // This is a previous meeting tasks row, so call the task list
-                print("collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)   to do")
-                //            if meetingCommunication != nil
-                //            {
-                //                meetingCommunication.displayTaskList(passedMeeting)
-                //            }
-                //            else
-                //            {
-                //                let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
-                //                taskListViewControl.delegate = self
-                //                taskListViewControl.myTaskListType = "Meeting"
-                //                taskListViewControl.passedMeeting = passedMeeting
-                //
-                //                self.present(taskListViewControl, animated: true, completion: nil)
-                //            }
+                let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+                taskListViewControl.delegate = self
+                taskListViewControl.myTaskListType = "Meeting"
+                let tempMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: passedMeeting.teamID)
+                taskListViewControl.passedMeeting = tempMeeting
+
+                self.present(taskListViewControl, animated: true, completion: nil)
             }
             else
             {  // This is a normal Agenda item so call the Agenda item screen

@@ -153,7 +153,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, UITableViewData
                 btnUrgency.setTitle(passedTask.urgency, for: .normal)
             }
 
-            
             if passedTask.estimatedTimeType == ""
             {
                 btnEstTimeInterval.setTitle("Click to set", for: .normal)
@@ -201,6 +200,19 @@ class taskViewController: UIViewController,  UITextViewDelegate, UITableViewData
             notificationCenter.addObserver(self, selector: #selector(self.removeTaskContext(_:)), name: NotificationRemoveTaskContext, object: nil)
             
             txtTaskDescription.delegate = self
+            
+            if passedMeeting != nil
+            {
+                lblEstTime.isHidden = true
+                txtEstTime.isHidden = true
+                btnEstTimeInterval.isHidden = true
+                lblrepeatEvery.isHidden = true
+                txtRepeatInterval.isHidden = true
+                btnRepeatPeriod.isHidden = true
+                lblFromActivity.isHidden = true
+                btnRepeatBase.isHidden = true
+                btnOwner.isHidden = true
+            }
             
 //            // TextExpander
 //            textExpander = SMTEDelegateController()
@@ -490,7 +502,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, UITableViewData
         popover.sourceRect = sender.bounds
         popover.permittedArrowDirections = .any
         
-        pickerView.source = "Energy"
+        pickerView.source = "Project"
         pickerView.delegate = self
         pickerView.pickerValues = displayList
         pickerView.preferredContentSize = CGSize(width: 200,height: 250)

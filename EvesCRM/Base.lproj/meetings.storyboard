@@ -1070,7 +1070,7 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dyT-KF-BNK" userLabel="tblAgenda">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dyT-KF-BNK" userLabel="tblAgenda">
                                 <rect key="frame" x="20" y="380" width="984" height="338"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -1487,6 +1487,7 @@
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YbD-q5-4NT" userLabel="btnStatus">
                                                     <rect key="frame" x="884" y="0.0" width="100" height="43.5"/>
                                                     <constraints>
+                                                        <constraint firstAttribute="height" constant="43.5" id="PjT-lJ-T37"/>
                                                         <constraint firstAttribute="width" constant="100" id="cjX-PI-ujf"/>
                                                     </constraints>
                                                     <state key="normal" title="Status"/>

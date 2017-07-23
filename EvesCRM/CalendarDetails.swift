@@ -2419,42 +2419,36 @@ func parsePastMeeting(_ meetingID: String, teamID: Int) -> [task]
     
     let myData = myDatabaseConnection.loadAgenda(meetingID, teamID: currentUser.currentTeam!.teamID)
     
-    if myData.count == 0
+    for myItem in myData
     {
-        // No meeting found, so no further action
-    }
-    else
-    {
-        for myItem in myData
+        var myArray: [task] = Array()
+        let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID!, teamID: teamID)
+        
+        for myItem2 in myData2
         {
-            var myArray: [task] = Array()
-            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID!, teamID: teamID)
-            
-            for myItem2 in myData2
+            let newTask = task(taskID: Int(myItem2.taskID), teamID: teamID)
+            newTask.meetingID = meetingID
+            if newTask.status != taskStatusClosed
             {
-                let newTask = task(taskID: Int(myItem2.taskID), teamID: teamID)
-                if newTask.status != "Closed"
-                {
-                    myArray.append(newTask)
-                }
-            }
-            
-            if myItem.previousMeetingID != ""
-            {
-                myReturnArray = parsePastMeeting(myItem.previousMeetingID!, teamID: teamID)
-                
-                for myWork in myArray
-                {
-                    myReturnArray.append(myWork)
-                }
-            }
-            else
-            {
-                myReturnArray = myArray
+                myArray.append(newTask)
             }
         }
+        
+        if myItem.previousMeetingID != ""
+        {
+            myReturnArray = parsePastMeeting(myItem.previousMeetingID!, teamID: teamID)
+            
+            for myWork in myArray
+            {
+                myReturnArray.append(myWork)
+            }
+        }
+        else
+        {
+            myReturnArray = myArray
+        }
     }
-    
+
     return myReturnArray
 }
 
