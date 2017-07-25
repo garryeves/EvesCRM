@@ -1536,6 +1536,37 @@ extension coreDatabase
     }
 }
 
+extension alerts
+{
+    func taskAlerts(_ teamID: Int)
+    {
+        // check for assigned tasks that are still open
+
+        for myItem in myDatabaseConnection.getTasksForContext(currentUser.personID, teamID: teamID, contextType: personContextType)
+        {
+            let taskEntry = task(taskID: Int(myItem.taskID), teamID: currentUser.currentTeam!.teamID)
+            
+            if taskEntry.status != taskStatusClosed && taskEntry.status != taskStatusOnHold
+            {
+                let alertEntry = alertItem()
+                
+                var projectName: String = ""
+                if taskEntry.projectID > 0
+                {
+                    projectName = project(projectID: taskEntry.projectID, teamID: currentUser.currentTeam!.teamID).projectName
+                }
+                
+                alertEntry.displayText = taskEntry.title
+                alertEntry.name = projectName
+                alertEntry.source = "Task"
+                alertEntry.object = myItem
+                
+                alertList.append(alertEntry)
+            }
+        }
+    }
+}
+
 extension CloudKitInteraction
 {
     func saveTaskToCloudKit()

@@ -1068,6 +1068,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             alertList.clearAlerts()
         }
         
+        alertList.taskAlerts(currentUser.currentTeam!.teamID)
         alertList.shiftAlerts(currentUser.currentTeam!.teamID)
         alertList.clientAlerts(currentUser.currentTeam!.teamID)
         alertList.projectAlerts(currentUser.currentTeam!.teamID)
