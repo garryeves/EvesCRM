@@ -176,6 +176,31 @@ class userItem: NSObject
         }
     }
     
+    var personTaskLink: Int
+    {
+        get
+        {
+            if currentTeam!.teamID == 0
+            {
+                // No team set
+                return 0
+            }
+            
+            let entryName = "Team \(currentTeam!.teamID) person link"
+
+            return readDefaultInt(entryName)
+        }
+        set
+        {
+            if currentTeam!.teamID != 0
+            {
+                let entryName = "Team \(currentTeam!.teamID) person link"
+                
+                writeDefaultInt(entryName, value: newValue)
+            }
+        }
+    }
+    
     init(currentTeam: team, userName: String, userEmail: String)
     {
         super.init()

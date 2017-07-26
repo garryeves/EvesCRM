@@ -48,6 +48,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
     @IBOutlet weak var btnType: UIButton!
     @IBOutlet weak var btnAddAppt: UIBarButtonItem!
     @IBOutlet weak var btnResetFilter: UIButton!
+    @IBOutlet weak var btnActions: UIButton!
     
     fileprivate let listView = "List View"
     fileprivate let dayView = "Day View"
@@ -257,6 +258,44 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
                         clientMaintenanceViewControl.selectedClient = alertList.alertList[indexPath.row].object as! client
                         self.present(clientMaintenanceViewControl, animated: true, completion: nil)
         
+                    case "PersonTask":
+                        let personTaskLinkViewControl = personStoryboard.instantiateViewController(withIdentifier: "personTaskLink") as! personTaskLinkViewController
+                        personTaskLinkViewControl.modalPresentationStyle = .popover
+                        
+                        let popover = personTaskLinkViewControl.popoverPresentationController!
+                        popover.delegate = self
+                        popover.sourceView = tblAlerts
+                        popover.sourceRect = tblAlerts.bounds
+                        popover.permittedArrowDirections = .any
+                        personTaskLinkViewControl.preferredContentSize = CGSize(width: 500,height: 300)
+                        
+                        self.present(personTaskLinkViewControl, animated: true, completion: nil)
+                    
+                    case "Task":
+                        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+                        popoverContent.modalPresentationStyle = .popover
+                        let popover = popoverContent.popoverPresentationController
+                        popover!.delegate = self
+                        popover!.sourceView = tblAlerts
+                        popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
+                        
+                        let tempTask = alertList.alertList[indexPath.row].object as! task
+                        
+                        let tempMeetingLinkList = myDatabaseConnection.getAgendaForTask(tempTask.taskID, teamID: tempTask.teamID)
+                        
+                        if tempMeetingLinkList.count > 0
+                        {
+                            popoverContent.passedTaskType = "minutes"
+                            let tempMeeting = calendarItem(meetingID: tempMeetingLinkList[0].meetingID!, teamID: Int(tempMeetingLinkList[0].teamID))
+                            popoverContent.passedMeeting = tempMeeting
+                        }
+                        
+                        popoverContent.passedTask = tempTask
+                        
+                        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+                        
+                        self.present(popoverContent, animated: true, completion: nil)
+                    
                     default:
                         let _ = 1
                 }
@@ -599,6 +638,15 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
         
         selectedEvent = nil
         refreshScreen()
+    }
+    
+    @IBAction func btnActions(_ sender: UIButton)
+    {
+        let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+        taskListViewControl.delegate = self
+        taskListViewControl.myTaskListType = ""
+        
+        self.present(taskListViewControl, animated: true, completion: nil)
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -1068,6 +1116,7 @@ class toolboxViewController: UIViewController, myCommunicationDelegate, UITableV
             alertList.clearAlerts()
         }
         
+        alertList.personTaskLinkAlerts()
         alertList.taskAlerts(currentUser.currentTeam!.teamID)
         alertList.shiftAlerts(currentUser.currentTeam!.teamID)
         alertList.clientAlerts(currentUser.currentTeam!.teamID)

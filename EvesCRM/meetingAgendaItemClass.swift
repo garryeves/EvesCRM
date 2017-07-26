@@ -648,6 +648,31 @@ extension coreDatabase
         }
     }
     
+    func getAgendaForTask(_ taskID: Int, teamID: Int)->[MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    
     func getMeetingsTasks(_ meetingID: String, teamID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")

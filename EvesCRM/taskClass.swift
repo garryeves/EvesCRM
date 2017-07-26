@@ -20,7 +20,7 @@ class tasks: NSObject
     var myTasks: [task] = Array()
     var myTeamID: Int = 0
     
-    var activeTasks: [task]
+    var tasks: [task]
     {
         get
         {
@@ -28,13 +28,13 @@ class tasks: NSObject
         }
     }
     
-    var allTasks: [task]
-    {
-        get
-        {
-            return myTasks
-        }
-    }
+//    var allTasks: [task]
+//    {
+//        get
+//        {
+//            return myTasks
+//        }
+//    }
     
     init(projectID: Int, teamID: Int)
     {
@@ -50,18 +50,18 @@ class tasks: NSObject
         }
     }
     
-    init(contextID: Int, teamID: Int)
+    init(contextID: Int, contextType: String, teamID: Int, loadAll: Bool)
     {
         super.init()
         myTeamID = teamID
-        loadActiveTasksForContext(contextID)
+        loadTasksForContext(contextID, contextType: contextType, loadAll: loadAll)
     }
     
-    func loadActiveTasksForContext(_ contextID: Int)
+    func loadTasksForContext(_ contextID: Int, contextType: String, loadAll: Bool)
     {
         myActiveTasks.removeAll()
         
-        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID, teamID: myTeamID)
+        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID, teamID: myTeamID, contextType: contextType)
         
         for myTaskContext in myTaskContextList
         {
@@ -71,13 +71,15 @@ class tasks: NSObject
             for myTask in myTaskList
             {  //append project details to work array
                 // check the project to see if it is on hold
-                
-                let myProject = project(projectID: Int(myTask.projectID), teamID: myTeamID)
-                
-                if myProject.projectStatus != "On Hold"
+                if loadAll || myTask.status == taskStatusOpen
                 {
-                    let tempTask = task(taskID: Int(myTask.taskID), teamID: myTeamID)
-                    myActiveTasks.append(tempTask)
+                    let myProject = project(projectID: Int(myTask.projectID), teamID: myTeamID)
+                    
+                    if myProject.projectStatus != "On Hold"
+                    {
+                        let tempTask = task(taskID: Int(myTask.taskID), teamID: myTeamID)
+                        myActiveTasks.append(tempTask)
+                    }
                 }
             }
         }
@@ -1542,7 +1544,7 @@ extension alerts
     {
         // check for assigned tasks that are still open
 
-        for myItem in myDatabaseConnection.getTasksForContext(currentUser.personID, teamID: teamID, contextType: personContextType)
+        for myItem in myDatabaseConnection.getTasksForContext(currentUser.personTaskLink, teamID: teamID, contextType: personContextType)
         {
             let taskEntry = task(taskID: Int(myItem.taskID), teamID: currentUser.currentTeam!.teamID)
             
@@ -1559,7 +1561,7 @@ extension alerts
                 alertEntry.displayText = taskEntry.title
                 alertEntry.name = projectName
                 alertEntry.source = "Task"
-                alertEntry.object = myItem
+                alertEntry.object = taskEntry
                 
                 alertList.append(alertEntry)
             }

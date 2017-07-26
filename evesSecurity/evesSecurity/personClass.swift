@@ -902,6 +902,24 @@ extension coreDatabase
     }
 }
 
+extension alerts
+{
+    func personTaskLinkAlerts()
+    {
+        if currentUser.personTaskLink <= 0
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "You need to create a link to a person entry so Actions can be assigned to you."
+            alertEntry.name = "Housekeeping"
+            alertEntry.source = "PersonTask"
+            alertEntry.object = currentUser.personTaskLink
+            
+            alertList.append(alertEntry)
+        }
+    }
+}
+
 extension CloudKitInteraction
 {
     func savePersonToCloudKit()

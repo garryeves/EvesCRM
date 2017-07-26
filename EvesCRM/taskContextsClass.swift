@@ -236,6 +236,30 @@ extension coreDatabase
         }
     }
     
+//    func getActiveTasksForContext(_ contextID: Int, teamID: Int, contextType: String)->[TaskContext]
+//    {
+//        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
+//        
+//        // Create a new predicate that filters out any object that
+//        // doesn't have a title of "Best Language" exactly.
+//        let predicate = NSPredicate(format: "(contextID = \(contextID)) AND (teamID == \(teamID)) AND (updateType != \"Delete\") AND (contextType == \"\(contextType)\") AND (status == \"\(taskStatusOpen)\")")
+//        
+//        // Set the predicate on the fetch request
+//        fetchRequest.predicate = predicate
+//        
+//        // Execute the fetch request, and cast the results to an array of LogItem objects
+//        do
+//        {
+//            let fetchResults = try objectContext.fetch(fetchRequest)
+//            return fetchResults
+//        }
+//        catch
+//        {
+//            print("Error occurred during execution: \(error)")
+//            return []
+//        }
+//    }
+    
     func getTasksForContext(_ contextID: Int, teamID: Int, contextType: String)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")

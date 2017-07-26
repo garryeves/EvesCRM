@@ -26,6 +26,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnSwitchUsers: UIButton!
     @IBOutlet weak var btnRestore: UIButton!
     @IBOutlet weak var btnNewTeam: UIButton!
+    @IBOutlet weak var btnLinkPersonTask: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -254,6 +255,21 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     {
         communicationDelegate!.refreshScreen!()
         dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func btnLinkPersonTask(_ sender: UIButton)
+    {
+        let personTaskLinkViewControl = personStoryboard.instantiateViewController(withIdentifier: "personTaskLink") as! personTaskLinkViewController
+        personTaskLinkViewControl.modalPresentationStyle = .popover
+        
+        let popover = personTaskLinkViewControl.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        personTaskLinkViewControl.preferredContentSize = CGSize(width: 500,height: 300)
+        
+        self.present(personTaskLinkViewControl, animated: true, completion: nil)
     }
     
     func refreshScreen()

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13168.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13137.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13147.4"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -376,6 +376,13 @@
                                     <action selector="btnResetFilter:" destination="iPZ-KP-gev" eventType="touchUpInside" id="haU-lh-VLY"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4L-JB-QiN" userLabel="btnActions">
+                                <rect key="frame" x="390" y="974" width="52" height="30"/>
+                                <state key="normal" title="Actions"/>
+                                <connections>
+                                    <action selector="btnActions:" destination="iPZ-KP-gev" eventType="touchUpInside" id="Wfe-Ux-f8U"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -392,6 +399,7 @@
                             <constraint firstItem="dDc-fN-hfC" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="100" id="BEy-r5-Iz4"/>
                             <constraint firstAttribute="bottom" secondItem="Mv0-1y-cgs" secondAttribute="bottom" constant="20" id="BQq-IT-wNY"/>
                             <constraint firstItem="Yhp-IT-h9I" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="Bn6-qx-4Hp"/>
+                            <constraint firstItem="O4L-JB-QiN" firstAttribute="top" secondItem="ITq-ms-Zyc" secondAttribute="bottom" constant="20" id="Bvb-iB-8h4"/>
                             <constraint firstItem="0lP-QP-Wyd" firstAttribute="leading" secondItem="JNP-OT-9FV" secondAttribute="trailing" id="E5f-Ep-GdT"/>
                             <constraint firstAttribute="trailing" secondItem="5ms-gM-M1e" secondAttribute="trailing" constant="20" id="G8Z-Dq-k4l"/>
                             <constraint firstItem="743-rg-JIO" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" id="Gg8-kA-VT3"/>
@@ -404,6 +412,7 @@
                             <constraint firstItem="LCm-4a-Tp2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="IhB-y2-J0m" secondAttribute="trailing" constant="10" id="Lht-LU-fCR"/>
                             <constraint firstItem="MvO-GP-ZX5" firstAttribute="leading" secondItem="TCE-0x-xKG" secondAttribute="trailing" constant="10" id="LwT-hc-6Od"/>
                             <constraint firstItem="5ms-gM-M1e" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="Mji-QG-p0o"/>
+                            <constraint firstItem="O4L-JB-QiN" firstAttribute="leading" secondItem="ITq-ms-Zyc" secondAttribute="trailing" constant="20" id="Mzx-Tr-awx"/>
                             <constraint firstAttribute="trailing" secondItem="YNk-L1-2aa" secondAttribute="trailing" constant="20" id="NFj-Rm-5uT"/>
                             <constraint firstItem="KuL-fN-Hef" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" constant="20" id="Nch-at-sLb"/>
                             <constraint firstItem="IhB-y2-J0m" firstAttribute="leading" secondItem="6UY-WZ-DrH" secondAttribute="leading" constant="120" id="Nij-tL-9bX"/>
@@ -450,6 +459,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnActions" destination="O4L-JB-QiN" id="LAm-Xv-sUX"/>
                         <outlet property="btnAddAppt" destination="RHa-nK-2az" id="Wh3-Bm-Wmt"/>
                         <outlet property="btnAgenda" destination="AY7-Ap-2dq" id="tEz-QC-iJt"/>
                         <outlet property="btnCalendarView" destination="0zF-5c-lX6" id="UZ9-hs-lQt"/>

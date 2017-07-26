@@ -17,7 +17,7 @@ let meetingAttendenceApologised = "Apologised"
 let meetingAttendenceNotAttend = "Did not attend"
 let meetingAttendenceDelegated = "Delegated"
 
-class meetingAgendaViewController: UIViewController, myCommunicationDelegate, MyTaskListDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate , MyPickerDelegate, UIPopoverPresentationControllerDelegate //,  SMTEFillDelegate
+class meetingAgendaViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate , MyPickerDelegate, UIPopoverPresentationControllerDelegate //,  SMTEFillDelegate
 {
     var passedMeeting: calendarItem!
     var communicationDelegate: myCommunicationDelegate?
@@ -913,13 +913,6 @@ class meetingAgendaViewController: UIViewController, myCommunicationDelegate, My
                 btnFinalise.isEnabled = false
             }
         }
-    }
-    
-    func myTaskListDidFinish(_ controller:taskListViewController)
-    {
-print("Garry - find where calls this and replace with my call to refreshScreen via commsdeletgate")
-        refreshScreen()
-        controller.dismiss(animated: true, completion: nil)
     }
     
     func createActivityController() -> UIActivityViewController

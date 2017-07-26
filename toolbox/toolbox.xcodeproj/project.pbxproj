@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		340E71101F283B740064F746 /* personTaskLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340E710F1F283B740064F746 /* personTaskLinkViewController.swift */; };
 		341B6C511F0736C8005A4576 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341B6C501F0736C8005A4576 /* CloudKit.framework */; };
 		341B6C531F073722005A4576 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341B6C521F073722005A4576 /* StoreKit.framework */; };
 		341DBCEC1F088876003163D3 /* addPerInfoMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341DBCE81F088876003163D3 /* addPerInfoMaintenanceViewController.swift */; };
@@ -113,6 +114,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		340E710F1F283B740064F746 /* personTaskLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = personTaskLinkViewController.swift; sourceTree = "<group>"; };
 		341B6C4E1F0736C4005A4576 /* toolbox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = toolbox.entitlements; sourceTree = "<group>"; };
 		341B6C501F0736C8005A4576 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		341B6C521F073722005A4576 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -412,6 +414,7 @@
 				34FE98D61F088A35000A7E72 /* meetingAgendaViewController.swift */,
 				344CEB261F0739EA006FCFCE /* newUserViewController.swift */,
 				344CEB281F0739EA006FCFCE /* orgEditViewController.swift */,
+				340E710F1F283B740064F746 /* personTaskLinkViewController.swift */,
 				344CEB2D1F0739EA006FCFCE /* personViewController.swift */,
 				344CEB2E1F0739EA006FCFCE /* pickerViewController.swift */,
 				344CEB301F0739EA006FCFCE /* rateMaintenanceViewController.swift */,
@@ -632,6 +635,7 @@
 				34D0FE041F07349F009E5973 /* CloudKitInteraction.swift in Sources */,
 				34D0FE361F0735D6009E5973 /* UserInfo.swift in Sources */,
 				34FE98E21F088A35000A7E72 /* meetingAgendaViewController.swift in Sources */,
+				340E71101F283B740064F746 /* personTaskLinkViewController.swift in Sources */,
 				344CEB3F1F0739EA006FCFCE /* reporting.swift in Sources */,
 				34FE99081F088A6B000A7E72 /* taskUpdatesViewController.swift in Sources */,
 				344CEB391F0739EA006FCFCE /* personClass.swift in Sources */,

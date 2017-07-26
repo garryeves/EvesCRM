@@ -9,11 +9,6 @@
 import Foundation
 import UIKit
 
-protocol MyTaskListDelegate
-{
-    func myTaskListDidFinish(_ controller:taskListViewController)
-}
-
 let NotificationShowTaskUpdate = Notification.Name("NotificationShowTaskUpdate")
 
 class taskListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate
@@ -22,7 +17,7 @@ class taskListViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var lblNoActions: UILabel!
     
-    var delegate: MyTaskListDelegate?
+    var delegate: myCommunicationDelegate?
     var myTaskListType: String = ""
     var passedMeeting: calendarItem!
     
@@ -68,6 +63,10 @@ class taskListViewController: UIViewController, UITableViewDataSource, UITableVi
                     myTaskList.append(newTask)
                 }
             }
+        }
+        else
+        {
+            myTaskList = tasks(contextID: currentUser.personTaskLink, contextType: personContextType, teamID: currentUser.currentTeam!.teamID, loadAll: false).tasks
         }
         
         if myTaskList.count == 0
